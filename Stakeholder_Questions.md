@@ -1,112 +1,114 @@
 # Stakeholder Interview — Question List
 ### Wholesale ERP / Order-to-Cash Platform
-**Prepared: February 24, 2026**
+**Updated: February 25, 2026**
 
-> Use this document on your stakeholder calls. Check off answers as you get them and bring back to the design session.
-
----
-
-## 🏢 SECTION 1 — Company & Current Systems
-
-- [ ] **[Q1]** What inventory and/or manufacturing system are you currently using? Does it have an API or data export capability?
-- [ ] **[Q5]** What is your current invoicing system? What data will need to be migrated into the new app?
-- [ ] **[Q18]** Do you have an existing customer database? In what format (spreadsheet, accounting software, etc.)?
-- [ ] **[Q16]** Roughly how many people in each role: salespeople, warehouse workers/pickers, drivers, accountants?
-- [ ] **[Q17]** What Bluetooth printer models are currently in use, or what models are you planning to use?
+> **22 questions remaining** for the stakeholder call. Organized by topic. Check off answers as you get them.
 
 ---
 
-## 👥 SECTION 2 — Customer Accounts & Credit
+## 1 — Inventory & Manufacturing Model *(Critical — affects many other decisions)*
 
-- [ ] **[Q2]** Who is the owner-level system admin — one person, or a small group?
-- [ ] **[Q3]** Is there a credit approval process when onboarding a new customer, or can any salesperson add a customer?
-- [ ] **[Q20]** How many customer credit tiers do you want to start with? What would you name/define them? (e.g. Tier 1 = net-30 credit account, Tier 2 = pay before delivery, etc.)
-- [ ] **[Q21]** What payment vault or legacy payment systems need to be supported beyond Authorize.NET?
-- [ ] **[Q22]** Should credit limit review notifications go to the accountant only, or also CC the salesperson on that account?
-- [ ] **[Q25]** For multi-location customers (e.g. a chain with multiple stores) — should billing always roll up to the parent account, or can individual locations have their own separate billing?
+- [ ] **[Q1a]** Is your ordering model **stock-based** (inventory on hand, orders ship from stock), **pre-order/made-to-order** (manufacture or source after receiving orders), or **both**?
+- [ ] **[Q1b]** If stock-based: does the system need to show **real-time stock levels** to salespeople? Should orders be blocked or warned when stock is insufficient (backorder)? How is stock currently tracked?
+- [ ] **[Q1c]** If pre-order/manufacturing: when an order is placed, how does it trigger manufacturing or sourcing? Does the manufacturing side have its own system that needs to receive orders and send back "ready" status?
+- [ ] **[Q8]** When a salesperson duplicates a past order, should the system check current inventory availability? *(Depends on Q1a/b)*
+- [ ] **[Q27]** If a product goes out of stock between order placement and warehouse picking — what should happen? Auto-remove, flag to salesperson, or let warehouse decide? *(Depends on Q1a/b)*
 
 ---
 
-## 💰 SECTION 3 — Pricing, Deposits & Discounts
+## 2 — Product Codes & Integration
 
-- [ ] **[Q4]** How are discounts structured — per product, per customer, per order, or all three?
-- [ ] **[Q9]** Are government deposits (CRV) calculated per unit or per case? Do they vary by container type (can vs. bottle vs. size)?
+- [ ] **[Q7a]** The system uses a new 6-digit product code. Does it need to map to product codes from other departments (manufacturing, purchasing, accounting)? Or is it standalone for this app only? Do we need a cross-reference table?
+
+---
+
+## 3 — Customer Accounts & Credit
+
+- [ ] **[Q2]** Who controls what admin panels? Which roles/people have access to system settings, policies, user management? Map out who manages what.
+- [ ] **[Q3]** Is there a credit approval process when onboarding a new customer, or can any salesperson add one?
+- [ ] **[Q20]** How many credit tiers to start with? What are their names and rules? (e.g. Tier 1 = net-30 credit, Tier 2 = pay before delivery)
+- [ ] **[Q34]** Do you want to tag/classify customers by type (restaurant, grocery, gas station, chain, independent)? Would tags affect pricing, product visibility, or reporting?
+
+---
+
+## 4 — Pricing, Deposits & Tax
+
+- [ ] **[Q9]** Are government deposits (CRV) per unit or per case? Do they vary by container type (can vs. bottle vs. size)? How should deposits be displayed on invoices — per line item, separate section, or rolled into price?
 - [ ] **[Q10]** Do some customers have fully custom price lists, or is it always standard price minus a discount?
-- [ ] **[Q11]** Are there any automatic promotions or volume deals? (e.g. buy 10 cases get 1 free, tiered pricing)
+- [ ] **[Q11]** Are there automatic promotions or volume deals? (e.g. buy 10 cases get 1 free, tiered pricing)
 - [ ] **[Q12]** Is tax calculated on the deposit amount separately from the product price?
-- [ ] **[Q19]** How are deposit/bottle returns handled? Are they a line item credit on the next order, a separate transaction, or something else?
 
 ---
 
-## 📦 SECTION 4 — Orders & Inventory
+## 5 — Returns & Credits
 
-- [ ] **[Q7]** Should the voice ordering system recognize product SKU codes in addition to product names?
-- [ ] **[Q8]** When a salesperson duplicates a past order, should the system check current inventory availability before confirming?
-- [ ] **[Q27]** If a product goes out of stock between when an order is placed and when the warehouse picks it — what should happen? (Auto-remove, flag to salesperson, let warehouse decide, other?)
+- [ ] **[Q19a]** How are general product returns handled? Can a customer return delivered products? If yes — what is the process, who approves, and how is the credit/refund calculated? Credit memo, line item on next order, or cash refund?
 
 ---
 
-## 🚚 SECTION 5 — Delivery & Routing
+## 6 — Order Modifications & Cancellations
 
-- [ ] **[Q24]** Truck routing: drivers in dense urban areas (NYC etc.) face truck-restricted roads that Google Maps ignores. Should we integrate a truck-specific navigation solution (e.g. Sygic Truck, PCMiler), or is standard GPS acceptable and drivers use their own judgment?
-
----
-
-## 🔒 SECTION 6 — Invoicing & Accounting Rules
-
-- [ ] **[Q15]** What invoice lock period do you want to start with? (e.g. locked X days after creation, or after payment received)
-- [ ] **[Q23]** What should the default salesperson dashboard look like out of the box — what's the most important information a salesperson needs to see at a glance?
+- [ ] **[Q28/29]** What are your current rules for order cancellations and modifications? At what stage do restrictions kick in? (We'll use these as defaults in the configurable policy engine.)
 
 ---
 
-## 📋 SECTION 7 — Orders, Adjustments & Cancellations
+## 7 — Invoicing & Accounting Workflow
 
-- [ ] **[Q28]** At what point in the flow can an order be cancelled, and by whom? (e.g. before picking starts, before truck loads, anytime with approval?)
-- [ ] **[Q29]** What are the rules for modifying an order after it's placed? Should there be configurable caps on what adjustments salespeople vs. accountants can make, similar to discount caps?
-- [ ] **[Q31]** Are there any specific fields or layout requirements for customer statements?
+- [ ] **[Q32]** Confirm: orders and invoices are **separate records** — order tracks what was requested, invoice is generated from delivered quantities. Or does the order itself become the invoice?
+- [ ] **[Q33]** Before invoices are "posted" (permanently locked, no more edits): what does accounting review them **for**? What errors or discrepancies do you typically catch during your weekly review? (This tells us what AI should auto-flag.)
 
-## 🛠️ SECTION 8 — Setup & Onboarding
+---
 
-- [ ] **[Q26]** For user onboarding: do you want a guided in-app setup wizard for new users, or will training be handled in person and admin sets up accounts directly?
-- [ ] **[Q30]** New customer onboarding: are there any required documents or approvals before a new customer can place their first order?
+## 8 — Data Migration
+
+- [ ] **[Q5]** What is your current invoicing system? What data needs to be migrated?
+- [ ] **[Q18]** Do you have an existing customer database? In what format (spreadsheet, accounting software, etc.)?
+
+---
+
+## 9 — Onboarding
+
+- [ ] **[Q26]** User onboarding: guided in-app setup wizard, or admin sets up accounts and trains in person?
+- [ ] **[Q30]** New customer onboarding: any required documents or approvals before a new customer can place their first order?
+
+---
+
+## 10 — Security & Access
+
+- [ ] **[Q35]** Do users need remote access from outside the office network (working from home, remote accounting)? If yes — SSO with MFA, VPN, or both? *(Affects scope and pricing)*
+- [ ] **[Q36]** Are the Android handhelds managed through MDM (like Microsoft Intune), or just handed out as-is?
 
 ---
 
 ## 📝 Notes from Call
 
-*(Fill in during / after the call)*
-
-| Q# | Answer / Notes |
-|----|---------------|
-| Q1 | |
-| Q2 | |
-| Q3 | |
-| Q4 | |
-| Q5 | |
-| Q7 | |
-| Q8 | |
-| Q9 | |
-| Q10 | |
-| Q11 | |
-| Q12 | |
-| Q15 | |
-| Q16 | |
-| Q17 | |
-| Q18 | |
-| Q19 | |
-| Q20 | |
-| Q21 | |
-| Q22 | |
-| Q23 | |
-| Q24 | |
-| Q25 | |
-| Q26 | |
-| Q27 | |
-| Q28 | |
-| Q29 | |
-| Q30 | |
-| Q31 | |
+| # | Question | Answer |
+|---|----------|--------|
+| Q1a | Stock-based, pre-order, or both? | |
+| Q1b | Real-time stock levels? Backorder behavior? | |
+| Q1c | Manufacturing trigger / system integration? | |
+| Q2 | Who controls what admin panels? | |
+| Q3 | Credit approval for new customers? | |
+| Q5 | Current invoicing system / migration? | |
+| Q7a | 6-digit code integration with other departments? | |
+| Q8 | Inventory check on order duplicate? | |
+| Q9 | CRV per unit/case? Display preference? | |
+| Q10 | Custom price lists? | |
+| Q11 | Auto promotions / volume deals? | |
+| Q12 | Tax on deposits separately? | |
+| Q18 | Existing customer database format? | |
+| Q19a | General returns process? | |
+| Q20 | Credit tier names and rules? | |
+| Q26 | User onboarding approach? | |
+| Q27 | Out-of-stock handling? | |
+| Q28/29 | Current cancellation/modification rules? | |
+| Q30 | New customer required docs? | |
+| Q32 | Order vs invoice — separate records? | |
+| Q33 | What does accounting review before posting? | |
+| Q34 | Customer classification tags? | |
+| Q35 | Remote access needs? | |
+| Q36 | Android device management (MDM)? | |
 
 ---
 
-*Bring completed answers back to the design session to update the Living Document and proceed to Phase 2: App Design.*
+*Bring completed answers back to update the Living Document.*

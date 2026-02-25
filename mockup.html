@@ -1,0 +1,2924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wholesale ERP — UI Mockup</title>
+<style>
+  :root {
+    --bg: #f5f6fa;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --yellow: #ca8a04;
+    --yellow-bg: #fef9c3;
+    --orange: #ea580c;
+    --orange-bg: #ffedd5;
+    --purple: #7c3aed;
+    --sidebar-w: 220px;
+    --header-h: 56px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); font-size:14px; }
+
+  /* === ROLE SELECTOR BAR (top) === */
+  .role-bar { position:fixed; top:0; left:0; right:0; height:36px; background:#1e293b; display:flex; align-items:center; justify-content:center; gap:4px; z-index:1000; padding:0 12px; }
+  .role-bar span { color:#94a3b8; font-size:11px; margin-right:8px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+  .role-btn { padding:4px 14px; border:none; border-radius:4px; font-size:12px; cursor:pointer; background:transparent; color:#cbd5e1; font-weight:500; transition:all .15s; }
+  .role-btn:hover { background:#334155; color:white; }
+  .role-btn.active { background:var(--primary); color:white; }
+
+  /* === LAYOUT === */
+  .app { display:none; padding-top:36px; }
+  .app.active { display:block; }
+
+  /* === LOGIN === */
+  .login-page { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); padding-top:36px; }
+  .login-box { background:white; border-radius:12px; padding:48px 40px; width:380px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+  .login-box h1 { font-size:22px; margin-bottom:4px; }
+  .login-box p { color:var(--text-light); font-size:13px; margin-bottom:28px; }
+  .login-box label { display:block; font-size:12px; font-weight:600; color:var(--text-light); margin-bottom:4px; margin-top:16px; text-transform:uppercase; letter-spacing:.5px; }
+  .login-box input[type=text], .login-box input[type=password] { width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:6px; font-size:14px; }
+  .login-box .btn-primary { width:100%; margin-top:24px; padding:12px; font-size:15px; }
+  .login-box .device-badge { display:inline-flex; align-items:center; gap:6px; background:#f0fdf4; border:1px solid #bbf7d0; color:var(--green); font-size:11px; padding:4px 10px; border-radius:20px; margin-top:16px; }
+  .login-box .device-badge::before { content:"✓"; font-weight:bold; }
+
+  /* === HEADER === */
+  .header { height:var(--header-h); background:var(--card); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:36px; z-index:100; }
+  .header .logo { font-weight:700; font-size:16px; color:var(--primary); }
+  .header .user-info { display:flex; align-items:center; gap:12px; }
+  .header .user-info .avatar { width:32px; height:32px; border-radius:50%; background:var(--primary-light); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--primary); font-size:13px; }
+  .header .notif-badge { position:relative; cursor:pointer; font-size:18px; }
+  .header .notif-badge .count { position:absolute; top:-6px; right:-8px; background:var(--red); color:white; font-size:9px; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; }
+
+  /* === SIDEBAR === */
+  .layout { display:flex; min-height:calc(100vh - var(--header-h) - 36px); }
+  .sidebar { width:var(--sidebar-w); background:var(--card); border-right:1px solid var(--border); padding:16px 0; flex-shrink:0; position:sticky; top:calc(var(--header-h) + 36px); height:calc(100vh - var(--header-h) - 36px); overflow-y:auto; }
+  .sidebar .nav-section { padding:0 16px; margin-bottom:16px; }
+  .sidebar .nav-section h4 { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--text-light); margin-bottom:8px; font-weight:600; }
+  .sidebar a { display:flex; align-items:center; gap:10px; padding:8px 16px; color:var(--text); text-decoration:none; font-size:13px; border-radius:6px; margin:1px 8px; transition:all .1s; }
+  .sidebar a:hover { background:var(--primary-light); color:var(--primary); }
+  .sidebar a.active { background:var(--primary); color:white; font-weight:600; }
+  .sidebar a .icon { width:18px; text-align:center; }
+
+  /* === CONTENT === */
+  .content { flex:1; padding:24px; max-width:1200px; }
+  .page { display:none; }
+  .page.active { display:block; }
+
+  /* === COMPONENTS === */
+  .btn-primary { background:var(--primary); color:white; border:none; padding:8px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
+  .btn-primary:hover { background:#1d4ed8; }
+  .btn-outline { background:transparent; color:var(--primary); border:1.5px solid var(--primary); padding:7px 16px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; }
+  .btn-sm { padding:5px 12px; font-size:12px; }
+  .btn-success { background:var(--green); color:white; border:none; padding:8px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; }
+  .btn-danger { background:var(--red); color:white; border:none; padding:8px 18px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; }
+  .btn-icon { background:none; border:1px solid var(--border); width:34px; height:34px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; }
+
+  /* Tiles */
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px; }
+  .tile { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .tile .tile-label { font-size:12px; color:var(--text-light); text-transform:uppercase; letter-spacing:.5px; font-weight:600; }
+  .tile .tile-value { font-size:28px; font-weight:700; margin-top:4px; }
+  .tile .tile-sub { font-size:11px; color:var(--text-light); margin-top:4px; }
+  .tile-green .tile-value { color:var(--green); }
+  .tile-red .tile-value { color:var(--red); }
+  .tile-yellow .tile-value { color:var(--yellow); }
+  .tile-blue .tile-value { color:var(--primary); }
+
+  /* Cards */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:16px; }
+  .card h3 { font-size:15px; margin-bottom:12px; }
+  .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+
+  /* Tables */
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--text-light); font-weight:600; padding:10px 12px; border-bottom:2px solid var(--border); }
+  td { padding:10px 12px; border-bottom:1px solid var(--border); font-size:13px; }
+  tr:hover { background:#f8fafc; }
+
+  /* Badges */
+  .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+  .badge-green { background:var(--green-bg); color:var(--green); }
+  .badge-red { background:var(--red-bg); color:var(--red); }
+  .badge-yellow { background:var(--yellow-bg); color:var(--yellow); }
+  .badge-blue { background:var(--primary-light); color:var(--primary); }
+  .badge-orange { background:var(--orange-bg); color:var(--orange); }
+  .badge-purple { background:#f3e8ff; color:var(--purple); }
+
+  /* Search */
+  .search-bar { display:flex; gap:8px; margin-bottom:20px; }
+  .search-bar input { flex:1; padding:9px 14px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; }
+  .search-bar select { padding:9px 12px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; background:white; }
+
+  /* Tabs */
+  .tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:20px; }
+  .tab { padding:10px 20px; font-size:13px; font-weight:600; color:var(--text-light); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; }
+  .tab:hover { color:var(--text); }
+  .tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+
+  /* Progress */
+  .progress { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--green); border-radius:3px; }
+
+  /* Steps */
+  .steps { display:flex; gap:0; margin-bottom:24px; }
+  .step { flex:1; text-align:center; position:relative; }
+  .step .step-num { width:32px; height:32px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; margin:0 auto 6px; font-weight:700; font-size:13px; color:var(--text-light); background:white; }
+  .step .step-label { font-size:11px; color:var(--text-light); }
+  .step.active .step-num { background:var(--primary); color:white; border-color:var(--primary); }
+  .step.active .step-label { color:var(--primary); font-weight:600; }
+  .step.done .step-num { background:var(--green); color:white; border-color:var(--green); }
+  .step.done .step-label { color:var(--green); }
+  .step::after { content:''; position:absolute; top:16px; left:50%; right:-50%; height:2px; background:var(--border); z-index:-1; }
+  .step:last-child::after { display:none; }
+  .step.done::after { background:var(--green); }
+
+  /* Quick Actions */
+  .quick-actions { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-bottom:24px; }
+  .quick-action { background:var(--card); border:1.5px solid var(--border); border-radius:10px; padding:18px 14px; text-align:center; cursor:pointer; transition:all .15s; }
+  .quick-action:hover { border-color:var(--primary); background:var(--primary-light); }
+  .quick-action .qa-icon { font-size:24px; margin-bottom:6px; }
+  .quick-action .qa-label { font-size:12px; font-weight:600; }
+
+  /* Forms */
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; font-size:12px; font-weight:600; color:var(--text-light); margin-bottom:4px; text-transform:uppercase; letter-spacing:.5px; }
+  .form-group input, .form-group select, .form-group textarea { width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; font-family:inherit; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+  /* Mobile indicator */
+  .mobile-frame { max-width:400px; margin:0 auto; background:white; border-radius:20px; box-shadow:0 4px 24px rgba(0,0,0,.12); overflow:hidden; border:8px solid #1e293b; min-height:700px; }
+  .mobile-header { background:var(--primary); color:white; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; }
+  .mobile-header h2 { font-size:16px; }
+  .mobile-content { padding:16px; }
+  .mobile-tab-bar { display:flex; border-top:1px solid var(--border); background:white; }
+  .mobile-tab { flex:1; text-align:center; padding:10px 4px; font-size:10px; color:var(--text-light); }
+  .mobile-tab.active { color:var(--primary); font-weight:700; }
+  .mobile-tab .mt-icon { font-size:20px; display:block; margin-bottom:2px; }
+
+  /* Map placeholder */
+  .map-placeholder { background:#e8f0fe; border:2px dashed #93b5f7; border-radius:10px; height:200px; display:flex; align-items:center; justify-content:center; color:var(--primary); font-weight:600; font-size:14px; margin-bottom:16px; }
+
+  /* Screen label */
+  .screen-label { background:var(--primary); color:white; display:inline-block; padding:4px 12px; border-radius:4px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; }
+  .screen-divider { border:none; border-top:3px dashed var(--border); margin:48px 0; }
+
+  /* Section title */
+  .section-title { display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:12px; border-bottom:2px solid var(--border); }
+  .section-title h2 { font-size:20px; }
+  .section-title .role-badge { background:var(--primary); color:white; padding:4px 12px; border-radius:4px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+
+  /* Voice */
+  .voice-btn { width:64px; height:64px; border-radius:50%; background:var(--red); border:none; color:white; font-size:24px; cursor:pointer; box-shadow:0 4px 16px rgba(220,38,38,.4); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 4px 16px rgba(220,38,38,.4)} 50%{box-shadow:0 4px 24px rgba(220,38,38,.6)} }
+
+  /* Invoice preview */
+  .invoice-preview { border:2px solid var(--text); padding:32px; font-size:13px; background:white; }
+  .invoice-preview .inv-header { display:flex; justify-content:space-between; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid var(--text); }
+  .invoice-preview h2 { font-size:20px; }
+  .invoice-preview .inv-total { text-align:right; padding-top:12px; border-top:2px solid var(--text); margin-top:12px; }
+
+  /* Utility */
+  .flex { display:flex; }
+  .flex-between { display:flex; justify-content:space-between; align-items:center; }
+  .gap-8 { gap:8px; }
+  .gap-16 { gap:16px; }
+  .mb-8 { margin-bottom:8px; }
+  .mb-16 { margin-bottom:16px; }
+  .mb-24 { margin-bottom:24px; }
+  .text-right { text-align:right; }
+  .text-sm { font-size:12px; }
+  .text-light { color:var(--text-light); }
+  .bold { font-weight:700; }
+  .page-title { font-size:22px; font-weight:700; margin-bottom:20px; }
+
+  .view-switcher { display:flex; gap:0; margin-bottom:16px; }
+  .view-switcher button { padding:6px 14px; border:1.5px solid var(--border); background:white; font-size:12px; cursor:pointer; }
+  .view-switcher button:first-child { border-radius:6px 0 0 6px; }
+  .view-switcher button:last-child { border-radius:0 6px 6px 0; }
+  .view-switcher button.active { background:var(--primary); color:white; border-color:var(--primary); }
+</style>
+</head>
+<body>
+
+<!-- ROLE SELECTOR -->
+<div class="role-bar">
+  <span>View as:</span>
+  <button class="role-btn active" onclick="showRole('login')">Login</button>
+  <button class="role-btn" onclick="showRole('sales')">Salesperson</button>
+  <button class="role-btn" onclick="showRole('warehouse')">Warehouse</button>
+  <button class="role-btn" onclick="showRole('driver')">Driver</button>
+  <button class="role-btn" onclick="showRole('route')">Route Planner</button>
+  <button class="role-btn" onclick="showRole('accounting')">Accounting</button>
+  <button class="role-btn" onclick="showRole('manager')">Manager</button>
+  <button class="role-btn" onclick="showRole('admin')">Admin</button>
+</div>
+
+<!-- ============================================================ -->
+<!-- LOGIN SCREEN -->
+<!-- ============================================================ -->
+<div class="app active" id="app-login">
+  <div class="login-page">
+    <div class="login-box">
+      <h1>WholesaleERP</h1>
+      <p>Wholesale Distribution Platform</p>
+      <label>Username</label>
+      <input type="text" placeholder="Enter your username" value="jsmith">
+      <label>Password</label>
+      <input type="password" placeholder="••••••••" value="password123">
+      <button class="btn-primary">Sign In</button>
+      <div class="device-badge">Device registered — Android Handheld #07</div>
+      <p style="margin-top:16px; font-size:11px; color:var(--text-light);">
+        Secured connection • Private network • IP verified<br>
+        <span style="color:var(--green);">🔒 HTTPS • Device ID: HH-2026-007</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SALESPERSON -->
+<!-- ============================================================ -->
+<div class="app" id="app-sales">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">WholesaleERP</div>
+    <div class="user-info">
+      <div class="notif-badge">🔔<div class="count">3</div></div>
+      <div class="avatar">JS</div>
+      <span style="font-size:13px; font-weight:600;">Jake Smith</span>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-section">
+        <h4>Main</h4>
+        <a href="#" class="active" onclick="showSalesPage('dashboard')"><span class="icon">📊</span> Dashboard</a>
+        <a href="#" onclick="showSalesPage('customers')"><span class="icon">👥</span> Customers</a>
+        <a href="#" onclick="showSalesPage('new-order')"><span class="icon">🛒</span> New Order</a>
+        <a href="#" onclick="showSalesPage('orders')"><span class="icon">📦</span> My Orders</a>
+      </div>
+      <div class="nav-section">
+        <h4>Tools</h4>
+        <a href="#" onclick="showSalesPage('reports')"><span class="icon">📈</span> Reports</a>
+        <a href="#"><span class="icon">💬</span> Messages</a>
+        <a href="#"><span class="icon">⚙️</span> Preferences</a>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- SALES DASHBOARD -->
+      <div class="page active" id="sales-dashboard">
+        <div class="page-title">Good morning, Jake 👋</div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <div class="quick-action" onclick="showSalesPage('new-order')">
+            <div class="qa-icon">➕</div>
+            <div class="qa-label">New Order</div>
+          </div>
+          <div class="quick-action" onclick="showSalesPage('customers')">
+            <div class="qa-icon">👥</div>
+            <div class="qa-label">Customers</div>
+          </div>
+          <div class="quick-action">
+            <div class="qa-icon">📦</div>
+            <div class="qa-label">Today's Orders</div>
+          </div>
+          <div class="quick-action">
+            <div class="qa-icon">🔔</div>
+            <div class="qa-label">Alerts (3)</div>
+          </div>
+        </div>
+
+        <!-- Summary Tiles -->
+        <div class="tiles">
+          <div class="tile tile-blue">
+            <div class="tile-label">Orders Today</div>
+            <div class="tile-value">7</div>
+            <div class="tile-sub">3 delivered, 2 in transit, 2 pending</div>
+          </div>
+          <div class="tile tile-yellow">
+            <div class="tile-label">Outstanding Balance</div>
+            <div class="tile-value">$42,380</div>
+            <div class="tile-sub">Across 18 customers</div>
+          </div>
+          <div class="tile tile-green">
+            <div class="tile-label">Deliveries Today</div>
+            <div class="tile-value">5</div>
+            <div class="tile-sub">3 confirmed, 2 in progress</div>
+          </div>
+          <div class="tile tile-red">
+            <div class="tile-label">Alerts</div>
+            <div class="tile-value">3</div>
+            <div class="tile-sub">1 overdue, 2 near credit limit</div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+          <h3>Recent Activity</h3>
+          <table>
+            <tr><td style="width:100px"><span class="text-sm text-light">2 min ago</span></td><td><span class="badge badge-green">Delivered</span> Order #1042 — Brooklyn Deli</td></tr>
+            <tr><td><span class="text-sm text-light">28 min ago</span></td><td><span class="badge badge-blue">Picked</span> Order #1039 — Fresh Market NYC</td></tr>
+            <tr><td><span class="text-sm text-light">1 hr ago</span></td><td><span class="badge badge-yellow">Payment</span> $2,450 received — Corner Grocery</td></tr>
+            <tr><td><span class="text-sm text-light">3 hr ago</span></td><td><span class="badge badge-orange">Warning</span> Metro Foods approaching credit limit ($480 remaining)</td></tr>
+          </table>
+        </div>
+        <div style="text-align:center; margin-top:8px;">
+          <button class="btn-outline btn-sm" onclick="showSalesPage('reports')">View Detailed Reports →</button>
+        </div>
+      </div>
+
+      <!-- CUSTOMER LIST -->
+      <div class="page" id="sales-customers">
+        <div class="flex-between mb-16">
+          <div class="page-title" style="margin-bottom:0">Customers</div>
+          <button class="btn-primary">+ Add Customer</button>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" placeholder="Search customers by name, phone, area...">
+          <select><option>All Tiers</option><option>Tier 1 — Credit</option><option>Tier 2 — Pay First</option></select>
+          <select><option>All Status</option><option>Active</option><option>Overdue</option><option>Near Limit</option></select>
+        </div>
+
+        <div class="view-switcher">
+          <button class="active">☰ List</button>
+          <button>▦ Cards</button>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Tier</th>
+                <th>Balance</th>
+                <th>Last Order</th>
+                <th>Status</th>
+                <th style="text-align:right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Brooklyn Deli Corp</strong><br><span class="text-sm text-light">3 locations • Net-30</span></td>
+                <td><span class="badge badge-blue">Tier 1</span></td>
+                <td>$3,240</td>
+                <td>Today</td>
+                <td><span class="badge badge-green">Current</span></td>
+                <td class="text-right"><button class="btn-primary btn-sm" onclick="showSalesPage('new-order')">+ Order</button></td>
+              </tr>
+              <tr>
+                <td><strong>Fresh Market NYC</strong><br><span class="text-sm text-light">1 location • Net-15</span></td>
+                <td><span class="badge badge-blue">Tier 1</span></td>
+                <td>$8,420</td>
+                <td>Feb 23</td>
+                <td><span class="badge badge-yellow">Due Soon</span></td>
+                <td class="text-right"><button class="btn-primary btn-sm">+ Order</button></td>
+              </tr>
+              <tr>
+                <td><strong>Metro Foods Inc</strong><br><span class="text-sm text-light">2 locations • Net-30</span></td>
+                <td><span class="badge badge-blue">Tier 1</span></td>
+                <td>$14,520</td>
+                <td>Feb 20</td>
+                <td><span class="badge badge-orange">Near Limit</span></td>
+                <td class="text-right"><button class="btn-primary btn-sm">+ Order</button></td>
+              </tr>
+              <tr>
+                <td><strong>Corner Grocery</strong><br><span class="text-sm text-light">1 location • COD</span></td>
+                <td><span class="badge badge-purple">Tier 2</span></td>
+                <td>$0</td>
+                <td>Feb 22</td>
+                <td><span class="badge badge-green">Paid</span></td>
+                <td class="text-right"><button class="btn-primary btn-sm">+ Order</button></td>
+              </tr>
+              <tr style="background:var(--red-bg);">
+                <td><strong>Queens Beverages</strong><br><span class="text-sm text-light">1 location • Net-30</span></td>
+                <td><span class="badge badge-blue">Tier 1</span></td>
+                <td><span style="color:var(--red); font-weight:700;">$6,890</span></td>
+                <td>Feb 10</td>
+                <td><span class="badge badge-red">Overdue 15d</span></td>
+                <td class="text-right"><button class="btn-primary btn-sm">+ Order</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CUSTOMER PROFILE -->
+      <div class="page" id="sales-profile">
+        <div class="flex-between mb-16">
+          <div>
+            <div class="page-title" style="margin-bottom:4px">Brooklyn Deli Corp</div>
+            <span class="badge badge-blue">Tier 1 — Credit</span>
+            <span class="badge badge-green" style="margin-left:4px">Current</span>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn-outline">📞 Call</button>
+            <button class="btn-primary" onclick="showSalesPage('new-order')">+ New Order</button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active">Overview</div>
+          <div class="tab">Orders</div>
+          <div class="tab">Account</div>
+          <div class="tab">Notes / Activity</div>
+        </div>
+
+        <div class="tiles" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="tile"><div class="tile-label">Credit Limit</div><div class="tile-value" style="font-size:20px;">$25,000</div></div>
+          <div class="tile"><div class="tile-label">Available</div><div class="tile-value tile-green" style="font-size:20px;">$21,760</div></div>
+          <div class="tile"><div class="tile-label">Outstanding</div><div class="tile-value" style="font-size:20px;">$3,240</div></div>
+          <div class="tile"><div class="tile-label">Payment Terms</div><div class="tile-value" style="font-size:20px;">Net-30</div></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="card">
+            <h3>Contact Information</h3>
+            <p class="mb-8"><strong>Main Contact:</strong> David Klein</p>
+            <p class="mb-8"><strong>Phone:</strong> (718) 555-0142</p>
+            <p class="mb-8"><strong>Email:</strong> david@brooklyndeli.com</p>
+            <p class="mb-8"><strong>Billing:</strong> 145 Atlantic Ave, Brooklyn, NY 11201</p>
+            <p><strong>Salesperson:</strong> Jake Smith</p>
+          </div>
+          <div class="card">
+            <h3>Delivery Locations (3)</h3>
+            <div style="border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:8px;">
+              <strong>Main Store</strong> — 145 Atlantic Ave, Brooklyn<br>
+              <span class="text-sm text-light">Default day: Monday • 6am-10am</span>
+            </div>
+            <div style="border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:8px;">
+              <strong>Store #2</strong> — 89 Court St, Brooklyn<br>
+              <span class="text-sm text-light">Default day: Wednesday • 7am-11am</span>
+            </div>
+            <div style="border:1px solid var(--border); border-radius:6px; padding:10px;">
+              <strong>Store #3</strong> — 212 Smith St, Brooklyn<br>
+              <span class="text-sm text-light">Default day: Friday • 6am-9am</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW ORDER - WIZARD -->
+      <div class="page" id="sales-new-order">
+        <div class="page-title">New Order</div>
+
+        <!-- Steps -->
+        <div class="steps">
+          <div class="step done"><div class="step-num">✓</div><div class="step-label">Customer</div></div>
+          <div class="step active"><div class="step-num">2</div><div class="step-label">Add Items</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-label">Review</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-label">Submit</div></div>
+        </div>
+
+        <div class="card mb-8">
+          <div class="flex-between">
+            <div>
+              <span class="text-sm text-light">Customer:</span> <strong>Brooklyn Deli Corp</strong> — Main Store
+              <span class="text-sm text-light" style="margin-left:12px;">Delivery:</span> <strong>Feb 27, 2026 (Thursday)</strong>
+            </div>
+            <button class="btn-outline btn-sm">Change</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 360px; gap:16px;">
+          <!-- Product Catalog -->
+          <div>
+            <div class="card">
+              <div class="flex-between mb-16">
+                <h3>Product Catalog</h3>
+                <div class="flex gap-8">
+                  <button class="btn-outline btn-sm">📋 Favorites</button>
+                  <button class="btn-outline btn-sm">🔄 Duplicate Order</button>
+                  <button class="voice-btn" style="width:36px; height:36px; font-size:14px; animation:none;">🎤</button>
+                </div>
+              </div>
+
+              <div class="search-bar" style="margin-bottom:12px;">
+                <input type="text" placeholder="Search products by name, code, or category...">
+              </div>
+
+              <!-- Category browsing -->
+              <div class="flex gap-8 mb-16" style="flex-wrap:wrap;">
+                <button class="btn-primary btn-sm">Beverages</button>
+                <button class="btn-outline btn-sm">Snacks</button>
+                <button class="btn-outline btn-sm">Dairy</button>
+                <button class="btn-outline btn-sm">Canned Goods</button>
+                <button class="btn-outline btn-sm">Condiments</button>
+              </div>
+
+              <!-- Sub-categories -->
+              <div class="flex gap-8 mb-16" style="flex-wrap:wrap;">
+                <span class="text-sm text-light" style="padding-top:4px;">↳</span>
+                <button class="btn-primary btn-sm" style="background:#3b82f6;">Sparkling Water</button>
+                <button class="btn-outline btn-sm">Juice</button>
+                <button class="btn-outline btn-sm">Soda</button>
+                <button class="btn-outline btn-sm">Energy Drinks</button>
+                <button class="btn-outline btn-sm">Tea</button>
+              </div>
+
+              <!-- Product list -->
+              <table>
+                <thead>
+                  <tr><th>Code</th><th>Product</th><th>Unit</th><th>Price</th><th>Deposit</th><th></th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-light">100234</td>
+                    <td><strong>Crystal Sparkling — Black Cherry</strong><br><span class="text-sm text-light">12oz • 12-pack</span></td>
+                    <td>12-pack</td>
+                    <td>$6.99</td>
+                    <td>$0.60</td>
+                    <td><div class="flex gap-8"><input type="number" value="3" min="0" style="width:60px; padding:5px 8px; border:1.5px solid var(--border); border-radius:4px; text-align:center;"><button class="btn-primary btn-sm">Add</button></div></td>
+                  </tr>
+                  <tr>
+                    <td class="text-light">100235</td>
+                    <td><strong>Crystal Sparkling — Lemon</strong><br><span class="text-sm text-light">12oz • 12-pack</span></td>
+                    <td>12-pack</td>
+                    <td>$6.99</td>
+                    <td>$0.60</td>
+                    <td><div class="flex gap-8"><input type="number" value="0" min="0" style="width:60px; padding:5px 8px; border:1.5px solid var(--border); border-radius:4px; text-align:center;"><button class="btn-primary btn-sm">Add</button></div></td>
+                  </tr>
+                  <tr>
+                    <td class="text-light">100236</td>
+                    <td><strong>Crystal Sparkling — Original</strong><br><span class="text-sm text-light">12oz • 12-pack</span></td>
+                    <td>12-pack</td>
+                    <td>$6.49</td>
+                    <td>$0.60</td>
+                    <td><div class="flex gap-8"><input type="number" value="0" min="0" style="width:60px; padding:5px 8px; border:1.5px solid var(--border); border-radius:4px; text-align:center;"><button class="btn-primary btn-sm">Add</button></div></td>
+                  </tr>
+                  <tr>
+                    <td class="text-light">100240</td>
+                    <td><strong>Crystal Sparkling — Grapefruit</strong><br><span class="text-sm text-light">1L • 6-pack</span></td>
+                    <td>6-pack</td>
+                    <td>$8.49</td>
+                    <td>$0.30</td>
+                    <td><div class="flex gap-8"><input type="number" value="0" min="0" style="width:60px; padding:5px 8px; border:1.5px solid var(--border); border-radius:4px; text-align:center;"><button class="btn-primary btn-sm">Add</button></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Cart / Running Order -->
+          <div>
+            <div class="card" style="position:sticky; top:calc(var(--header-h) + 52px);">
+              <h3 class="mb-16">🛒 Order Summary (4 items)</h3>
+
+              <div style="border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:8px;">
+                <div class="flex-between">
+                  <div><strong>Black Cherry</strong> <span class="text-sm text-light">100234</span></div>
+                  <button style="background:none; border:none; color:var(--red); cursor:pointer; font-size:16px;">✕</button>
+                </div>
+                <div class="flex-between text-sm" style="margin-top:4px;">
+                  <span>3 × $6.99</span><span class="bold">$20.97</span>
+                </div>
+                <div class="text-sm text-light">+ $1.80 deposit</div>
+              </div>
+
+              <div style="border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:8px;">
+                <div class="flex-between">
+                  <div><strong>Orange Juice</strong> <span class="text-sm text-light">200108</span></div>
+                  <button style="background:none; border:none; color:var(--red); cursor:pointer; font-size:16px;">✕</button>
+                </div>
+                <div class="flex-between text-sm" style="margin-top:4px;">
+                  <span>8 × $4.99</span><span class="bold">$39.92</span>
+                </div>
+                <div class="text-sm text-light">+ $2.40 deposit</div>
+              </div>
+
+              <div style="border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:8px;">
+                <div class="flex-between">
+                  <div><strong>Lemon Sparkling</strong> <span class="text-sm text-light">100235</span></div>
+                  <button style="background:none; border:none; color:var(--red); cursor:pointer; font-size:16px;">✕</button>
+                </div>
+                <div class="flex-between text-sm" style="margin-top:4px;">
+                  <span>5 × $6.99</span><span class="bold">$34.95</span>
+                </div>
+                <div class="text-sm text-light">+ $3.00 deposit</div>
+              </div>
+
+              <div style="border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:16px;">
+                <div class="flex-between">
+                  <div><strong>Cola Classic</strong> <span class="text-sm text-light">100310</span></div>
+                  <button style="background:none; border:none; color:var(--red); cursor:pointer; font-size:16px;">✕</button>
+                </div>
+                <div class="flex-between text-sm" style="margin-top:4px;">
+                  <span>10 × $5.49 <span class="badge badge-yellow" style="font-size:9px;">-5%</span></span><span class="bold">$52.16</span>
+                </div>
+                <div class="text-sm text-light">+ $6.00 deposit</div>
+              </div>
+
+              <div style="border-top:2px solid var(--border); padding-top:12px;">
+                <div class="flex-between text-sm mb-8"><span>Subtotal</span><span>$148.00</span></div>
+                <div class="flex-between text-sm mb-8"><span>Deposits</span><span>$13.20</span></div>
+                <div class="flex-between text-sm mb-8"><span>Tax (8.875%)</span><span>$13.13</span></div>
+                <div class="flex-between text-sm mb-8"><span>Discount</span><span style="color:var(--green);">-$2.75</span></div>
+                <div class="flex-between bold" style="font-size:18px; margin-top:8px;"><span>Total</span><span>$171.58</span></div>
+              </div>
+
+              <button class="btn-primary" style="width:100%; margin-top:16px; padding:12px; font-size:15px;">Review Order →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDER REVIEW (Step 3 - Editable Invoice) -->
+      <div class="page" id="sales-orders">
+        <div class="page-title">Order Review — Editable Invoice</div>
+
+        <div class="steps">
+          <div class="step done"><div class="step-num">✓</div><div class="step-label">Customer</div></div>
+          <div class="step done"><div class="step-num">✓</div><div class="step-label">Add Items</div></div>
+          <div class="step active"><div class="step-num">3</div><div class="step-label">Review</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-label">Submit</div></div>
+        </div>
+
+        <div class="invoice-preview">
+          <div class="inv-header">
+            <div>
+              <h2>INVOICE</h2>
+              <span class="text-sm text-light">Draft — Not yet submitted</span>
+            </div>
+            <div class="text-right">
+              <strong>WholesaleERP Inc.</strong><br>
+              <span class="text-sm">123 Industrial Blvd<br>Brooklyn, NY 11201</span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
+            <div>
+              <span class="text-sm text-light">Bill To:</span><br>
+              <strong>Brooklyn Deli Corp</strong><br>
+              145 Atlantic Ave<br>Brooklyn, NY 11201
+            </div>
+            <div class="text-right">
+              <span class="text-sm text-light">Order #:</span> <strong>ORD-2026-00143</strong><br>
+              <span class="text-sm text-light">Date:</span> Feb 25, 2026<br>
+              <span class="text-sm text-light">Delivery:</span> <input type="date" value="2026-02-27" style="border:1px dashed var(--primary); padding:2px 6px; border-radius:4px;"><br>
+              <span class="text-sm text-light">Terms:</span> Net-30
+            </div>
+          </div>
+
+          <table>
+            <thead><tr><th>Code</th><th>Product</th><th>Qty</th><th>Unit Price</th><th>Discount</th><th>Deposit</th><th class="text-right">Total</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>100234</td>
+                <td>Crystal Sparkling — Black Cherry 12oz 12-pk</td>
+                <td><input type="number" value="3" style="width:50px; border:1px dashed var(--primary); padding:2px; text-align:center; border-radius:4px;"></td>
+                <td>$6.99</td>
+                <td>—</td>
+                <td>$1.80</td>
+                <td class="text-right">$22.77</td>
+              </tr>
+              <tr>
+                <td>200108</td>
+                <td>Orange Juice Premium 64oz 6-pk</td>
+                <td><input type="number" value="8" style="width:50px; border:1px dashed var(--primary); padding:2px; text-align:center; border-radius:4px;"></td>
+                <td>$4.99</td>
+                <td>—</td>
+                <td>$2.40</td>
+                <td class="text-right">$42.32</td>
+              </tr>
+              <tr>
+                <td>100235</td>
+                <td>Crystal Sparkling — Lemon 12oz 12-pk</td>
+                <td><input type="number" value="5" style="width:50px; border:1px dashed var(--primary); padding:2px; text-align:center; border-radius:4px;"></td>
+                <td>$6.99</td>
+                <td>—</td>
+                <td>$3.00</td>
+                <td class="text-right">$37.95</td>
+              </tr>
+              <tr>
+                <td>100310</td>
+                <td>Cola Classic 12oz 24-pk</td>
+                <td><input type="number" value="10" style="width:50px; border:1px dashed var(--primary); padding:2px; text-align:center; border-radius:4px;"></td>
+                <td>$5.49</td>
+                <td><input type="text" value="5%" style="width:40px; border:1px dashed var(--primary); padding:2px; text-align:center; border-radius:4px; color:var(--green);"></td>
+                <td>$6.00</td>
+                <td class="text-right">$58.16</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="inv-total">
+            <div class="flex-between text-sm mb-8"><span>Subtotal</span><span>$148.00</span></div>
+            <div class="flex-between text-sm mb-8"><span>Total Deposits</span><span>$13.20</span></div>
+            <div class="flex-between text-sm mb-8"><span>Tax (8.875%)</span><span>$13.13</span></div>
+            <div class="flex-between text-sm mb-8"><span>Discount</span><span style="color:var(--green);">-$2.75</span></div>
+            <div class="flex-between bold" style="font-size:20px; margin-top:12px;"><span>TOTAL DUE</span><span>$171.58</span></div>
+          </div>
+
+          <div style="margin-top:16px;">
+            <label class="text-sm text-light">Special Instructions:</label>
+            <textarea style="width:100%; border:1px dashed var(--primary); padding:8px; border-radius:4px; margin-top:4px; font-family:inherit;" rows="2" placeholder="Leave at back door, call on arrival..."></textarea>
+          </div>
+        </div>
+
+        <div class="flex-between" style="margin-top:20px;">
+          <button class="btn-outline">← Back to Items</button>
+          <button class="btn-success" style="padding:12px 32px; font-size:15px;">✓ Submit Order</button>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="page" id="sales-reports">
+        <div class="page-title">Reports & Analytics</div>
+        <div class="tiles">
+          <div class="tile tile-green">
+            <div class="tile-label">Revenue This Month</div>
+            <div class="tile-value">$87,420</div>
+            <div class="tile-sub" style="color:var(--green);">↑ 12% vs last month</div>
+          </div>
+          <div class="tile tile-blue">
+            <div class="tile-label">Orders This Month</div>
+            <div class="tile-value">142</div>
+            <div class="tile-sub">Avg $615 per order</div>
+          </div>
+          <div class="tile">
+            <div class="tile-label">Top Customer</div>
+            <div class="tile-value" style="font-size:18px;">Metro Foods</div>
+            <div class="tile-sub">$18,200 this month</div>
+          </div>
+          <div class="tile">
+            <div class="tile-label">Collection Rate</div>
+            <div class="tile-value" style="font-size:24px;">94.2%</div>
+            <div class="tile-sub">On-time payments</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Saved Reports</h3>
+            <button class="btn-primary btn-sm">+ New Report</button>
+          </div>
+          <table>
+            <thead><tr><th>Report Name</th><th>Type</th><th>Last Run</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><strong>Monthly Sales Summary</strong></td><td>Revenue</td><td>Feb 24</td><td><button class="btn-outline btn-sm">Run</button></td></tr>
+              <tr><td><strong>Overdue Accounts</strong></td><td>Aging</td><td>Feb 23</td><td><button class="btn-outline btn-sm">Run</button></td></tr>
+              <tr><td><strong>Top Products by Volume</strong></td><td>Product</td><td>Feb 20</td><td><button class="btn-outline btn-sm">Run</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- WAREHOUSE -->
+<!-- ============================================================ -->
+<div class="app" id="app-warehouse">
+  <div class="header">
+    <div class="logo">WholesaleERP <span class="badge badge-orange" style="margin-left:8px;">Warehouse</span></div>
+    <div class="user-info"><div class="avatar">MR</div><span style="font-size:13px; font-weight:600;">Mike Rodriguez</span></div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-section">
+        <h4>Warehouse</h4>
+        <a href="#" class="active" onclick="showWhPage('queue')"><span class="icon">📋</span> Order Queue</a>
+        <a href="#" onclick="showWhPage('pick')"><span class="icon">📦</span> Pick Order</a>
+        <a href="#" onclick="showWhPage('ai-review')"><span class="icon">🤖</span> AI Pick Review</a>
+        <a href="#"><span class="icon">✅</span> Approvals</a>
+        <a href="#"><span class="icon">🖨️</span> Print Queue</a>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- ORDER QUEUE -->
+      <div class="page active" id="wh-queue">
+        <div class="page-title">Order Queue — Today, Feb 25</div>
+        <div class="tiles" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="tile tile-blue"><div class="tile-label">New</div><div class="tile-value">6</div></div>
+          <div class="tile tile-yellow"><div class="tile-label">Assigned</div><div class="tile-value">3</div></div>
+          <div class="tile tile-green"><div class="tile-label">Picked</div><div class="tile-value">8</div></div>
+          <div class="tile"><div class="tile-label">Approved</div><div class="tile-value">12</div></div>
+        </div>
+
+        <!-- Route Group -->
+        <div class="card">
+          <div class="card-header">
+            <h3>🚚 Route A — Brooklyn North (Driver: Carlos)</h3>
+            <span class="badge badge-blue">5 orders</span>
+          </div>
+          <table>
+            <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Cases</th><th>Status</th><th>Assigned To</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td>#1042</td><td>Brooklyn Deli Corp</td><td>4</td><td>26</td>
+                <td><span class="badge badge-green">Picked</span></td><td>Mike R.</td>
+                <td><button class="btn-outline btn-sm">View</button></td>
+              </tr>
+              <tr>
+                <td>#1039</td><td>Fresh Market NYC</td><td>7</td><td>41</td>
+                <td><span class="badge badge-yellow">Assigned</span></td><td>Mike R.</td>
+                <td><button class="btn-primary btn-sm" onclick="showWhPage('pick')">Pick →</button></td>
+              </tr>
+              <tr>
+                <td>#1045</td><td>Corner Grocery</td><td>3</td><td>12</td>
+                <td><span class="badge badge-blue">New</span></td><td>—</td>
+                <td><button class="btn-outline btn-sm">Assign</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>🚚 Route B — Queens (Driver: Tony)</h3>
+            <span class="badge badge-blue">4 orders</span>
+          </div>
+          <table>
+            <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Cases</th><th>Status</th><th>Assigned To</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>#1038</td><td>Queens Beverages</td><td>6</td><td>34</td><td><span class="badge badge-green">Picked</span></td><td>Alex K.</td><td><button class="btn-outline btn-sm">View</button></td></tr>
+              <tr><td>#1043</td><td>Astoria Market</td><td>5</td><td>28</td><td><span class="badge badge-green">Picked</span></td><td>Alex K.</td><td><button class="btn-outline btn-sm">View</button></td></tr>
+              <tr><td>#1046</td><td>Jamaica Foods</td><td>8</td><td>52</td><td><span class="badge badge-blue">New</span></td><td>—</td><td><button class="btn-outline btn-sm">Assign</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PICK ORDER -->
+      <div class="page" id="wh-pick">
+        <div class="flex-between mb-16">
+          <div>
+            <div class="page-title" style="margin-bottom:4px">Pick Order #1039</div>
+            <span class="text-light">Fresh Market NYC — Route A, Stop #2</span>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn-outline">🖨️ Print Pick List</button>
+            <button class="btn-outline">📸 Scan Photo</button>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table>
+            <thead><tr><th>Code</th><th>Product</th><th>Ordered</th><th>Picked</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>100234</td>
+                <td><strong>Crystal Sparkling — Black Cherry</strong><br><span class="text-sm text-light">12oz • Case of 24</span></td>
+                <td><strong>5 cases</strong></td>
+                <td><input type="number" value="5" min="0" style="width:60px; padding:5px; border:1.5px solid var(--green); border-radius:4px; text-align:center;"></td>
+                <td><span class="badge badge-green">Full</span></td>
+              </tr>
+              <tr>
+                <td>200108</td>
+                <td><strong>Orange Juice Premium</strong><br><span class="text-sm text-light">64oz • Case of 8</span></td>
+                <td><strong>10 cases</strong></td>
+                <td><input type="number" value="8" min="0" style="width:60px; padding:5px; border:1.5px solid var(--yellow); border-radius:4px; text-align:center;"></td>
+                <td><span class="badge badge-yellow">Partial (8/10)</span></td>
+              </tr>
+              <tr>
+                <td>100310</td>
+                <td><strong>Cola Classic</strong><br><span class="text-sm text-light">12oz • Case of 24</span></td>
+                <td><strong>8 cases</strong></td>
+                <td><input type="number" value="8" min="0" style="width:60px; padding:5px; border:1.5px solid var(--green); border-radius:4px; text-align:center;"></td>
+                <td><span class="badge badge-green">Full</span></td>
+              </tr>
+              <tr>
+                <td>300042</td>
+                <td><strong>Spring Water Natural</strong><br><span class="text-sm text-light">16oz • Pallet of 48 cases</span></td>
+                <td><strong>1 pallet</strong></td>
+                <td><input type="number" value="1" min="0" style="width:60px; padding:5px; border:1.5px solid var(--green); border-radius:4px; text-align:center;"></td>
+                <td><span class="badge badge-green">Full</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex-between" style="margin-top:16px;">
+          <span class="text-light text-sm">Picked: 22 of 24 ordered cases (1 partial)</span>
+          <button class="btn-success" style="padding:10px 24px;">✓ Submit Pick — Send to Manager</button>
+        </div>
+      </div>
+
+      <!-- AI PICK REVIEW -->
+      <div class="page" id="wh-ai-review">
+        <div class="page-title">🤖 AI Pick Sheet Review — Order #1038</div>
+        <p class="text-light mb-16">Manager snapped a photo of the handwritten pick sheet. AI extracted the quantities below. Please review and confirm.</p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="card">
+            <h3>📸 Scanned Pick Sheet</h3>
+            <div style="background:#f1f5f9; border-radius:8px; height:300px; display:flex; align-items:center; justify-content:center; color:var(--text-light);">
+              [ Photo of handwritten pick sheet ]<br>
+              <span class="text-sm">Captured 2 min ago by Manager Dave</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3>🤖 AI Extracted Data</h3>
+            <table>
+              <thead><tr><th>Code</th><th>Product</th><th>Ordered</th><th>AI Read</th><th>✓</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>100234</td><td>Black Cherry</td><td>6</td>
+                  <td><input type="number" value="6" style="width:50px; padding:3px; text-align:center; border:1.5px solid var(--green); border-radius:4px;"></td>
+                  <td>✅</td>
+                </tr>
+                <tr style="background:var(--yellow-bg);">
+                  <td>200108</td><td>Orange Juice</td><td>10</td>
+                  <td><input type="number" value="8" style="width:50px; padding:3px; text-align:center; border:1.5px solid var(--yellow); border-radius:4px;"></td>
+                  <td>⚠️ <span class="text-sm text-light">Partial?</span></td>
+                </tr>
+                <tr>
+                  <td>100310</td><td>Cola Classic</td><td>5</td>
+                  <td><input type="number" value="5" style="width:50px; padding:3px; text-align:center; border:1.5px solid var(--green); border-radius:4px;"></td>
+                  <td>✅</td>
+                </tr>
+                <tr style="background:var(--red-bg);">
+                  <td>300042</td><td>Spring Water</td><td>3</td>
+                  <td><input type="number" value="8" style="width:50px; padding:3px; text-align:center; border:1.5px solid var(--red); border-radius:4px;"></td>
+                  <td>❌ <span class="text-sm text-light">Confidence: 62%</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="text-sm text-light" style="margin-top:8px;">⚠️ 1 item flagged low confidence. Please verify handwriting.</p>
+            <button class="btn-success" style="width:100%; margin-top:12px;">✓ Confirm & Approve Pick</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DRIVER (MOBILE) -->
+<!-- ============================================================ -->
+<div class="app" id="app-driver">
+  <div style="padding:48px 0 24px; text-align:center;">
+    <div class="screen-label">Mobile View — Driver Handheld</div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; max-width:1300px; margin:0 auto; padding:0 24px;">
+
+    <!-- ROUTE LIST -->
+    <div class="mobile-frame">
+      <div class="mobile-header">
+        <h2>🚚 My Route</h2>
+        <span style="font-size:13px;">Carlos M.</span>
+      </div>
+      <div style="padding:12px 16px; background:#f8fafc; border-bottom:1px solid var(--border);">
+        <div class="flex-between text-sm">
+          <span>Route A — Brooklyn North</span>
+          <span class="badge badge-blue">5 stops</span>
+        </div>
+        <div class="progress" style="margin-top:8px;">
+          <div class="progress-fill" style="width:40%;"></div>
+        </div>
+        <div class="text-sm text-light" style="margin-top:4px;">2 of 5 delivered</div>
+      </div>
+      <div class="mobile-content" style="padding:8px 12px;">
+        <div style="border-left:3px solid var(--green); padding:10px 12px; margin-bottom:6px; background:#f0fdf4; border-radius:0 6px 6px 0;">
+          <div class="flex-between">
+            <div><strong>1. Brooklyn Deli</strong><br><span class="text-sm text-light">145 Atlantic Ave</span></div>
+            <span class="badge badge-green">✓</span>
+          </div>
+        </div>
+        <div style="border-left:3px solid var(--green); padding:10px 12px; margin-bottom:6px; background:#f0fdf4; border-radius:0 6px 6px 0;">
+          <div class="flex-between">
+            <div><strong>2. Fresh Market</strong><br><span class="text-sm text-light">89 Court St</span></div>
+            <span class="badge badge-green">✓</span>
+          </div>
+        </div>
+        <div style="border-left:3px solid var(--primary); padding:10px 12px; margin-bottom:6px; background:var(--primary-light); border-radius:0 6px 6px 0;">
+          <div class="flex-between">
+            <div><strong>3. Corner Grocery</strong><br><span class="text-sm text-light">212 Smith St</span><br><span class="text-sm">12 cases • 3 items</span></div>
+            <span class="badge badge-blue">Next →</span>
+          </div>
+        </div>
+        <div style="border-left:3px solid var(--border); padding:10px 12px; margin-bottom:6px; border-radius:0 6px 6px 0;">
+          <div><strong>4. Park Slope Deli</strong><br><span class="text-sm text-light">78 5th Ave</span><br><span class="text-sm">28 cases • 6 items</span></div>
+        </div>
+        <div style="border-left:3px solid var(--border); padding:10px 12px; border-radius:0 6px 6px 0;">
+          <div><strong>5. Heights Market</strong><br><span class="text-sm text-light">42 Montague St</span><br><span class="text-sm">18 cases • 4 items</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STOP DETAIL -->
+    <div class="mobile-frame">
+      <div class="mobile-header">
+        <span>← Route</span>
+        <h2>Stop #3</h2>
+        <span>3/5</span>
+      </div>
+      <div class="mobile-content">
+        <h3 style="margin-bottom:4px;">Corner Grocery</h3>
+        <p class="text-sm text-light mb-16">212 Smith St, Brooklyn, NY 11201</p>
+
+        <div class="flex gap-8 mb-16">
+          <button class="btn-primary" style="flex:1; padding:12px;">🗺️ Navigate</button>
+          <button class="btn-outline" style="flex:1; padding:12px;">📞 Call</button>
+        </div>
+
+        <div class="card" style="padding:12px;">
+          <h4 class="text-sm mb-8">Order Items (3)</h4>
+          <div class="flex-between text-sm mb-8"><span>100234 — Black Cherry 12pk</span><span class="bold">×3</span></div>
+          <div class="flex-between text-sm mb-8"><span>200108 — Orange Juice 64oz</span><span class="bold">×5</span></div>
+          <div class="flex-between text-sm mb-8"><span>100310 — Cola Classic 24pk</span><span class="bold">×4</span></div>
+          <div style="border-top:1px solid var(--border); padding-top:8px; margin-top:8px;" class="flex-between text-sm bold">
+            <span>Total: 12 cases</span><span>$89.42</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" style="width:100%; padding:14px; font-size:15px; margin-bottom:8px;">🖨️ Print Invoice</button>
+        
+        <div style="background:var(--yellow-bg); border:1px solid #fde68a; border-radius:8px; padding:10px; margin-bottom:12px; display:none;" id="location-warning">
+          <span class="text-sm" style="color:var(--yellow);">⚠️ You don't appear to be at this location. Print anyway?</span>
+        </div>
+
+        <p class="text-sm text-light" style="text-align:center; margin-bottom:12px;">
+          Printing or sending invoice will auto-confirm delivery
+        </p>
+
+        <button class="btn-danger" style="width:100%; padding:12px;">✕ Reject Delivery</button>
+        <p class="text-sm text-light" style="text-align:center; margin-top:6px;">Must provide reason</p>
+      </div>
+    </div>
+
+    <!-- REJECTION FLOW -->
+    <div class="mobile-frame">
+      <div class="mobile-header" style="background:var(--red);">
+        <span>← Back</span>
+        <h2>Reject Delivery</h2>
+        <span></span>
+      </div>
+      <div class="mobile-content">
+        <h3 class="mb-8">Stop #4 — Park Slope Deli</h3>
+        <p class="text-sm text-light mb-16">Reason for rejection:</p>
+
+        <div style="margin-bottom:16px;">
+          <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1.5px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer;">
+            <input type="radio" name="reject" checked> Not home / closed
+          </label>
+          <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1.5px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer;">
+            <input type="radio" name="reject"> Customer refused
+          </label>
+          <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1.5px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer;">
+            <input type="radio" name="reject"> Damaged goods
+          </label>
+          <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1.5px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer;">
+            <input type="radio" name="reject"> Wrong order
+          </label>
+          <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1.5px solid var(--border); border-radius:8px; cursor:pointer;">
+            <input type="radio" name="reject"> Access issue
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>Additional Notes (optional)</label>
+          <textarea rows="3" placeholder="Gate was locked, no answer at door..."></textarea>
+        </div>
+
+        <button class="btn-danger" style="width:100%; padding:14px; font-size:15px;">Confirm Rejection</button>
+        <p class="text-sm text-light" style="text-align:center; margin-top:8px;">This will notify sales and accounting immediately</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ROUTE PLANNER -->
+<!-- ============================================================ -->
+<div class="app" id="app-route">
+  <div class="header">
+    <div class="logo">WholesaleERP <span class="badge badge-purple" style="margin-left:8px;">Route Planning</span></div>
+    <div class="user-info"><div class="avatar">LP</div><span style="font-size:13px; font-weight:600;">Lisa Park</span></div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-section">
+        <h4>Planning</h4>
+        <a href="#" class="active"><span class="icon">🗺️</span> Route Builder</a>
+        <a href="#"><span class="icon">📋</span> Today's Routes</a>
+        <a href="#"><span class="icon">🚚</span> Trucks</a>
+        <a href="#"><span class="icon">👤</span> Drivers</a>
+      </div>
+    </div>
+    <div class="content">
+      <div class="flex-between mb-16">
+        <div class="page-title" style="margin-bottom:0">Route Builder — Feb 26, 2026</div>
+        <div class="flex gap-8">
+          <select style="padding:8px 12px; border:1.5px solid var(--border); border-radius:6px;"><option>Tomorrow (Feb 26)</option><option>Feb 27</option><option>Feb 28</option></select>
+          <button class="btn-primary">Save All Routes</button>
+        </div>
+      </div>
+
+      <div class="tiles" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="tile tile-blue"><div class="tile-label">Open Orders</div><div class="tile-value">14</div></div>
+        <div class="tile tile-green"><div class="tile-label">Assigned to Routes</div><div class="tile-value">11</div></div>
+        <div class="tile"><div class="tile-label">Routes Created</div><div class="tile-value">3</div></div>
+        <div class="tile tile-yellow"><div class="tile-label">Unassigned</div><div class="tile-value">3</div></div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <!-- Map -->
+        <div class="card">
+          <h3 class="mb-8">Map View</h3>
+          <div class="map-placeholder" style="height:400px;">
+            🗺️ Interactive Map<br><br>
+            <span style="font-weight:normal; font-size:12px;">
+              🔵 Unassigned orders &nbsp;&nbsp; 🟢 Route A &nbsp;&nbsp; 🟠 Route B &nbsp;&nbsp; 🟣 Route C<br>
+              Drag stops to reorder • Click to assign to route
+            </span>
+          </div>
+        </div>
+
+        <!-- Route Lists -->
+        <div>
+          <!-- Route A -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🟢 Route A — Brooklyn</h3>
+              <div class="flex gap-8">
+                <select style="padding:4px 8px; border:1px solid var(--border); border-radius:4px; font-size:12px;">
+                  <option>Driver: Carlos M.</option><option>Driver: Tony S.</option>
+                </select>
+                <select style="padding:4px 8px; border:1px solid var(--border); border-radius:4px; font-size:12px;">
+                  <option>Truck #3</option><option>Truck #5</option>
+                </select>
+              </div>
+            </div>
+            <div class="text-sm text-light mb-8">5 stops • 126 cases • Est. 3.5 hrs</div>
+            <table>
+              <thead><tr><th>#</th><th>Customer</th><th>Cases</th><th>Loading</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Brooklyn Deli (Main)</td><td>26</td><td>Load 5th</td></tr>
+                <tr><td>2</td><td>Fresh Market</td><td>41</td><td>Load 4th</td></tr>
+                <tr><td>3</td><td>Corner Grocery</td><td>12</td><td>Load 3rd</td></tr>
+                <tr><td>4</td><td>Park Slope Deli</td><td>28</td><td>Load 2nd</td></tr>
+                <tr><td>5</td><td>Heights Market</td><td>19</td><td>Load 1st</td></tr>
+              </tbody>
+            </table>
+            <p class="text-sm text-light" style="margin-top:8px;">↕ Drag rows to reorder stops</p>
+          </div>
+
+          <!-- Unassigned -->
+          <div class="card" style="border-color:var(--yellow); border-width:2px;">
+            <h3 class="mb-8">⚠️ Unassigned Orders (3)</h3>
+            <table>
+              <thead><tr><th>Order</th><th>Customer</th><th>Area</th><th>Cases</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>#1049</td><td>Bronx Market</td><td>Bronx</td><td>34</td><td><button class="btn-outline btn-sm">Assign →</button></td></tr>
+                <tr><td>#1050</td><td>Riverdale Deli</td><td>Bronx</td><td>18</td><td><button class="btn-outline btn-sm">Assign →</button></td></tr>
+                <tr><td>#1051</td><td>Harlem Foods</td><td>Manhattan</td><td>22</td><td><button class="btn-outline btn-sm">Assign →</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ACCOUNTING -->
+<!-- ============================================================ -->
+<div class="app" id="app-accounting">
+  <div class="header">
+    <div class="logo">WholesaleERP <span class="badge badge-green" style="margin-left:8px;">Accounting</span></div>
+    <div class="user-info">
+      <div class="notif-badge">🔔<div class="count">5</div></div>
+      <div class="avatar">SR</div><span style="font-size:13px; font-weight:600;">Sarah Rodriguez</span>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-section">
+        <h4>Accounting</h4>
+        <a href="#" class="active" onclick="showAcctPage('dashboard')"><span class="icon">📊</span> Dashboard</a>
+        <a href="#" onclick="showAcctPage('invoices')"><span class="icon">📄</span> Invoices</a>
+        <a href="#" onclick="showAcctPage('payments')"><span class="icon">💳</span> Payments</a>
+        <a href="#" onclick="showAcctPage('statements')"><span class="icon">📑</span> Statements</a>
+        <a href="#" onclick="showAcctPage('ledger')"><span class="icon">📒</span> Ledger</a>
+      </div>
+      <div class="nav-section">
+        <h4>Tools</h4>
+        <a href="#" onclick="showAcctPage('customers')"><span class="icon">👥</span> Customers</a>
+        <a href="#" onclick="showAcctPage('notifications')"><span class="icon">🔔</span> Notifications</a>
+        <a href="#" onclick="showAcctPage('review')"><span class="icon">🤖</span> AI Invoice Review</a>
+        <a href="#" onclick="showAcctPage('reports')"><span class="icon">📈</span> Reports</a>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- ACCOUNTING DASHBOARD -->
+      <div class="page active" id="acct-dashboard">
+        <div class="page-title">Accounting Dashboard</div>
+        <div class="tiles">
+          <div class="tile tile-blue">
+            <div class="tile-label">Total Receivables</div>
+            <div class="tile-value">$284,650</div>
+            <div class="tile-sub">Across 47 customers</div>
+          </div>
+          <div class="tile tile-red">
+            <div class="tile-label">Overdue</div>
+            <div class="tile-value">$38,420</div>
+            <div class="tile-sub">12 invoices past due</div>
+          </div>
+          <div class="tile tile-green">
+            <div class="tile-label">Received This Week</div>
+            <div class="tile-value">$52,180</div>
+            <div class="tile-sub">↑ 8% vs last week</div>
+          </div>
+          <div class="tile tile-yellow">
+            <div class="tile-label">Unapplied Payments</div>
+            <div class="tile-value">$4,230</div>
+            <div class="tile-sub">3 payments to reconcile</div>
+          </div>
+        </div>
+
+        <!-- Action Queue -->
+        <div class="card">
+          <h3 class="mb-16">🔔 Action Queue</h3>
+          <table>
+            <thead><tr><th>Priority</th><th>Action</th><th>Details</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-red">Urgent</span></td>
+                <td>Rejected delivery</td>
+                <td>Order #1036 — Park Slope Deli refused delivery (wrong order)</td>
+                <td><button class="btn-outline btn-sm">Review</button></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-yellow">Due</span></td>
+                <td>Credit review</td>
+                <td>Metro Foods — scheduled review date: today</td>
+                <td><button class="btn-outline btn-sm">Review</button></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-orange">Warning</span></td>
+                <td>Near credit limit</td>
+                <td>Queens Beverages — $480 remaining of $15,000 limit</td>
+                <td><button class="btn-outline btn-sm">View Account</button></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-blue">Reconcile</span></td>
+                <td>Unapplied payment</td>
+                <td>$1,200 from Fresh Market — no invoice match</td>
+                <td><button class="btn-outline btn-sm">Apply</button></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-blue">Review</span></td>
+                <td>Weekly invoice posting</td>
+                <td>18 invoices ready for review and posting</td>
+                <td><button class="btn-primary btn-sm" onclick="showAcctPage('review')">Review →</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Today's Activity -->
+        <div class="card">
+          <h3>Today's Deliveries</h3>
+          <div class="text-sm text-light mb-8">Invoices auto-created on delivery confirmation</div>
+          <table>
+            <thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>#1042</td><td>Brooklyn Deli</td><td>$171.58</td><td><span class="badge badge-green">Delivered — Invoice #INV-2026-00412</span></td></tr>
+              <tr><td>#1039</td><td>Fresh Market</td><td>$342.90</td><td><span class="badge badge-blue">In Transit</span></td></tr>
+              <tr><td>#1038</td><td>Queens Beverages</td><td>$518.24</td><td><span class="badge badge-green">Delivered — Invoice #INV-2026-00411</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INVOICES LIST -->
+      <div class="page" id="acct-invoices">
+        <div class="flex-between mb-16">
+          <div class="page-title" style="margin-bottom:0">Invoices</div>
+          <div class="flex gap-8">
+            <select style="padding:8px; border:1.5px solid var(--border); border-radius:6px;"><option>All Status</option><option>Draft</option><option>Pending Review</option><option>Posted</option><option>Paid</option><option>Overdue</option></select>
+            <button class="btn-outline">Export CSV</button>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table>
+            <thead><tr><th>Invoice #</th><th>Customer</th><th>Date</th><th>Amount</th><th>Paid</th><th>Balance</th><th>Status</th><th>Due</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><a href="#" style="color:var(--primary); text-decoration:none; font-weight:600;">INV-2026-00412</a></td>
+                <td>Brooklyn Deli</td><td>Feb 25</td><td>$171.58</td><td>$0</td><td>$171.58</td>
+                <td><span class="badge badge-yellow">Pending</span></td><td>Mar 27</td>
+              </tr>
+              <tr>
+                <td><a href="#" style="color:var(--primary); text-decoration:none; font-weight:600;">INV-2026-00411</a></td>
+                <td>Queens Beverages</td><td>Feb 25</td><td>$518.24</td><td>$0</td><td>$518.24</td>
+                <td><span class="badge badge-yellow">Pending</span></td><td>Mar 27</td>
+              </tr>
+              <tr>
+                <td>INV-2026-00398</td>
+                <td>Fresh Market</td><td>Feb 20</td><td>$892.40</td><td>$892.40</td><td>$0</td>
+                <td><span class="badge badge-green">Paid</span></td><td>—</td>
+              </tr>
+              <tr style="background:var(--red-bg);">
+                <td>INV-2026-00342</td>
+                <td>Queens Beverages</td><td>Feb 5</td><td>$2,340.00</td><td>$0</td><td>$2,340.00</td>
+                <td><span class="badge badge-red">Overdue 20d</span></td><td>Feb 5</td>
+              </tr>
+              <tr>
+                <td>INV-2026-00380</td>
+                <td>Metro Foods</td><td>Feb 15</td><td>$4,120.00</td><td>$2,000.00</td><td>$2,120.00</td>
+                <td><span class="badge badge-orange">Partial</span></td><td>Mar 15</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAYMENT PROCESSING -->
+      <div class="page" id="acct-payments">
+        <div class="page-title">Process Payment</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="card">
+            <h3 class="mb-16">Customer: Queens Beverages</h3>
+            <h4 class="text-sm text-light mb-8">Open Invoices</h4>
+            <table>
+              <thead><tr><th>Select</th><th>Invoice</th><th>Date</th><th>Balance</th></tr></thead>
+              <tbody>
+                <tr style="background:var(--primary-light);">
+                  <td><input type="checkbox" checked></td><td>INV-2026-00342</td><td>Feb 5</td><td class="bold">$2,340.00</td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox"></td><td>INV-2026-00411</td><td>Feb 25</td><td>$518.24</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="flex-between bold" style="margin-top:12px; padding-top:12px; border-top:2px solid var(--border);">
+              <span>Selected Total</span><span>$2,340.00</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="mb-16">Payment Details</h3>
+            <div class="form-group">
+              <label>Payment Method</label>
+              <select><option>Credit Card — Visa ending 4242</option><option>ACH / Bank Transfer</option><option>Check</option><option>Cash</option></select>
+            </div>
+            <div class="form-group">
+              <label>Amount</label>
+              <input type="text" value="$2,340.00">
+            </div>
+            <div class="form-group">
+              <label>Reference / Check #</label>
+              <input type="text" placeholder="Optional">
+            </div>
+            <div style="background:var(--green-bg); border-radius:6px; padding:10px; margin-bottom:16px;">
+              <span class="text-sm" style="color:var(--green);">🔒 Payment processed via Authorize.NET • Tokenized • PCI Compliant</span>
+            </div>
+            <button class="btn-success" style="width:100%; padding:12px;">Process Payment — $2,340.00</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI INVOICE REVIEW -->
+      <div class="page" id="acct-review">
+        <div class="page-title">🤖 Weekly Invoice Review — Week of Feb 24</div>
+        <p class="text-light mb-16">AI has scanned 18 invoices before posting. 3 items flagged for review.</p>
+
+        <div class="tiles" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="tile"><div class="tile-label">Total Invoices</div><div class="tile-value">18</div></div>
+          <div class="tile tile-green"><div class="tile-label">No Issues</div><div class="tile-value">15</div></div>
+          <div class="tile tile-yellow"><div class="tile-label">Flagged</div><div class="tile-value">3</div></div>
+          <div class="tile tile-blue"><div class="tile-label">Total Value</div><div class="tile-value" style="font-size:20px;">$24,820</div></div>
+        </div>
+
+        <div class="card" style="border-color:var(--yellow); border-width:2px;">
+          <h3 class="mb-16">⚠️ Flagged Items</h3>
+          <table>
+            <thead><tr><th>Invoice</th><th>Customer</th><th>Issue</th><th>Details</th><th></th></tr></thead>
+            <tbody>
+              <tr style="background:var(--yellow-bg);">
+                <td>INV-00409</td><td>Metro Foods</td>
+                <td><span class="badge badge-yellow">Pricing</span></td>
+                <td>Cola Classic billed at $4.99 — standard price is $5.49. Discount not recorded. <strong>Possible unapproved discount?</strong></td>
+                <td><button class="btn-outline btn-sm">Review</button></td>
+              </tr>
+              <tr style="background:var(--yellow-bg);">
+                <td>INV-00407</td><td>Queens Beverages</td>
+                <td><span class="badge badge-orange">Quantity</span></td>
+                <td>Ordered 10 cases Spring Water, picked 10, but invoice shows 8. <strong>Pick data doesn't match invoice.</strong></td>
+                <td><button class="btn-outline btn-sm">Review</button></td>
+              </tr>
+              <tr style="background:var(--yellow-bg);">
+                <td>INV-00404</td><td>Brooklyn Deli</td>
+                <td><span class="badge badge-red">Deposit</span></td>
+                <td>CRV deposit missing on 3 line items (Black Cherry, Lemon, Grapefruit). <strong>$4.80 in deposits not charged.</strong></td>
+                <td><button class="btn-outline btn-sm">Review</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>✅ Clean Invoices (15)</h3>
+            <button class="btn-success">Post All Clean Invoices</button>
+          </div>
+          <p class="text-sm text-light">No discrepancies detected. These can be posted immediately.</p>
+        </div>
+      </div>
+
+      <!-- STATEMENTS -->
+      <div class="page" id="acct-statements">
+        <div class="flex-between mb-16">
+          <div class="page-title" style="margin-bottom:0">Customer Statements</div>
+          <div class="flex gap-8">
+            <button class="btn-primary">🖨️ Batch Print All</button>
+            <button class="btn-outline">📧 Email All</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="mb-16">Statement Run Settings</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Statement Period</label>
+              <select><option>February 2026</option><option>January 2026</option><option>Custom Range...</option></select>
+            </div>
+            <div class="form-group">
+              <label>Template</label>
+              <select><option>Standard — With Aging</option><option>Compact — Balance Only</option><option>Detailed — All Line Items</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Include Customers</label>
+              <select><option>All with Balance</option><option>Overdue Only</option><option>Credit Customers Only</option><option>All Customers</option></select>
+            </div>
+            <div class="form-group">
+              <label>Delivery Method</label>
+              <select><option>Print + Email</option><option>Print Only</option><option>Email Only</option><option>WhatsApp</option></select>
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top:8px;">Generate Statements →</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Recent Statement Runs</h3>
+          </div>
+          <table>
+            <thead><tr><th>Date</th><th>Period</th><th>Customers</th><th>Total Billed</th><th>Method</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>Feb 20</td><td>Jan 2026</td><td>34</td><td>$186,420</td><td>Print + Email</td><td><span class="badge badge-green">Sent</span></td><td><button class="btn-outline btn-sm">View</button></td></tr>
+              <tr><td>Jan 20</td><td>Dec 2025</td><td>31</td><td>$172,300</td><td>Print + Email</td><td><span class="badge badge-green">Sent</span></td><td><button class="btn-outline btn-sm">View</button></td></tr>
+              <tr><td>Feb 10</td><td>Custom: Feb 1–10</td><td>8</td><td>$38,420</td><td>Email Only</td><td><span class="badge badge-green">Sent</span></td><td><button class="btn-outline btn-sm">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Statement Preview -->
+        <div class="card">
+          <h3 class="mb-16">Statement Preview — Brooklyn Deli Corp</h3>
+          <div class="invoice-preview" style="border-width:1px; padding:24px;">
+            <div class="flex-between mb-16" style="border-bottom:2px solid var(--text); padding-bottom:12px;">
+              <div><h2 style="font-size:18px;">STATEMENT</h2><span class="text-sm">February 2026</span></div>
+              <div class="text-right"><strong>WholesaleERP Inc.</strong><br><span class="text-sm">123 Industrial Blvd, Brooklyn</span></div>
+            </div>
+            <p class="mb-16"><strong>Brooklyn Deli Corp</strong><br>145 Atlantic Ave, Brooklyn, NY 11201</p>
+            <table>
+              <thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Charges</th><th>Payments</th><th>Balance</th></tr></thead>
+              <tbody>
+                <tr><td>Feb 1</td><td>—</td><td>Beginning Balance</td><td></td><td></td><td>$1,890.00</td></tr>
+                <tr><td>Feb 5</td><td>INV-00389</td><td>Order #1028 — 18 items</td><td>$842.30</td><td></td><td>$2,732.30</td></tr>
+                <tr><td>Feb 10</td><td>PMT-00221</td><td>Check #4521</td><td></td><td>$1,890.00</td><td>$842.30</td></tr>
+                <tr><td>Feb 18</td><td>INV-00401</td><td>Order #1035 — 12 items</td><td>$2,226.12</td><td></td><td>$3,068.42</td></tr>
+                <tr><td>Feb 25</td><td>INV-00412</td><td>Order #1042 — 4 items</td><td>$171.58</td><td></td><td>$3,240.00</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; text-align:center;">
+              <div style="border:1px solid var(--border); padding:8px; border-radius:4px;"><div class="text-sm text-light">Current</div><div class="bold">$171.58</div></div>
+              <div style="border:1px solid var(--border); padding:8px; border-radius:4px;"><div class="text-sm text-light">1–30 Days</div><div class="bold">$3,068.42</div></div>
+              <div style="border:1px solid var(--border); padding:8px; border-radius:4px;"><div class="text-sm text-light">31–60 Days</div><div class="bold">$0.00</div></div>
+              <div style="border:1px solid var(--border); padding:8px; border-radius:4px;"><div class="text-sm text-light">60+ Days</div><div class="bold" style="color:var(--green);">$0.00</div></div>
+            </div>
+            <div class="flex-between bold" style="font-size:16px; margin-top:16px; padding-top:12px; border-top:2px solid var(--text);"><span>TOTAL DUE</span><span>$3,240.00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEDGER -->
+      <div class="page" id="acct-ledger">
+        <div class="page-title">General Ledger</div>
+
+        <div class="tabs">
+          <div class="tab active">Journal Entries</div>
+          <div class="tab">Chart of Accounts</div>
+          <div class="tab">Trial Balance</div>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" placeholder="Search journal entries by reference, account, description...">
+          <select><option>All Accounts</option><option>1000 — Accounts Receivable</option><option>4000 — Sales Revenue</option><option>2100 — Sales Tax Payable</option><option>1200 — Deposits Receivable</option></select>
+          <select><option>This Month</option><option>This Week</option><option>Today</option><option>Custom...</option></select>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table>
+            <thead><tr><th>Date</th><th>Entry #</th><th>Reference</th><th>Account</th><th>Description</th><th class="text-right">Debit</th><th class="text-right">Credit</th></tr></thead>
+            <tbody>
+              <tr style="background:#f8fafc;"><td colspan="7" class="bold" style="padding:6px 12px; font-size:12px;">INV-2026-00412 — Brooklyn Deli Corp (Auto-generated on delivery)</td></tr>
+              <tr>
+                <td>Feb 25</td><td>JE-4821</td><td>INV-00412</td>
+                <td>1000 — Accounts Receivable</td><td>Brooklyn Deli — Invoice</td>
+                <td class="text-right bold">$171.58</td><td></td>
+              </tr>
+              <tr>
+                <td>Feb 25</td><td>JE-4821</td><td>INV-00412</td>
+                <td>4000 — Sales Revenue</td><td>Brooklyn Deli — Sales</td>
+                <td></td><td class="text-right bold">$148.00</td>
+              </tr>
+              <tr>
+                <td>Feb 25</td><td>JE-4821</td><td>INV-00412</td>
+                <td>2100 — Sales Tax Payable</td><td>Brooklyn Deli — Tax 8.875%</td>
+                <td></td><td class="text-right bold">$13.13</td>
+              </tr>
+              <tr>
+                <td>Feb 25</td><td>JE-4821</td><td>INV-00412</td>
+                <td>1200 — Deposits Receivable</td><td>Brooklyn Deli — CRV Deposits</td>
+                <td></td><td class="text-right bold">$13.20</td>
+              </tr>
+              <tr>
+                <td>Feb 25</td><td>JE-4821</td><td>INV-00412</td>
+                <td>4100 — Discounts Given</td><td>Brooklyn Deli — 5% Cola</td>
+                <td class="text-right bold">$2.75</td><td></td>
+              </tr>
+              <tr style="background:#f8fafc;"><td colspan="7" class="bold" style="padding:6px 12px; font-size:12px;">PMT-2026-00245 — Fresh Market Payment Received</td></tr>
+              <tr>
+                <td>Feb 24</td><td>JE-4818</td><td>PMT-00245</td>
+                <td>1100 — Cash / Bank</td><td>Fresh Market — Visa payment</td>
+                <td class="text-right bold">$892.40</td><td></td>
+              </tr>
+              <tr>
+                <td>Feb 24</td><td>JE-4818</td><td>PMT-00245</td>
+                <td>1000 — Accounts Receivable</td><td>Fresh Market — Payment applied</td>
+                <td></td><td class="text-right bold">$892.40</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background:#f1f5f9; border-radius:6px; padding:10px; margin-top:16px;">
+          <span class="text-sm text-light">📒 Double-entry ledger: every transaction creates balanced debit/credit journal entries automatically. No manual journal entry creation needed — the system generates them from business actions (invoices, payments, adjustments).</span>
+        </div>
+
+        <!-- Chart of Accounts preview -->
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Chart of Accounts (Summary)</h3>
+          <table>
+            <thead><tr><th>Code</th><th>Account Name</th><th>Type</th><th class="text-right">Balance</th></tr></thead>
+            <tbody>
+              <tr><td>1000</td><td><strong>Accounts Receivable</strong></td><td>Asset</td><td class="text-right bold">$284,650.00</td></tr>
+              <tr><td>1100</td><td><strong>Cash / Bank</strong></td><td>Asset</td><td class="text-right bold">$142,800.00</td></tr>
+              <tr><td>1200</td><td><strong>Deposits Receivable</strong></td><td>Asset</td><td class="text-right bold">$18,420.00</td></tr>
+              <tr><td>2100</td><td><strong>Sales Tax Payable</strong></td><td>Liability</td><td class="text-right bold">$22,340.00</td></tr>
+              <tr><td>4000</td><td><strong>Sales Revenue</strong></td><td>Revenue</td><td class="text-right bold">$892,400.00</td></tr>
+              <tr><td>4100</td><td><strong>Discounts Given</strong></td><td>Contra-Revenue</td><td class="text-right bold">$12,680.00</td></tr>
+              <tr><td>5000</td><td><strong>Cost of Goods Sold</strong></td><td>Expense</td><td class="text-right bold">$618,200.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CUSTOMERS (Accounting View) -->
+      <div class="page" id="acct-customers">
+        <div class="page-title">Customer Accounts</div>
+
+        <div class="tiles">
+          <div class="tile tile-blue"><div class="tile-label">Total Customers</div><div class="tile-value">47</div></div>
+          <div class="tile tile-green"><div class="tile-label">Current</div><div class="tile-value">32</div></div>
+          <div class="tile tile-yellow"><div class="tile-label">Due Soon</div><div class="tile-value">8</div></div>
+          <div class="tile tile-red"><div class="tile-label">Overdue</div><div class="tile-value">7</div></div>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" placeholder="Search customers...">
+          <select><option>All Status</option><option>Current</option><option>Due Soon</option><option>Overdue</option><option>Over Credit Limit</option></select>
+          <select><option>All Tiers</option><option>Tier 1 — Net Terms</option><option>Tier 2 — COD / Prepay</option></select>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table>
+            <thead><tr><th>Customer</th><th>Credit Limit</th><th>Outstanding</th><th>Available</th><th>Current</th><th>1–30d</th><th>31–60d</th><th>60+d</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Brooklyn Deli Corp</strong></td>
+                <td>$25,000</td><td>$3,240</td><td style="color:var(--green);">$21,760</td>
+                <td>$171</td><td>$3,069</td><td>$0</td><td>$0</td>
+                <td><span class="badge badge-green">Current</span></td>
+              </tr>
+              <tr>
+                <td><strong>Metro Foods Inc</strong></td>
+                <td>$15,000</td><td>$14,520</td><td style="color:var(--orange);">$480</td>
+                <td>$4,120</td><td>$8,400</td><td>$2,000</td><td>$0</td>
+                <td><span class="badge badge-orange">Near Limit</span></td>
+              </tr>
+              <tr style="background:var(--red-bg);">
+                <td><strong>Queens Beverages</strong></td>
+                <td>$15,000</td><td>$6,890</td><td>$8,110</td>
+                <td>$518</td><td>$4,032</td><td>$0</td><td style="color:var(--red); font-weight:700;">$2,340</td>
+                <td><span class="badge badge-red">Overdue 20d</span></td>
+              </tr>
+              <tr>
+                <td><strong>Fresh Market NYC</strong></td>
+                <td>$20,000</td><td>$8,420</td><td style="color:var(--green);">$11,580</td>
+                <td>$342</td><td>$8,078</td><td>$0</td><td>$0</td>
+                <td><span class="badge badge-yellow">Due Soon</span></td>
+              </tr>
+              <tr>
+                <td><strong>Corner Grocery</strong></td>
+                <td>COD</td><td>$0</td><td>—</td>
+                <td>$0</td><td>$0</td><td>$0</td><td>$0</td>
+                <td><span class="badge badge-green">Paid</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-header">
+            <h3>Aging Summary</h3>
+          </div>
+          <div class="tiles" style="grid-template-columns: repeat(4, 1fr);">
+            <div class="tile tile-green"><div class="tile-label">Current</div><div class="tile-value" style="font-size:20px;">$42,180</div></div>
+            <div class="tile tile-yellow"><div class="tile-label">1–30 Days</div><div class="tile-value" style="font-size:20px;">$168,400</div></div>
+            <div class="tile tile-orange"><div class="tile-label">31–60 Days</div><div class="tile-value" style="font-size:20px;">$35,650</div></div>
+            <div class="tile tile-red"><div class="tile-label">60+ Days</div><div class="tile-value" style="font-size:20px;">$38,420</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="page" id="acct-notifications">
+        <div class="page-title">Collection Notifications</div>
+
+        <div class="tiles" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="tile tile-blue"><div class="tile-label">Sent Today</div><div class="tile-value">8</div></div>
+          <div class="tile tile-green"><div class="tile-label">Delivered</div><div class="tile-value">7</div></div>
+          <div class="tile tile-yellow"><div class="tile-label">Pending</div><div class="tile-value">1</div></div>
+          <div class="tile tile-red"><div class="tile-label">Failed</div><div class="tile-value">0</div></div>
+        </div>
+
+        <!-- Automated Dunning -->
+        <div class="card">
+          <h3 class="mb-16">⚡ Automated Dunning Rules</h3>
+          <table>
+            <thead><tr><th>Rule</th><th>Trigger</th><th>Channel</th><th>Template</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Payment Reminder</strong></td>
+                <td>3 days before due</td>
+                <td><span class="badge badge-blue">Email</span> <span class="badge badge-green">WhatsApp</span></td>
+                <td>Friendly Reminder</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Overdue Notice</strong></td>
+                <td>1 day past due</td>
+                <td><span class="badge badge-blue">Email</span> <span class="badge badge-green">WhatsApp</span></td>
+                <td>Past Due — Firm</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Final Warning</strong></td>
+                <td>14 days past due</td>
+                <td><span class="badge badge-blue">Email</span> <span class="badge badge-orange">SMS</span></td>
+                <td>Final Notice + Statement</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Account Hold</strong></td>
+                <td>30 days past due</td>
+                <td><span class="badge badge-red">Internal Alert</span></td>
+                <td>Freeze orders + notify salesperson</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Recent Notifications -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Recent Notifications</h3>
+            <button class="btn-outline btn-sm">Send Batch...</button>
+          </div>
+          <table>
+            <thead><tr><th>Time</th><th>Customer</th><th>Type</th><th>Channel</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="text-sm">14:30</td><td>Queens Beverages</td><td>Final Warning</td><td><span class="badge badge-blue">Email</span></td><td><span class="badge badge-green">Delivered</span></td></tr>
+              <tr><td class="text-sm">14:30</td><td>Queens Beverages</td><td>Final Warning</td><td><span class="badge badge-orange">SMS</span></td><td><span class="badge badge-green">Delivered</span></td></tr>
+              <tr><td class="text-sm">10:15</td><td>Metro Foods</td><td>Payment Reminder</td><td><span class="badge badge-green">WhatsApp</span></td><td><span class="badge badge-green">Read ✓✓</span></td></tr>
+              <tr><td class="text-sm">10:15</td><td>Metro Foods</td><td>Payment Reminder</td><td><span class="badge badge-blue">Email</span></td><td><span class="badge badge-green">Delivered</span></td></tr>
+              <tr><td class="text-sm">09:00</td><td>Fresh Market</td><td>Overdue Notice</td><td><span class="badge badge-blue">Email</span></td><td><span class="badge badge-yellow">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ACCOUNTING REPORTS -->
+      <div class="page" id="acct-reports">
+        <div class="page-title">Accounting Reports</div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:24px;">
+          <div class="card" style="cursor:pointer; text-align:center;">
+            <div style="font-size:28px; margin-bottom:8px;">📊</div>
+            <h3 style="font-size:14px;">Aging Report</h3>
+            <p class="text-sm text-light">Receivables by age bucket</p>
+            <button class="btn-primary btn-sm" style="margin-top:12px;">Run</button>
+          </div>
+          <div class="card" style="cursor:pointer; text-align:center;">
+            <div style="font-size:28px; margin-bottom:8px;">💰</div>
+            <h3 style="font-size:14px;">Revenue Report</h3>
+            <p class="text-sm text-light">Sales by period, customer, product</p>
+            <button class="btn-primary btn-sm" style="margin-top:12px;">Run</button>
+          </div>
+          <div class="card" style="cursor:pointer; text-align:center;">
+            <div style="font-size:28px; margin-bottom:8px;">💳</div>
+            <h3 style="font-size:14px;">Collections Report</h3>
+            <p class="text-sm text-light">Payment received vs outstanding</p>
+            <button class="btn-primary btn-sm" style="margin-top:12px;">Run</button>
+          </div>
+          <div class="card" style="cursor:pointer; text-align:center;">
+            <div style="font-size:28px; margin-bottom:8px;">📈</div>
+            <h3 style="font-size:14px;">Profit & Loss</h3>
+            <p class="text-sm text-light">Revenue minus COGS and expenses</p>
+            <button class="btn-primary btn-sm" style="margin-top:12px;">Run</button>
+          </div>
+          <div class="card" style="cursor:pointer; text-align:center;">
+            <div style="font-size:28px; margin-bottom:8px;">🏦</div>
+            <h3 style="font-size:14px;">Tax Report</h3>
+            <p class="text-sm text-light">Sales tax collected by jurisdiction</p>
+            <button class="btn-primary btn-sm" style="margin-top:12px;">Run</button>
+          </div>
+          <div class="card" style="cursor:pointer; text-align:center;">
+            <div style="font-size:28px; margin-bottom:8px;">🔄</div>
+            <h3 style="font-size:14px;">Deposit Report</h3>
+            <p class="text-sm text-light">CRV deposits collected & owed</p>
+            <button class="btn-primary btn-sm" style="margin-top:12px;">Run</button>
+          </div>
+        </div>
+
+        <!-- Sample report output -->
+        <div class="card">
+          <div class="card-header">
+            <h3>📊 Aging Report — Feb 25, 2026</h3>
+            <div class="flex gap-8">
+              <button class="btn-outline btn-sm">Export CSV</button>
+              <button class="btn-outline btn-sm">🖨️ Print</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>Customer</th><th class="text-right">Current</th><th class="text-right">1–30 Days</th><th class="text-right">31–60 Days</th><th class="text-right">60+ Days</th><th class="text-right">Total</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Brooklyn Deli Corp</strong></td><td class="text-right">$171</td><td class="text-right">$3,069</td><td class="text-right">$0</td><td class="text-right">$0</td><td class="text-right bold">$3,240</td></tr>
+              <tr><td><strong>Metro Foods Inc</strong></td><td class="text-right">$4,120</td><td class="text-right">$8,400</td><td class="text-right">$2,000</td><td class="text-right">$0</td><td class="text-right bold">$14,520</td></tr>
+              <tr style="background:var(--red-bg);"><td><strong>Queens Beverages</strong></td><td class="text-right">$518</td><td class="text-right">$4,032</td><td class="text-right">$0</td><td class="text-right" style="color:var(--red);">$2,340</td><td class="text-right bold">$6,890</td></tr>
+              <tr><td><strong>Fresh Market NYC</strong></td><td class="text-right">$342</td><td class="text-right">$8,078</td><td class="text-right">$0</td><td class="text-right">$0</td><td class="text-right bold">$8,420</td></tr>
+            </tbody>
+            <tfoot><tr style="background:#f1f5f9;"><td class="bold">TOTALS</td><td class="text-right bold">$42,180</td><td class="text-right bold">$168,400</td><td class="text-right bold">$35,650</td><td class="text-right bold" style="color:var(--red);">$38,420</td><td class="text-right bold">$284,650</td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MANAGER DASHBOARD -->
+<!-- ============================================================ -->
+<div class="app" id="app-manager">
+  <div class="header">
+    <div class="logo">WholesaleERP <span class="badge" style="margin-left:8px; background:#1e293b; color:white;">Manager</span></div>
+    <div class="user-info">
+      <div class="notif-badge">🔔<div class="count">2</div></div>
+      <div class="avatar">DK</div><span style="font-size:13px; font-weight:600;">David Klein (Owner)</span>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-section">
+        <h4>Overview</h4>
+        <a href="#" class="active"><span class="icon">📊</span> Dashboard</a>
+        <a href="#"><span class="icon">🗺️</span> Live Tracker</a>
+      </div>
+      <div class="nav-section">
+        <h4>Reports</h4>
+        <a href="#"><span class="icon">💰</span> Revenue</a>
+        <a href="#"><span class="icon">👥</span> Salespeople</a>
+        <a href="#"><span class="icon">📦</span> Products</a>
+        <a href="#"><span class="icon">🏦</span> Receivables</a>
+        <a href="#"><span class="icon">📋</span> Custom Reports</a>
+      </div>
+      <div class="nav-section">
+        <h4>Views</h4>
+        <a href="#"><span class="icon">📌</span> Daily Overview</a>
+        <a href="#"><span class="icon">💼</span> Sales Focus</a>
+        <a href="#"><span class="icon">💳</span> Collections</a>
+      </div>
+    </div>
+    <div class="content">
+      <div class="flex-between mb-16">
+        <div class="page-title" style="margin-bottom:0">Manager Dashboard</div>
+        <div class="flex gap-8">
+          <select style="padding:8px; border:1.5px solid var(--border); border-radius:6px;"><option>📌 Daily Overview</option><option>💼 Sales Focus</option><option>💳 Collections</option></select>
+          <button class="btn-outline btn-sm">✏️ Customize</button>
+        </div>
+      </div>
+
+      <!-- KPI Tiles -->
+      <div class="tiles">
+        <div class="tile tile-green">
+          <div class="tile-label">Revenue Today</div>
+          <div class="tile-value">$8,420</div>
+          <div class="tile-sub" style="color:var(--green);">↑ 15% vs yesterday</div>
+        </div>
+        <div class="tile tile-blue">
+          <div class="tile-label">Revenue This Month</div>
+          <div class="tile-value">$248,600</div>
+          <div class="tile-sub">Target: $280,000 (89%)</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">Deliveries Today</div>
+          <div class="tile-value">24</div>
+          <div class="tile-sub">18 complete, 4 in transit, 2 rejected</div>
+        </div>
+        <div class="tile tile-red">
+          <div class="tile-label">Rejection Rate</div>
+          <div class="tile-value">8.3%</div>
+          <div class="tile-sub">↑ from 5.2% last week</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <!-- Live Route Tracker -->
+        <div class="card">
+          <h3 class="mb-8">🗺️ Live Route Tracker</h3>
+          <div class="map-placeholder" style="height:250px;">
+            🗺️ Live Map<br><br>
+            <span style="font-weight:normal; font-size:12px;">
+              🟢 Carlos — Stop 3/5 (Brooklyn)<br>
+              🔵 Tony — Stop 2/4 (Queens)<br>
+              🟠 Mike — Stop 5/6 (Manhattan)
+            </span>
+          </div>
+          <table>
+            <thead><tr><th>Driver</th><th>Route</th><th>Progress</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Carlos M.</td><td>Brooklyn North</td>
+                <td><div class="progress" style="width:100px;"><div class="progress-fill" style="width:60%;"></div></div> 3/5</td>
+                <td><span class="badge badge-green">On Track</span></td>
+              </tr>
+              <tr>
+                <td>Tony S.</td><td>Queens</td>
+                <td><div class="progress" style="width:100px;"><div class="progress-fill" style="width:50%;"></div></div> 2/4</td>
+                <td><span class="badge badge-green">On Track</span></td>
+              </tr>
+              <tr>
+                <td>Mike D.</td><td>Manhattan</td>
+                <td><div class="progress" style="width:100px;"><div class="progress-fill" style="width:83%;"></div></div> 5/6</td>
+                <td><span class="badge badge-yellow">1 Rejected</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Salesperson Leaderboard -->
+        <div class="card">
+          <h3 class="mb-16">👥 Salesperson Performance — Feb 2026</h3>
+          <table>
+            <thead><tr><th>#</th><th>Salesperson</th><th>Revenue</th><th>Orders</th><th>Collection</th></tr></thead>
+            <tbody>
+              <tr style="background:#fef9c3;">
+                <td>🥇</td><td><strong>Jake Smith</strong></td><td>$87,420</td><td>142</td><td><span class="badge badge-green">96%</span></td>
+              </tr>
+              <tr>
+                <td>🥈</td><td>Maria Lopez</td><td>$72,300</td><td>118</td><td><span class="badge badge-green">93%</span></td>
+              </tr>
+              <tr>
+                <td>🥉</td><td>Sam Chen</td><td>$64,880</td><td>105</td><td><span class="badge badge-yellow">87%</span></td>
+              </tr>
+              <tr>
+                <td>4</td><td>Alex Kim</td><td>$24,000</td><td>38</td><td><span class="badge badge-red">72%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="card" style="border-color:var(--red); border-width:2px;">
+        <h3 class="mb-8">🚨 Alerts & Flags</h3>
+        <table>
+          <tbody>
+            <tr><td><span class="badge badge-red">Rejection</span></td><td>Order #1036 rejected at Park Slope Deli — "wrong order" — 45 min ago</td></tr>
+            <tr><td><span class="badge badge-orange">Credit</span></td><td>Queens Beverages at 97% of credit limit ($480 remaining) — overdue $6,890</td></tr>
+            <tr><td><span class="badge badge-yellow">Approval</span></td><td>2 post-pick adjustments pending manager approval</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ADMIN -->
+<!-- ============================================================ -->
+<div class="app" id="app-admin">
+  <div class="header">
+    <div class="logo">WholesaleERP <span class="badge" style="margin-left:8px; background:var(--red); color:white;">Admin Panel</span></div>
+    <div class="user-info"><div class="avatar">DK</div><span style="font-size:13px; font-weight:600;">David Klein (Admin)</span></div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-section">
+        <h4>System</h4>
+        <a href="#" class="active" onclick="showAdminPage('users')"><span class="icon">👥</span> Users & Roles</a>
+        <a href="#" onclick="showAdminPage('permissions')"><span class="icon">🔐</span> Permissions</a>
+        <a href="#" onclick="showAdminPage('devices')"><span class="icon">📱</span> Devices</a>
+      </div>
+      <div class="nav-section">
+        <h4>Catalog</h4>
+        <a href="#" onclick="showAdminPage('products')"><span class="icon">📦</span> Products</a>
+        <a href="#" onclick="showAdminPage('categories')"><span class="icon">📂</span> Categories</a>
+        <a href="#" onclick="showAdminPage('pricing')"><span class="icon">💲</span> Pricing</a>
+      </div>
+      <div class="nav-section">
+        <h4>Policies</h4>
+        <a href="#" onclick="showAdminPage('discounts')"><span class="icon">📏</span> Discount Caps</a>
+        <a href="#" onclick="showAdminPage('adjustments')"><span class="icon">✏️</span> Adjustments</a>
+        <a href="#" onclick="showAdminPage('invoice-lock')"><span class="icon">🔒</span> Invoice Lock</a>
+        <a href="#" onclick="showAdminPage('credit')"><span class="icon">🏦</span> Credit Tiers</a>
+        <a href="#" onclick="showAdminPage('order-rules')"><span class="icon">📋</span> Order Rules</a>
+      </div>
+      <div class="nav-section">
+        <h4>Config</h4>
+        <a href="#" onclick="showAdminPage('notifications')"><span class="icon">🔔</span> Notifications</a>
+        <a href="#" onclick="showAdminPage('payment')"><span class="icon">💳</span> Payment Gateway</a>
+        <a href="#" onclick="showAdminPage('printers')"><span class="icon">🖨️</span> Printers</a>
+        <a href="#" onclick="showAdminPage('settings')"><span class="icon">⚙️</span> System Settings</a>
+        <a href="#" onclick="showAdminPage('audit')"><span class="icon">📋</span> Audit Log</a>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- ======== USERS & ROLES ======== -->
+      <div class="page active" id="admin-users">
+        <div class="page-title">Users & Roles</div>
+
+        <div class="search-bar">
+          <input type="text" placeholder="Search users...">
+          <select><option>All Roles</option><option>Salesperson</option><option>Warehouse</option><option>Driver</option><option>Accounting</option><option>Manager</option><option>Admin</option></select>
+          <select><option>All Status</option><option>Active</option><option>Inactive</option></select>
+          <button class="btn-primary">+ Add User</button>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table>
+            <thead><tr><th>User</th><th>Role</th><th>Group</th><th>Device</th><th>Last Active</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Jake Smith</strong><br><span class="text-sm text-light">jsmith@company.com</span></td>
+                <td><span class="badge badge-blue">Salesperson</span></td>
+                <td>Sales Team A</td>
+                <td><span class="text-sm">HH-07 📱</span></td>
+                <td>2 min ago</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Mike Rodriguez</strong><br><span class="text-sm text-light">mike.r@company.com</span></td>
+                <td><span class="badge badge-orange">Warehouse</span></td>
+                <td>Warehouse</td>
+                <td><span class="text-sm">HH-12 📱</span></td>
+                <td>15 min ago</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Carlos Martinez</strong><br><span class="text-sm text-light">carlos@company.com</span></td>
+                <td><span class="badge badge-purple">Driver</span></td>
+                <td>Drivers</td>
+                <td><span class="text-sm">HH-03 📱</span></td>
+                <td>5 min ago</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Sarah Rodriguez</strong><br><span class="text-sm text-light">sarah@company.com</span></td>
+                <td><span class="badge badge-green">Accounting</span></td>
+                <td>Accounting</td>
+                <td><span class="text-sm">Desktop 🖥️</span></td>
+                <td>1 min ago</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Tom Harris</strong><br><span class="text-sm text-light">tom.h@company.com</span></td>
+                <td><span class="badge badge-blue">Salesperson</span></td>
+                <td>Sales Team B</td>
+                <td><span class="text-sm">HH-09 📱</span></td>
+                <td>3 days ago</td>
+                <td><span class="badge badge-red">Inactive</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== PERMISSIONS ======== -->
+      <div class="page" id="admin-permissions">
+        <div class="page-title">Permissions Matrix</div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Role-Based Access Control</h3>
+            <button class="btn-primary btn-sm">+ Create Custom Role</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th style="min-width:160px;">Permission</th><th>Salesperson</th><th>Warehouse</th><th>Driver</th><th>Route Planner</th><th>Accounting</th><th>Manager</th><th>Admin</th></tr></thead>
+              <tbody>
+                <tr><td class="bold" style="background:#f1f5f9;" colspan="8">Orders</td></tr>
+                <tr><td>Create Orders</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Edit Own Orders</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Edit All Orders</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Cancel Orders</td><td>⚠️ own</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Apply Discounts</td><td>⚠️ capped</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td class="bold" style="background:#f1f5f9;" colspan="8">Warehouse</td></tr>
+                <tr><td>Pick / Pack</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Mark Picked</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Post-Pick Adjustment</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td class="bold" style="background:#f1f5f9;" colspan="8">Delivery</td></tr>
+                <tr><td>View Routes</td><td>❌</td><td>❌</td><td>✅ own</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Record Delivery</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Log Rejection</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+                <tr><td class="bold" style="background:#f1f5f9;" colspan="8">Finance</td></tr>
+                <tr><td>View Invoices</td><td>⚠️ own</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td>Edit Invoices</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>⚠️ limited</td><td>✅</td></tr>
+                <tr><td>Record Payments</td><td>❌</td><td>❌</td><td>✅ COD</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td class="bold" style="background:#f1f5f9;" colspan="8">Admin</td></tr>
+                <tr><td>Manage Users</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+                <tr><td>View Audit Log</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td>System Config</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:12px; font-size:12px; color:var(--text-light);">✅ Full access &nbsp; ⚠️ Limited / Conditional &nbsp; ❌ No access</div>
+        </div>
+      </div>
+
+      <!-- ======== DEVICES ======== -->
+      <div class="page" id="admin-devices">
+        <div class="page-title">Device Management</div>
+
+        <div class="tiles" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="tile tile-green"><div class="tile-label">Active</div><div class="tile-value">8</div></div>
+          <div class="tile tile-blue"><div class="tile-label">Registered</div><div class="tile-value">12</div></div>
+          <div class="tile tile-red"><div class="tile-label">Revoked</div><div class="tile-value">1</div></div>
+          <div class="tile tile-yellow"><div class="tile-label">Pending</div><div class="tile-value">2</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>📱 Registered Devices</h3>
+            <button class="btn-primary btn-sm">+ Register Device</button>
+          </div>
+          <table>
+            <thead><tr><th>Device ID</th><th>Assigned User</th><th>Type</th><th>Registered</th><th>Last Seen</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td>HH-2026-007</td><td>Jake Smith</td><td>Android Handheld</td><td>Jan 15, 2026</td><td>2 min ago</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-danger btn-sm">Revoke</button></td>
+              </tr>
+              <tr>
+                <td>HH-2026-012</td><td>Mike Rodriguez</td><td>Android Handheld</td><td>Jan 15, 2026</td><td>15 min ago</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-danger btn-sm">Revoke</button></td>
+              </tr>
+              <tr>
+                <td>HH-2026-003</td><td>Carlos Martinez</td><td>Android Handheld</td><td>Jan 15, 2026</td><td>5 min ago</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-danger btn-sm">Revoke</button></td>
+              </tr>
+              <tr>
+                <td>WS-2026-001</td><td>Sarah Rodriguez</td><td>Desktop Browser</td><td>Jan 16, 2026</td><td>1 min ago</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-danger btn-sm">Revoke</button></td>
+              </tr>
+              <tr style="background:var(--red-bg);">
+                <td>HH-2026-005</td><td>— (unassigned)</td><td>Android Handheld</td><td>Jan 20, 2026</td><td>Feb 10</td>
+                <td><span class="badge badge-red">Revoked</span></td>
+                <td><span class="text-sm text-light">Lost device — wiped</span></td>
+              </tr>
+              <tr>
+                <td>HH-2026-015</td><td>— (pending)</td><td>Android Handheld</td><td>Feb 22, 2026</td><td>—</td>
+                <td><span class="badge badge-yellow">Pending Setup</span></td>
+                <td><button class="btn-outline btn-sm">Assign</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Device Policies</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Max Devices Per User</label>
+              <select><option>1</option><option selected>2</option><option>3</option></select>
+            </div>
+            <div class="form-group">
+              <label>Auto-lock After Inactivity</label>
+              <select><option>5 minutes</option><option selected>15 minutes</option><option>30 minutes</option></select>
+            </div>
+            <div class="form-group">
+              <label>Remote Wipe on Revocation</label>
+              <select><option selected>Yes — Wipe app data</option><option>No — Soft disable only</option></select>
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top:8px;">Save Device Policy</button>
+        </div>
+      </div>
+
+      <!-- ======== PRODUCTS ======== -->
+      <div class="page" id="admin-products">
+        <div class="page-title">Product Catalog</div>
+
+        <div class="search-bar">
+          <input type="text" placeholder="Search products by name, SKU, barcode...">
+          <select><option>All Categories</option><option>Beverages</option><option>Snacks</option><option>Dairy</option><option>Produce</option><option>Frozen</option></select>
+          <select><option>All Status</option><option>Active</option><option>Inactive</option><option>Discontinued</option></select>
+          <button class="btn-primary">+ Add Product</button>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table>
+            <thead><tr><th>SKU</th><th>Product Name</th><th>Category</th><th>Unit</th><th>Base Price</th><th>Tax</th><th>CRV</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="text-sm">BEV-001</td>
+                <td><strong>Cola Classic</strong></td>
+                <td>Beverages</td>
+                <td>Case (24)</td>
+                <td>$18.50</td>
+                <td>8.875%</td>
+                <td>$1.20</td>
+                <td>342</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td class="text-sm">BEV-002</td>
+                <td><strong>Spring Water 1L</strong></td>
+                <td>Beverages</td>
+                <td>Case (12)</td>
+                <td>$8.40</td>
+                <td>0%</td>
+                <td>$0.60</td>
+                <td>518</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td class="text-sm">SNK-015</td>
+                <td><strong>Tortilla Chips Family</strong></td>
+                <td>Snacks</td>
+                <td>Box (8)</td>
+                <td>$22.00</td>
+                <td>8.875%</td>
+                <td>—</td>
+                <td>89</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td class="text-sm">DRY-008</td>
+                <td><strong>Whole Milk 1gal</strong></td>
+                <td>Dairy</td>
+                <td>Case (4)</td>
+                <td>$14.80</td>
+                <td>0%</td>
+                <td>—</td>
+                <td><span style="color:var(--red); font-weight:700;">12</span></td>
+                <td><span class="badge badge-yellow">Low Stock</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr style="opacity:0.6;">
+                <td class="text-sm">BEV-099</td>
+                <td><strong>Diet Lemon Soda</strong></td>
+                <td>Beverages</td>
+                <td>Case (24)</td>
+                <td>$16.00</td>
+                <td>8.875%</td>
+                <td>$1.20</td>
+                <td>0</td>
+                <td><span class="badge badge-red">Discontinued</span></td>
+                <td><button class="btn-outline btn-sm">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+          <span class="text-sm text-light">Showing 1–5 of 248 products</span>
+          <div class="flex gap-8"><button class="btn-outline btn-sm">← Prev</button><button class="btn-outline btn-sm">Next →</button></div>
+        </div>
+      </div>
+
+      <!-- ======== CATEGORIES ======== -->
+      <div class="page" id="admin-categories">
+        <div class="page-title">Product Categories</div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Category Hierarchy</h3>
+            <button class="btn-primary btn-sm">+ Add Category</button>
+          </div>
+          <table>
+            <thead><tr><th>Category</th><th>Parent</th><th>Products</th><th>Tax Default</th><th>CRV</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>🥤 Beverages</strong></td>
+                <td>— (root)</td>
+                <td>82</td>
+                <td>8.875%</td>
+                <td>Yes</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td style="padding-left:32px;">↳ <strong>Carbonated</strong></td>
+                <td>Beverages</td>
+                <td>34</td>
+                <td>8.875%</td>
+                <td>Yes</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td style="padding-left:32px;">↳ <strong>Water</strong></td>
+                <td>Beverages</td>
+                <td>18</td>
+                <td>0%</td>
+                <td>Yes</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td style="padding-left:32px;">↳ <strong>Juice</strong></td>
+                <td>Beverages</td>
+                <td>30</td>
+                <td>0%</td>
+                <td>Yes</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>🍿 Snacks</strong></td>
+                <td>— (root)</td>
+                <td>56</td>
+                <td>8.875%</td>
+                <td>No</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>🧀 Dairy</strong></td>
+                <td>— (root)</td>
+                <td>42</td>
+                <td>0%</td>
+                <td>No</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>🥬 Produce</strong></td>
+                <td>— (root)</td>
+                <td>38</td>
+                <td>0%</td>
+                <td>No</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>❄️ Frozen</strong></td>
+                <td>— (root)</td>
+                <td>30</td>
+                <td>8.875%</td>
+                <td>No</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== PRICING ======== -->
+      <div class="page" id="admin-pricing">
+        <div class="page-title">Price Lists</div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Manage Price Lists</h3>
+            <button class="btn-primary btn-sm">+ Create Price List</button>
+          </div>
+          <table>
+            <thead><tr><th>Price List</th><th>Applies To</th><th>Products</th><th>Type</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Standard Retail</strong></td>
+                <td>All new customers (default)</td>
+                <td>248</td>
+                <td>Base pricing</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">View</button></td>
+              </tr>
+              <tr>
+                <td><strong>Volume Pricing</strong></td>
+                <td>Tier 1 customers (Net Terms)</td>
+                <td>248</td>
+                <td>-5% across all SKUs</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">View</button></td>
+              </tr>
+              <tr>
+                <td><strong>Brooklyn Deli Custom</strong></td>
+                <td>Brooklyn Deli Corp only</td>
+                <td>12</td>
+                <td>Custom per-SKU pricing</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">View</button></td>
+              </tr>
+              <tr>
+                <td><strong>Promo: March Madness</strong></td>
+                <td>All customers</td>
+                <td>8</td>
+                <td>-15% on selected snacks</td>
+                <td><span class="badge badge-yellow">Scheduled</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Price List: Volume Pricing — Sample</h3>
+          <table>
+            <thead><tr><th>SKU</th><th>Product</th><th>Standard</th><th>Volume Price</th><th>Discount</th></tr></thead>
+            <tbody>
+              <tr><td>BEV-001</td><td>Cola Classic (Case 24)</td><td>$18.50</td><td class="bold" style="color:var(--green);">$17.58</td><td>-5%</td></tr>
+              <tr><td>BEV-002</td><td>Spring Water 1L (Case 12)</td><td>$8.40</td><td class="bold" style="color:var(--green);">$7.98</td><td>-5%</td></tr>
+              <tr><td>SNK-015</td><td>Tortilla Chips (Box 8)</td><td>$22.00</td><td class="bold" style="color:var(--green);">$20.90</td><td>-5%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== DISCOUNT CAPS ======== -->
+      <div class="page" id="admin-discounts">
+        <div class="page-title">Discount Cap Policies</div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>📏 Discount Policies</h3>
+            <button class="btn-primary btn-sm">+ New Policy</button>
+          </div>
+          <table>
+            <thead><tr><th>Policy Name</th><th>Applies To</th><th>Max Discount</th><th>Requires Approval</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Standard Sales</strong></td>
+                <td>Sales Team A, Sales Team B</td>
+                <td>10% per line item</td>
+                <td>No (within cap)</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Senior Sales</strong></td>
+                <td>Jake Smith, Maria Lopez</td>
+                <td>15% per line item, 10% per order</td>
+                <td>Over 12% needs manager OK</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Accounting Override</strong></td>
+                <td>Accounting Group</td>
+                <td>25% any</td>
+                <td>Over 20% needs owner OK</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>New Customer Welcome</strong></td>
+                <td>All salespersons</td>
+                <td>20% first order only</td>
+                <td>No — auto-approved first order</td>
+                <td><span class="badge badge-yellow">Draft</span></td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Policy Details: Standard Sales</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Max per Line Item</label><input type="text" value="10%"></div>
+            <div class="form-group"><label>Max per Order Total</label><input type="text" value="8%"></div>
+            <div class="form-group"><label>Approval Threshold</label><input type="text" value="Any (within cap)"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Stacking Allowed</label><select><option>No — one discount per line</option><option>Yes — with combined cap</option></select></div>
+            <div class="form-group"><label>Applies To Categories</label><select><option selected>All Categories</option></select></div>
+          </div>
+          <button class="btn-primary" style="margin-top:8px;">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- ======== ADJUSTMENTS ======== -->
+      <div class="page" id="admin-adjustments">
+        <div class="page-title">Adjustment Rules</div>
+
+        <div class="card">
+          <h3 class="mb-16">Post-Delivery Adjustment Policies</h3>
+          <table>
+            <thead><tr><th>Rule</th><th>When</th><th>Allowed By</th><th>Auto-Approve</th><th>Audit</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Quantity Correction</strong></td>
+                <td>Before invoice lock</td>
+                <td>Warehouse, Accounting</td>
+                <td>If delta ≤ 2 units</td>
+                <td>✅ Logged</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Price Adjustment</strong></td>
+                <td>Before invoice lock</td>
+                <td>Accounting only</td>
+                <td>Never — always needs approval</td>
+                <td>✅ Logged + reason</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Return / Credit</strong></td>
+                <td>Within 7 days of delivery</td>
+                <td>Accounting, Manager</td>
+                <td>If ≤ $50</td>
+                <td>✅ Logged + photo</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Rejection Adjustment</strong></td>
+                <td>At delivery time</td>
+                <td>Driver</td>
+                <td>Auto — remove rejected items</td>
+                <td>✅ GPS + photo + signature</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== INVOICE LOCK ======== -->
+      <div class="page" id="admin-invoice-lock">
+        <div class="page-title">Invoice Lock Policy</div>
+
+        <div class="card">
+          <h3 class="mb-16">🔒 Lock Window Settings</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Lock Trigger</label>
+              <select>
+                <option selected>On Delivery Confirmation</option>
+                <option>X hours after delivery</option>
+                <option>End of business day</option>
+                <option>Manual lock only</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Grace Period (if time-based)</label>
+              <select><option>None</option><option>2 hours</option><option selected>4 hours</option><option>8 hours</option><option>24 hours</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Who Can Unlock</label>
+              <select><option>Admin only</option><option selected>Admin + Owner</option><option>Admin + Manager + Owner</option></select>
+            </div>
+            <div class="form-group">
+              <label>Unlock Requires</label>
+              <select><option>Reason only</option><option selected>Reason + confirmation</option><option>Dual approval</option></select>
+            </div>
+          </div>
+          <button class="btn-primary" style="margin-top:8px;">Save Lock Policy</button>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Recent Lock Overrides</h3>
+          <table>
+            <thead><tr><th>Date</th><th>Invoice</th><th>Unlocked By</th><th>Reason</th><th>Re-locked</th></tr></thead>
+            <tbody>
+              <tr><td>Feb 23</td><td>INV-00398</td><td>David Klein (Admin)</td><td>Customer dispute — qty adjustment needed</td><td>Yes — 4 min later</td></tr>
+              <tr><td>Feb 19</td><td>INV-00372</td><td>David Klein (Admin)</td><td>Wrong price applied — salesperson error</td><td>Yes — 12 min later</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== CREDIT TIERS ======== -->
+      <div class="page" id="admin-credit">
+        <div class="page-title">Credit Tiers</div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>🏦 Customer Credit Tiers</h3>
+            <button class="btn-primary btn-sm">+ Add Tier</button>
+          </div>
+          <table>
+            <thead><tr><th>Tier</th><th>Payment Terms</th><th>Default Credit Limit</th><th>Discount Access</th><th>Auto-Qualification</th><th>Customers</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong><span class="badge badge-green">Tier 1 — Net</span></strong></td>
+                <td>Net 30</td>
+                <td>$25,000</td>
+                <td>Up to 15%</td>
+                <td>6+ months, $50k+ total orders, no late pay</td>
+                <td>18</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong><span class="badge badge-blue">Tier 2 — COD</span></strong></td>
+                <td>Cash on Delivery</td>
+                <td>N/A</td>
+                <td>Up to 10%</td>
+                <td>Default for new customers</td>
+                <td>22</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong><span class="badge badge-yellow">Tier 3 — Prepay</span></strong></td>
+                <td>Prepayment Required</td>
+                <td>N/A</td>
+                <td>Up to 5%</td>
+                <td>Manual assignment (poor history)</td>
+                <td>5</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong><span class="badge badge-red">Hold</span></strong></td>
+                <td>No orders allowed</td>
+                <td>Frozen</td>
+                <td>None</td>
+                <td>Auto: 60+ days overdue</td>
+                <td>2</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Credit Limit Overrides</h3>
+          <table>
+            <thead><tr><th>Customer</th><th>Tier</th><th>Default Limit</th><th>Override Limit</th><th>Approved By</th><th>Reason</th></tr></thead>
+            <tbody>
+              <tr><td>Brooklyn Deli Corp</td><td>Tier 1</td><td>$25,000</td><td class="bold" style="color:var(--green);">$35,000</td><td>David Klein</td><td>Long-term customer, 5+ years</td></tr>
+              <tr><td>Metro Foods Inc</td><td>Tier 1</td><td>$25,000</td><td class="bold" style="color:var(--red);">$15,000</td><td>David Klein</td><td>Reduced — slow payments last quarter</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== ORDER RULES ======== -->
+      <div class="page" id="admin-order-rules">
+        <div class="page-title">Order Rules</div>
+
+        <div class="card">
+          <h3 class="mb-16">📋 Order Modification Policies</h3>
+          <table>
+            <thead><tr><th>Rule</th><th>Setting</th><th>Override</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Minimum Order Value</strong></td>
+                <td>$50.00</td>
+                <td>Manager can waive</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Order Edit Window</strong></td>
+                <td>Until warehouse starts picking</td>
+                <td>Accounting can force-edit</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Order Cancellation</strong></td>
+                <td>Allowed before pick starts</td>
+                <td>After pick: Manager + reason required</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Duplicate Order Detection</strong></td>
+                <td>Warn if same customer within 2 hours</td>
+                <td>Salesperson can confirm & proceed</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Credit Check at Order</strong></td>
+                <td>Block if over credit limit</td>
+                <td>Manager approval for override</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><strong>Weekend / After-Hours Orders</strong></td>
+                <td>Queue for next business day</td>
+                <td>Admin can enable immediate processing</td>
+                <td><button class="btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== NOTIFICATIONS (Admin) ======== -->
+      <div class="page" id="admin-notifications">
+        <div class="page-title">Notification Settings</div>
+
+        <div class="card">
+          <h3 class="mb-16">📣 Notification Channels</h3>
+          <table>
+            <thead><tr><th>Event</th><th>Email</th><th>WhatsApp</th><th>SMS</th><th>In-App</th><th>Push</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Order Placed</strong></td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td><strong>Order Picked</strong></td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td><strong>Delivery Complete</strong></td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
+              <tr><td><strong>Delivery Rejected</strong></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td><strong>Invoice Generated</strong></td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
+              <tr><td><strong>Payment Received</strong></td><td>✅</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td></tr>
+              <tr><td><strong>Credit Limit Warning</strong></td><td>✅</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td><strong>Discount Override</strong></td><td>✅</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Integration Settings</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Twilio Account SID</label><input type="text" value="AC•••••••••••••••d8e4" style="font-family:monospace;"></div>
+            <div class="form-group"><label>Twilio Auth Token</label><input type="password" value="••••••••••••"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>WhatsApp Business #</label><input type="text" value="+1 (718) 555-0100"></div>
+            <div class="form-group"><label>SendGrid API Key</label><input type="password" value="••••••••••••"></div>
+          </div>
+          <button class="btn-primary" style="margin-top:8px;">Save Integration Settings</button>
+        </div>
+      </div>
+
+      <!-- ======== PAYMENT GATEWAY ======== -->
+      <div class="page" id="admin-payment">
+        <div class="page-title">Payment Gateway</div>
+
+        <div class="card">
+          <h3 class="mb-16">💳 Authorize.NET Configuration</h3>
+          <div class="form-row">
+            <div class="form-group"><label>API Login ID</label><input type="text" value="7g•••••Hj2" style="font-family:monospace;"></div>
+            <div class="form-group"><label>Transaction Key</label><input type="password" value="••••••••••••"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Environment</label><select><option>Sandbox (Testing)</option><option selected>Production</option></select></div>
+            <div class="form-group"><label>Gateway Mode</label><select><option selected>Auth + Capture</option><option>Auth Only</option></select></div>
+          </div>
+          <button class="btn-primary" style="margin-top:8px;">Save Gateway Settings</button>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Accepted Payment Methods</h3>
+          <table>
+            <thead><tr><th>Method</th><th>Gateway</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><strong>💳 Credit / Debit Card</strong></td><td>Authorize.NET</td><td><span class="badge badge-green">Active</span></td><td><button class="btn-outline btn-sm">Config</button></td></tr>
+              <tr><td><strong>🏦 ACH / eCheck</strong></td><td>Authorize.NET</td><td><span class="badge badge-green">Active</span></td><td><button class="btn-outline btn-sm">Config</button></td></tr>
+              <tr><td><strong>💵 Cash</strong></td><td>Manual entry</td><td><span class="badge badge-green">Active</span></td><td><button class="btn-outline btn-sm">Config</button></td></tr>
+              <tr><td><strong>🧾 Check</strong></td><td>Manual entry</td><td><span class="badge badge-green">Active</span></td><td><button class="btn-outline btn-sm">Config</button></td></tr>
+              <tr><td><strong>📱 Apple Pay / Google Pay</strong></td><td>Authorize.NET</td><td><span class="badge badge-yellow">Coming Soon</span></td><td><button class="btn-outline btn-sm">Setup</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== PRINTERS ======== -->
+      <div class="page" id="admin-printers">
+        <div class="page-title">Printer Management</div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>🖨️ Registered Printers</h3>
+            <button class="btn-primary btn-sm">+ Add Printer</button>
+          </div>
+          <table>
+            <thead><tr><th>Printer</th><th>Location</th><th>Type</th><th>Assigned To</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Warehouse Label Printer</strong></td>
+                <td>Warehouse — Pack station</td>
+                <td>Thermal Label (4")</td>
+                <td>Warehouse role</td>
+                <td><span class="badge badge-green">Online</span></td>
+                <td><button class="btn-outline btn-sm">Config</button></td>
+              </tr>
+              <tr>
+                <td><strong>Invoice Printer</strong></td>
+                <td>Office</td>
+                <td>Laser (Letter)</td>
+                <td>Accounting, Admin</td>
+                <td><span class="badge badge-green">Online</span></td>
+                <td><button class="btn-outline btn-sm">Config</button></td>
+              </tr>
+              <tr>
+                <td><strong>Mobile Receipt Printer</strong></td>
+                <td>Delivery truck — Carlos</td>
+                <td>Bluetooth Thermal (3")</td>
+                <td>Driver: Carlos M.</td>
+                <td><span class="badge badge-green">Online</span></td>
+                <td><button class="btn-outline btn-sm">Config</button></td>
+              </tr>
+              <tr>
+                <td><strong>Statement Printer</strong></td>
+                <td>Office</td>
+                <td>Laser (Letter)</td>
+                <td>Accounting</td>
+                <td><span class="badge badge-red">Offline</span></td>
+                <td><button class="btn-outline btn-sm">Troubleshoot</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Print Templates</h3>
+          <table>
+            <thead><tr><th>Template</th><th>Used For</th><th>Paper / Size</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><strong>Invoice</strong></td><td>Order invoices, reprints</td><td>Letter 8.5" × 11"</td><td><button class="btn-outline btn-sm">Preview</button></td></tr>
+              <tr><td><strong>Pick List</strong></td><td>Warehouse picking</td><td>Letter 8.5" × 11"</td><td><button class="btn-outline btn-sm">Preview</button></td></tr>
+              <tr><td><strong>Shelf Label</strong></td><td>Product labels</td><td>Thermal 4" × 2"</td><td><button class="btn-outline btn-sm">Preview</button></td></tr>
+              <tr><td><strong>Delivery Receipt</strong></td><td>Driver proof-of-delivery</td><td>Thermal 3" roll</td><td><button class="btn-outline btn-sm">Preview</button></td></tr>
+              <tr><td><strong>Statement</strong></td><td>Monthly customer statement</td><td>Letter 8.5" × 11"</td><td><button class="btn-outline btn-sm">Preview</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ======== SYSTEM SETTINGS ======== -->
+      <div class="page" id="admin-settings">
+        <div class="page-title">System Settings</div>
+
+        <div class="card">
+          <h3 class="mb-16">⚙️ Company Information</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Company Name</label><input type="text" value="WholesaleERP Inc."></div>
+            <div class="form-group"><label>Phone</label><input type="text" value="+1 (718) 555-0100"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Address</label><input type="text" value="123 Industrial Blvd, Brooklyn, NY 11201"></div>
+            <div class="form-group"><label>Tax ID / EIN</label><input type="text" value="12-3456789"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Business Rules</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Default Tax Rate</label><input type="text" value="8.875%"></div>
+            <div class="form-group"><label>CRV per Bottle</label><input type="text" value="$0.05"></div>
+            <div class="form-group"><label>CRV per Can</label><input type="text" value="$0.05"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Order Number Prefix</label><input type="text" value="ORD-2026-"></div>
+            <div class="form-group"><label>Invoice Number Prefix</label><input type="text" value="INV-2026-"></div>
+            <div class="form-group"><label>Fiscal Year Start</label><select><option selected>January</option><option>April</option><option>July</option><option>October</option></select></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="mb-16">Data & Backup</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Auto-Backup</label><select><option selected>Daily at 2:00 AM</option><option>Every 6 hours</option><option>Hourly</option></select></div>
+            <div class="form-group"><label>Backup Retention</label><select><option>30 days</option><option selected>90 days</option><option>1 year</option></select></div>
+            <div class="form-group"><label>Last Backup</label><input type="text" value="Feb 25, 2026 — 2:00 AM ✅" disabled></div>
+          </div>
+          <div class="flex gap-8" style="margin-top:8px;">
+            <button class="btn-primary">Save Settings</button>
+            <button class="btn-outline">Run Backup Now</button>
+            <button class="btn-outline">Export All Data (CSV)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== AUDIT LOG ======== -->
+      <div class="page" id="admin-audit">
+        <div class="page-title">Audit Log</div>
+
+        <div style="background:#f1f5f9; border-radius:6px; padding:8px 12px; margin-bottom:16px;">
+          <span class="text-sm text-light">🔒 Audit log is append-only. Entries cannot be deleted or modified, even by system administrators.</span>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" placeholder="Search audit log...">
+          <select><option>All Users</option><option>Jake S.</option><option>Sarah R.</option><option>David K.</option><option>System</option></select>
+          <select><option>All Actions</option><option>invoice.*</option><option>discount.*</option><option>user.*</option><option>device.*</option><option>order.*</option><option>payment.*</option></select>
+          <select><option>Today</option><option>This Week</option><option>This Month</option><option>Custom...</option></select>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table>
+            <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th><th>Reason</th><th>IP</th></tr></thead>
+            <tbody>
+              <tr><td class="text-sm">14:32</td><td>Sarah R.</td><td><span class="badge badge-orange">invoice.adjusted</span></td><td>INV-00398 — changed line 3 qty from 5 to 4</td><td>Customer reported 1 case damaged</td><td class="text-sm text-light">10.0.1.45</td></tr>
+              <tr><td class="text-sm">14:15</td><td>Jake S.</td><td><span class="badge badge-blue">discount.applied</span></td><td>Order #1042 — 5% on Cola Classic (10 cases)</td><td>Volume deal</td><td class="text-sm text-light">10.0.1.22</td></tr>
+              <tr><td class="text-sm">13:50</td><td>David K.</td><td><span class="badge badge-red">user.deactivated</span></td><td>Tom Harris account deactivated</td><td>Employee departure</td><td class="text-sm text-light">10.0.1.10</td></tr>
+              <tr><td class="text-sm">13:22</td><td>System</td><td><span class="badge badge-red">device.revoked</span></td><td>HH-2026-005 remote wiped</td><td>Lost device — reported by manager</td><td class="text-sm text-light">system</td></tr>
+              <tr><td class="text-sm">12:45</td><td>Carlos M.</td><td><span class="badge badge-green">delivery.completed</span></td><td>Order #1035 — delivered to Fresh Market NYC</td><td>—</td><td class="text-sm text-light">GPS: 40.68,-73.97</td></tr>
+              <tr><td class="text-sm">12:30</td><td>Mike R.</td><td><span class="badge badge-yellow">order.picked</span></td><td>Order #1035 — 12 items packed</td><td>—</td><td class="text-sm text-light">10.0.1.30</td></tr>
+              <tr><td class="text-sm">11:15</td><td>Jake S.</td><td><span class="badge badge-blue">order.created</span></td><td>Order #1042 — Brooklyn Deli Corp — 4 items</td><td>—</td><td class="text-sm text-light">10.0.1.22</td></tr>
+              <tr><td class="text-sm">10:00</td><td>System</td><td><span class="badge badge-green">payment.received</span></td><td>PMT-00245 — Fresh Market — $892.40 via Visa</td><td>—</td><td class="text-sm text-light">gateway</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+          <span class="text-sm text-light">Showing 1–8 of 1,247 entries</span>
+          <div class="flex gap-8"><button class="btn-outline btn-sm">← Prev</button><button class="btn-outline btn-sm">Next →</button><button class="btn-outline btn-sm">Export Full Log</button></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function showRole(role) {
+  document.querySelectorAll('.app').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('app-' + role).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showSalesPage(page) {
+  document.querySelectorAll('#app-sales .page').forEach(p => p.classList.remove('active'));
+  document.getElementById('sales-' + page).classList.add('active');
+  document.querySelectorAll('#app-sales .sidebar a').forEach(a => a.classList.remove('active'));
+  event.target.closest('a')?.classList.add('active');
+}
+
+function showWhPage(page) {
+  document.querySelectorAll('#app-warehouse .page').forEach(p => p.classList.remove('active'));
+  document.getElementById('wh-' + page).classList.add('active');
+  document.querySelectorAll('#app-warehouse .sidebar a').forEach(a => a.classList.remove('active'));
+  event.target.closest('a')?.classList.add('active');
+}
+
+function showAcctPage(page) {
+  document.querySelectorAll('#app-accounting .page').forEach(p => p.classList.remove('active'));
+  document.getElementById('acct-' + page).classList.add('active');
+  document.querySelectorAll('#app-accounting .sidebar a').forEach(a => a.classList.remove('active'));
+  event.target.closest('a')?.classList.add('active');
+}
+
+function showAdminPage(page) {
+  document.querySelectorAll('#app-admin .page').forEach(p => p.classList.remove('active'));
+  document.getElementById('admin-' + page).classList.add('active');
+  document.querySelectorAll('#app-admin .sidebar a').forEach(a => a.classList.remove('active'));
+  event.target.closest('a')?.classList.add('active');
+}
+</script>
+
+</body>
+</html>
