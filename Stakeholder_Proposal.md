@@ -1,694 +1,823 @@
-# WHOLESALE ERP — STAKEHOLDER PROPOSAL
+# WHOLESALE ERP — STAKEHOLDER PROPOSAL v2
 ### Custom Order-to-Cash Platform for Wholesale Food Distribution
-**Prepared: February 25, 2026**
+**Prepared: February 26, 2026 | Updated after Stakeholder Meeting (Feb 25)**
 
 ---
 
 ## TABLE OF CONTENTS
 
-1. [Executive Summary](#1-executive-summary)
-2. [What This System Does — Plain English](#2-what-this-system-does)
-3. [How Your Team Will Use It — Step by Step](#3-how-your-team-will-use-it)
-4. [What's Under the Hood](#4-whats-under-the-hood)
-5. [Project Timeline — 4-Week Rapid Build](#5-project-timeline)
-6. [Base Package — Pricing](#6-base-package-pricing)
-7. [Optional Add-Ons — With Timeline & Cost Impact](#7-optional-add-ons)
-8. [Total Investment Summary](#8-total-investment-summary)
-9. [What We Need From You](#9-what-we-need-from-you)
-10. [Terms & Conditions](#10-terms--conditions)
+1. [System Overview](#1-system-overview)
+2. [What's Included — Base Package](#2-whats-included)
+3. [Data Migration (Required)](#3-data-migration)
+4. [Server Setup & Deployment (Required)](#4-server-setup)
+5. [Optional Add-Ons](#5-optional-add-ons)
+6. [Technical Details](#6-technical-details)
+7. [Pricing & Timeline](#7-pricing--timeline)
+8. [Terms & Conditions](#8-terms--conditions)
 
 ---
 
-<a name="1-executive-summary"></a>
-## 1. EXECUTIVE SUMMARY
+<a name="1-system-overview"></a>
+## 1. SYSTEM OVERVIEW
 
-You already have a comprehensive system that handles your wholesale distribution operation end-to-end — ordering, warehouse, delivery, invoicing, collections. Your team knows the workflow and it works. The problem isn't the process — it's that the technology underneath it is outdated, difficult to maintain, and nearly impossible to extend with new features or integrations.
+You already have a comprehensive workflow for wholesale distribution — ordering, warehouse, delivery, invoicing, collections. **I'm rebuilding the engine, not redesigning the car.** The new system mirrors your existing process but runs on modern, maintainable technology.
 
-**We're rebuilding the engine, not redesigning the car.**
-
-The goal is to replace your current system with a modern platform that mirrors your existing workflow but runs on current technology — so it's faster, more reliable, accessible from any device, and ready to grow with you. When you want to add new features, integrate with other systems, or scale your operation, the platform is built for it from day one.
-
-**Key points:**
-- **Same workflow, modern foundation** — your team keeps working the way they already do. The screens and flows are designed around your existing process, not a generic template
-- Runs on your own server — your data stays on your premises
+**What you get:**
+- Same workflow your team already knows — modern foundation underneath
+- Runs on your own server — your data stays in your building
 - Works in any web browser — phones, tablets, desktops, no app store needed
-- Built on a modern, maintainable codebase that's ready for future integrations and feature additions
-- Smart features available when you're ready: voice ordering, AI-powered pick sheet reading, automatic invoice review
-- Designed for speed — large buttons, minimal taps, works on cheap Android handhelds
-- Full accounting built in — proper double-entry ledger, aging reports, statements, payment processing
+- Full accounting built in — proper double-entry ledger, aging reports, statements
+- Comprehensive reporting — report builder, standard reports, saved/scheduled exports, graphs
 - Every action logged — who did what, when, and why
-- **Future-proof architecture** — adding new modules, connecting to external systems, or moving to the cloud later is straightforward, not a rebuild
+- Future-proof — adding features, integrations, or moving to cloud later is a natural extension
 
----
-
-<a name="2-what-this-system-does"></a>
-## 2. WHAT THIS SYSTEM DOES — PLAIN ENGLISH
-
-### The Big Picture
-
-Your operation already follows this flow — and the new system keeps it exactly the same:
+**The flow stays the same:**
 
 ```
 SALESPERSON          WAREHOUSE           DELIVERY            ACCOUNTING
 places order    →    picks product   →   delivers to      →  invoices &
-(phone/desktop)      off the shelf       customer's door      collects payment
+(phone/in field)     off the shelf       customer's door      collects payment
 ```
 
-The difference: everything now runs through one modern platform instead of your legacy system. The flow your team already knows stays the same — but it's faster, more reliable, works on any device, and every step is tracked automatically. When something changes upstream, everyone downstream sees it in real time instead of finding out later.
+---
 
-### Who Uses It and What They See
+<a name="2-whats-included"></a>
+## 2. WHAT'S INCLUDED — BASE PACKAGE ($7,500)
 
-**Your salespeople** do what they already do — pick a customer, add products, review, and submit — but now through a clean, fast interface that works on their phone or desktop browser. They can browse the catalog, search, duplicate a past order, or even use voice input. They can also see their customer's balance, overdue invoices, credit status, and order history — everything they need to have an informed conversation with the customer.
-
-**Your warehouse team** keeps their existing workflow. Orders show up organized by route and delivery area. A manager assigns orders to pickers. The picker can work digitally on a handheld or continue working on paper — if paper, the manager takes a photo of the completed pick sheet and the system reads the handwritten quantities automatically using AI. The manager reviews and approves, then the order is ready for the truck. No change to how the warehouse operates day-to-day.
-
-**Your route planner** works the same way — sees all approved orders for the day, organizes them into routes (each route = one truck, one driver), and arranges the stop order. The system knows that the last stop needs to be loaded first on the truck.
-
-**Your drivers** see their route with every stop listed in order — same as today, but now on a clean screen instead of a printout. They tap a stop, print the invoice on a small Bluetooth printer, and the delivery is automatically marked as confirmed. If there's a problem, they tap "Rejected" and select a reason. Managers see all of this in real time on a live tracking map.
-
-**Your accounting team** gets a full dashboard that replaces whatever they're currently working with — invoices, payments, customer balances, aging reports, statements. Invoices are generated automatically from delivered orders. Payments can be processed through Authorize.NET (credit card, ACH). Statements can be sent automatically on a schedule or manually at any time via email, SMS, or WhatsApp.
-
-**The owner/manager** gets the visibility upgrade — a dashboard with live driver tracking, revenue numbers, sales performance by salesperson, collection rates, outstanding receivables, and customizable reports. The kind of reporting that's hard or impossible to get out of the old system.
+Everything below is included in the base price. Each section describes a screen group your team will use.
 
 ---
 
-<a name="3-how-your-team-will-use-it"></a>
-## 3. HOW YOUR TEAM WILL USE IT — STEP BY STEP
+### 2.1 Login & Security
 
-### 3.1 The Life of an Order — Complete Flow
-
-Below is the complete journey of a single order from start to finish. This mirrors your existing process — the screens and steps are new, but the workflow is what your team already does.
-
----
-
-#### SCENE 1: Salesperson Places the Order
-
-**Where:** On the road (mobile phone) or at the office (desktop)
-
-The salesperson opens the app in their phone's browser. They're immediately on their dashboard — a clean screen showing their customers, today's orders, and any alerts (like "Customer X is overdue on payment").
-
-**Step 1 — Pick the customer**
-They tap the search bar and type the first few letters of the customer name. The system finds it instantly. They could also scroll their "recent customers" list or tap a favorited customer. If the customer has multiple store locations, they pick which location this delivery is for.
-
-**Step 2 — Build the order**
-Now they're on the order screen. They have four ways to add products:
-
-- **Browse:** Tap through categories — Beverages → Sparkling Water → Crystal Springs → Black Cherry → 12oz case. Add quantity. Next item.
-- **Search:** Type "black cherry" in the search bar — system shows all matching products across all categories. Tap to add.
-- **Voice:** Tap the microphone button and say naturally: *"Three cases black cherry, eight cases lemon lime, two cases orange."* The system uses AI to match what you said to actual products in the catalog. It plays back each match so you can confirm or correct.
-- **Duplicate a past order:** Pull up this customer's last order, it loads every item and quantity. Adjust as needed.
-
-As they add items, a running total builds at the bottom — item count, subtotal, deposits, total.
-
-**Step 3 — Review**
-They tap "Review Order." The screen shows exactly what the invoice will look like — every line item with product name, quantity, unit price, any discount applied, deposit amount, and line total. Grand total at the bottom. Delivery date (defaults to the customer's usual day, but they can change it). A notes field for special instructions ("leave at back dock, call when arriving").
-
-At this stage, everything is still editable. They can add items, remove items, change quantities, apply a discount (within their allowed limits — the system enforces the cap automatically).
-
-**Step 4 — Submit**
-They tap "Submit Order." The order enters the system with a unique order number (e.g., ORD-2026-00142).
-
-🔸 *If this customer is on credit terms (Tier 1):* The order goes straight to the warehouse queue.
-🔸 *If this customer is pay-first (Tier 2):* The order is held. A payment link is sent to the customer. Only after payment clears does the order release to the warehouse.
-
-The salesperson gets a confirmation screen. Done. Total time: 2-5 minutes for a typical order.
+- Every user has an account with a role — system redirects to the right dashboard on login
+- Roles: Salesperson, Warehouse Worker, Warehouse Manager, Driver, Route Planner, Accounting, Admin/Owner
+- Permissions are granular — admin controls exactly what each person can see and do
+- Company-owned Android handhelds: device registration required, PIN/biometric unlock after first login
+- Desktop access: IP allowlist (office network only by default)
+- All traffic encrypted (HTTPS), even on local network
+- Failed login lockout, session timeout, tamper-proof audit log
 
 ---
 
-#### SCENE 2: Warehouse Picks the Order
+### 2.2 Salesperson Screens
 
-**Where:** Warehouse, on Android handhelds or paper
+**Dashboard (hub/launchpad):**
+- Quick-action buttons: New Order, Customer List, My Orders Today, Alerts
+- Summary tiles: orders today, outstanding balance total, deliveries in progress
+- Recent activity feed, link to full Reports page
 
-It's the morning of the delivery day. The warehouse manager opens the Order Queue — a screen showing all orders grouped by route and delivery area.
+**Customer List:**
+- Search/filter by name, status, area, tier
+- At-a-glance per row: name, last order, balance, overdue flag, credit status
+- "New Order" button on each row — skip into order wizard directly
 
-**Step 1 — Assign to pickers**
-The manager assigns each order to a picker. The picker sees the assignment appear on their handheld device (or the manager prints a pick list).
+**Customer Profile (4 tabs):**
+- Overview — contact info, addresses, credit status, tier, assigned salesperson
+- Orders — order history, duplicate any past order, filter by date/status
+- Account — invoices, payments, aging, balance, statements
+- Notes/Activity — internal notes, notification log, activity feed
 
-**Step 2 — Pick the order**
+**New Order Wizard (4 steps):**
+1. **Select Customer** — quick search, recents, favorites, pick delivery location
+2. **Build Order** — browse catalog (Category → Subcategory → Product → Flavor → Size), search, duplicate past order, favorites/quick lists. Running total visible. Each item shows 5-digit code, name, qty, price, line total
+3. **Review** — editable invoice preview. Adjust quantities, apply discounts (within policy caps), set delivery date, add notes
+4. **Submit** — order enters system. Credit customers → straight to warehouse. Pay-first customers → held until payment clears
 
-*Digital path:* The picker opens the order on their handheld. They see each line item — 6-digit product code, product name, requested quantity. They walk the warehouse, grab the product, and enter how many they actually picked. If a product is short, they enter the lower quantity (if partial picks are allowed by policy).
-
-*Paper + AI path (your current workflow):* The picker works off a printed sheet with a pen. They write the picked quantities by hand. When done, they bring the clipboard back. The manager takes a photo of the completed sheet with their phone. The system's AI reads the handwritten numbers and maps them to each line item using the 6-digit product codes. The manager sees the AI's reading on screen, confirms it's correct (or fixes any misread numbers), and approves.
-
-**Step 3 — Manager approval**
-The manager reviews every picked order before it moves forward. They can override quantities, flag issues, or send it back to the picker. Once approved, the order is ready for routing.
-
----
-
-#### SCENE 3: Route Planning & Truck Loading
-
-**Where:** Office or warehouse, desktop or tablet
-
-The route planner sees all approved orders for today. They drag orders into route groups — each route is one truck with one driver. Within each route, they arrange the stops in the order the driver should visit them (they know the streets and traffic patterns).
-
-The system shows the total cases per route and the number of stops. The planner assigns a driver and a truck to each route.
-
-**Key detail:** The truck is loaded in *reverse* stop order — the last delivery goes in first, the first delivery goes in last (so the driver can unload in order without digging through the truck).
-
-Once the route is finalized, it's locked and the loading order is sent to the warehouse team.
+**Payment collection in the field:**
+- Salespeople can collect payments from customers during visits
+- Process through Authorize.NET (card, ACH) or record cash/check
 
 ---
 
-#### SCENE 4: Driver Makes Deliveries
+### 2.3 Warehouse Screens
 
-**Where:** On the road, Android handheld in the truck
+**Order Queue:**
+- Orders grouped by route/delivery area
+- Manager assigns orders to specific pickers
+- Status tracking: New → Assigned → Picked → Approved
 
-The driver opens the app and sees their route — a list of stops in order. A progress bar shows "0 of 8 stops completed."
+**Pick Flow (Base — Paper Pick + Manual Entry):**
+- Manager prints pick list for the order
+- Worker picks using pen and physical clipboard — standard paper process
+- Worker returns completed clipboard to manager
+- Manager manually enters results in system: edits quantities or removes lines, rest is confirmed
+- Confirmed pick → moves to approved status
 
-**At each stop:**
+**Pick Approval:**
+- Manager reviews every picked order before release
+- Can override quantities, flag issues, reject back to picker
+- Approved orders → ready for route assignment and truck loading
 
-1. The driver taps the stop to see the order details — customer name, address, what's being delivered.
-2. They tap "Navigate" — Google Maps or Waze opens with the address loaded.
-3. They arrive at the location and tap "Print Invoice" — the invoice prints on the small Bluetooth printer in the truck.
-4. **Delivery automatically confirmed.** When the invoice prints (or is sent electronically), the system marks it as delivered. No extra tap needed.
-5. If there's a problem — customer refuses delivery, nobody's there, wrong address — the driver taps "Rejected," picks a reason from a dropdown, and optionally adds a note. The rejection is instantly visible to accounting and the salesperson.
-
-🔸 *Location check:* If the driver prints an invoice but their GPS shows they're not near the delivery address, the system shows a warning: "You don't appear to be at this location. Print anyway?" It's not a hard block — they can proceed — but it's logged.
-
-**End of route:** The driver sees a summary — X stops delivered, Y rejected, total cases delivered. They confirm the route is complete.
-
----
-
-#### SCENE 5: Accounting Gets Paid
-
-**Where:** Office, desktop
-
-**Invoices are generated automatically** from delivered orders. The quantities actually delivered (what the picker confirmed, not what was originally ordered) become the billed amounts.
-
-The accountant's dashboard shows:
-- Invoices pending review
-- Unapplied payments to reconcile
-- Overdue accounts
-- Credit limit reviews due
-
-**Invoice review & finalization:**
-At the end of the week (or on whatever schedule you choose), accounting reviews the week's invoices before they are "posted" — meaning officially locked into the books. The system's AI flags potential issues: pricing that looks wrong, quantities that are unusual for this customer, missing deposit charges, possible duplicates. The accountant reviews the flags, corrects anything needed, and posts the invoices.
-
-**Collecting payments:**
-- For credit customers: invoices are sent automatically. Payments come in via Authorize.NET (customer pays through a link, or accounting charges the card on file).
-- For pay-first customers: payment was already collected before delivery.
-- Any payment can be applied to specific invoices. If a payment doesn't match an exact invoice, the remainder sits in "unapplied payments" until the accountant matches it.
-
-**Statements:** Sent automatically on a schedule (monthly, weekly, custom per customer) via email, SMS, or WhatsApp. Can also be sent manually at any time.
-
-**Notifications:** The system sends automated reminders — "Your invoice is due in 3 days," "Payment received, thank you," "Your statement is ready." Channels, timing, and wording are all configurable.
+> Digital pick on handheld and AI pick sheet scanning are available as optional add-ons.
 
 ---
 
-### 3.2 Other Key Flows
+### 2.4 Route Planning Screens
 
-#### Customer Credit Tiers
-The system supports multiple customer tiers — you define as many as you need:
-- **Credit customers** order first, pay later per their terms (net-15, net-30, etc.). Credit limits are set per customer. The system warns or blocks the salesperson when a customer approaches or exceeds their limit.
-- **Pay-first customers** must pay before their order enters the warehouse. The system sends a payment link automatically and holds the order until payment clears.
-- You can create additional tiers with custom rules at any time.
+> Route planning happens BEFORE the truck is loaded — the route determines loading order (last stop loaded first).
 
-#### Discounts & Pricing Control
-Salespeople can apply discounts in the field — but only within limits you set. If a salesperson's cap is 10% and they try to give 15%, the system blocks it. You define these caps per person, per group, or per role. Every discount is logged with who applied it and why.
+**Route Builder:**
+- All approved/picked orders displayed, grouped by area
+- Planner drags orders into route groups — each route = one truck + one driver
+- Arranges stop order within each route (planner knows the streets)
+- Shows total cases per route, number of stops
+- Assigns driver and truck
+- Finalized route → locked and sent to warehouse for truck loading
 
-#### Multi-Location Customers
-One company (account) can have many delivery locations (store branches). Billing and credit roll up to the parent account. Each location has its own address, contact, and delivery schedule.
-
-#### Admin Control Panel
-A separate, powerful back-end area (not visible to field workers) where managers configure everything: user accounts, role permissions, discount policies, credit tiers, product catalog, notification rules, invoice lock periods, and more. Think of it as the control room behind the clean storefront.
-
----
-
-<a name="4-whats-under-the-hood"></a>
-## 4. WHAT'S UNDER THE HOOD
-
-This section explains the technology choices — what the system is built with, where it runs, and how it's protected. It's written for decision-makers, not developers. The goal of every choice below is the same: build on proven, modern technology so the system is easy to maintain, easy to extend, and ready for whatever integrations or features you want to add down the road.
-
-### 4.1 Where It Runs
-
-The system runs **on your own server** in your office. Your data never leaves your building. All users — whether they're on a desktop in accounting or a phone in a customer's store — connect to that server over your local network.
-
-The server runs Windows (which your team already knows) with two main components:
-- **The application** — built on Microsoft's .NET platform (the same technology behind most enterprise Windows software). This is the engine that handles all the business logic, screens, and calculations.
-- **The database** — PostgreSQL, a powerful free database system used by companies from startups to Fortune 500s. It stores all your customers, orders, invoices, products, and history. It includes geographic capabilities (for driver tracking and distance calculations) at no extra licensing cost.
-
-**Why these choices matter to you:**
-- .NET on Windows = no new infrastructure to learn. It runs natively on the servers you already have.
-- PostgreSQL = zero licensing fees, forever. No "per user" or "per year" database costs. Full-featured.
-- The app is a website, so it works in any browser — Chrome, Edge, Safari, Firefox. No app store, no installations, no updates to push to every device.
-- **Future-readiness:** This stack is designed from the ground up so that adding new features, connecting to external systems (inventory, manufacturing, accounting exports), or eventually moving to the cloud is a natural extension — not a painful rewrite. That's the whole point of modernizing now.
-
-### 4.2 How It Feels to Use
-
-The system is designed as a **web application** — it looks and feels like a modern website, not clunky desktop software.
-
-- **On desktop:** Full-screen browser experience with dashboards, tables, charts, and detailed forms
-- **On mobile:** The same app, automatically reformatted for small screens with large buttons, swipe gestures, and minimal typing
-- **Speed:** Pages load fast because the server does the heavy lifting and sends ready-made pages to the browser — the phone or handheld device doesn't need to be powerful
-
-For the few screens that need richer interaction (the order builder with live search, the route planner with drag-and-drop, the live driver map), small targeted JavaScript modules handle those specific features without slowing everything else down.
-
-### 4.3 Smart Features (AI-Powered)
-
-Three areas use cloud-based AI (the app sends data to an AI service and gets results back):
-
-1. **Voice ordering** — The salesperson speaks naturally, and the AI matches what they said to your actual product catalog. Not just dictation — it understands "three cases of the black cherry sparkling" and maps it to the correct product, flavor, and size.
-
-2. **Pick sheet reading** — The warehouse worker fills out a paper pick sheet by hand. The manager photographs it. The AI reads the handwritten quantities and maps them to line items using the 6-digit product codes. The manager confirms and moves on.
-
-3. **Invoice review** — Before invoices are posted, the AI scans for anomalies: pricing errors, unusual quantities for this customer, missing deposits, possible duplicates. Flags them for the accountant to review.
-
-These AI calls go over the internet to a cloud service (OpenAI). Only the specific data needed is sent (audio clip, photo, invoice data) — not your entire database. All other system operations stay on your local network.
-
-### 4.4 Security — How Your Data Is Protected
-
-**Network:**
-- The app and database sit on your private network — not on the public internet
-- Desktop users connect directly over your office LAN
-- Mobile/field devices connect through your firewall — only the app's specific port is open
-- Standard firewall and antivirus on the server
-
-**User access:**
-- Every user has an account with a role (salesperson, driver, warehouse, accounting, admin)
-- Permissions are granular — you control exactly what each person can see and do
-- Salespeople only see their own customers. Drivers only see their own route. Accounting sees financial data. Managers see everything.
-- Failed login attempts lock the account temporarily
-
-**Mobile devices:**
-- Company-owned handhelds are registered in the system — unregistered devices can't connect
-- After initial setup, workers use a simple PIN or fingerprint to unlock (not full password every time)
-- Admin can revoke a device instantly if it's lost or someone leaves
-- No sensitive data stored in plain text on the device
-
-**Financial data:**
-- Credit card numbers never touch your system — they go directly to Authorize.NET's secure vault. Your app only sees a token like "Visa ending 4242"
-- Every financial action (invoice, payment, credit, adjustment) creates an automatic audit trail
-- The audit log is tamper-proof — even admins can't delete entries
-
-**All encrypted:** All traffic between browsers and the server is encrypted (HTTPS), even on your local network.
-
-### 4.5 Accounting Under the Hood
-
-The system looks simple to the user, but underneath it follows **proper double-entry accounting** — the standard used by every serious financial system in the world.
-
-What this means: every time someone creates an invoice, receives a payment, applies a discount, or issues a credit, the system automatically creates the correct accounting entries (debits and credits) in a real ledger. The accountant doesn't need to make these entries — the system generates them from normal business actions.
-
-This gives you:
-- Accounts receivable aging (who owes what, how overdue)
-- Revenue reports by product, customer, salesperson, and time period
-- Tax reports for government filing
-- Trial balance for accountant verification
-- Full transaction journal — every dollar traced from source to destination
-
-### 4.6 Notifications System
-
-The system has a built-in notification engine that sends messages automatically:
-- **Channels:** Email, SMS (via Twilio), and WhatsApp
-- **Triggers:** Invoice sent, payment due, payment received, delivery confirmed, credit limit approaching, statement ready — or custom triggers you define
-- **Timing:** Configurable — e.g., reminder 3 days before due, again on due date, again 7 days after
-- **Logging:** Every notification is logged — who received what, when, via which channel, and whether they replied
+**Route Assignment View:**
+- Summary of all routes for the day
+- Can reassign driver/truck, reorder stops until loading begins
 
 ---
 
-<a name="5-project-timeline"></a>
-## 5. PROJECT TIMELINE — 4-WEEK RAPID BUILD
+### 2.5 Driver Screens
 
-### Development Approach
+**My Route:**
+- List of stops in delivery order with progress bar
+- Each stop: customer name, address, # cases, delivery window
 
-We use a **design-first, build-fast** method with **parallel development agents** — multiple specialized development streams running simultaneously. Instead of one developer building everything sequentially, we spin up focused work streams that each handle a module of the system at the same time.
+**Stop Detail:**
+- Order summary showing each product's 5-digit product code, name, and quantity
+- **Driver can edit the order before confirming** — e.g. customer spots a problem at the door. Edits are flagged for accounting and salesperson is notified automatically
+- **Print Invoice** — handheld portable Bluetooth thermal printer (driver carries it)
+  - Location check: if GPS shows driver isn't near the address → warning (logged, not hard-blocked)
+- **Digital Signature option** — customer signs on device screen instead of receiving printout
+- **Launch Navigation** — opens Google Maps / Waze with destination
+- **Delivery status:** Confirmed (tap to confirm) or Rejected (select reason + optional note)
 
-**Week 1** is purely design and foundation. **Weeks 2-3** are full parallel construction. **Week 4** is integration, testing, and delivery.
+**Auto-Confirmation Rule:** When the driver prints or sends the invoice, delivery is automatically marked as confirmed — no extra tap needed.
 
----
-
-### WEEK 1 — FOUNDATION & DESIGN (Days 1-7)
-
-| Day | Task | Deliverable |
-|-----|------|-------------|
-| 1-2 | Final stakeholder Q&A session — resolve all open questions | Completed requirements document |
-| 2-3 | Database schema finalized — all tables, relationships, constraints | Database blueprint |
-| 3-4 | UI wireframes for all screens — salesperson, warehouse, driver, accounting, admin | Clickable wireframes for review |
-| 4-5 | API design — every endpoint documented | API specification |
-| 5-6 | Server setup — Windows Server, PostgreSQL installed, project scaffolded, CI pipeline | Working dev environment |
-| 6-7 | Seed data — test products, customers, users loaded | Ready for development |
-
-**Milestone: Design Review** — End of Week 1, you see wireframes of every screen and approve before we build.
+**End of Route:** Summary of completed/rejected stops, driver confirms route complete.
 
 ---
 
-### WEEK 2 — PARALLEL BUILD, PHASE 1 (Days 8-14)
+### 2.6 Accounting Screens
 
-Multiple development streams launch simultaneously:
+> Simpler than QuickBooks on the surface — but proper double-entry accounting runs automatically underneath every action.
 
-| Stream | What's Being Built | Depends On |
-|--------|--------------------|------------|
-| **Stream A** | Core data layer — Customer, Product, Order, Invoice entities + database migrations | Foundation (Week 1) |
-| **Stream B** | Authentication — login, roles, permissions, device registration, session management | Foundation |
-| **Stream C** | Product catalog — admin management screens, category/product/variant CRUD, pricing, visibility rules | Stream A (starts day 9) |
-| **Stream D** | Salesperson screens — dashboard, customer list, customer profile, order wizard (browse + search + duplicate) | Stream A + C (starts day 10) |
-| **Stream E** | Notification engine — trigger system, email/SMS/WhatsApp integration, templates, scheduling | Stream A (starts day 9) |
+**Dashboard:**
+- KPI tiles: total receivables, overdue amount, payments received today/week, cash flow summary
+- Action queue: invoices pending review, unapplied payments, credit reviews due, flagged orders
+- Quick access: customer lookup, send statement, process payment, issue credit memo
 
-**Milestone: Core Demo** — End of Week 2, you can log in, browse products, and place an order through the system.
+**Invoice Detail:**
+- Full invoice view (same layout as printed)
+- Payment status and history, actions (apply payment, credit memo, send, print, adjust)
+- PDF preview and download
+- Linked journal entries visible for audit
 
----
+**Payment Processing:**
+- **Receive payment without selecting an invoice** — record a payment against a customer. It sits in "unapplied payments" until the accountant matches it to specific invoices later
+- **Apply payment to specific invoice(s)** — select one or more open invoices and apply the payment directly
+- **Both flows always available** — receive first / apply later, or receive and apply in one step
+- Batch payment view — process multiple payments in one session
+- Methods: card (Authorize.NET), ACH, check (manual entry), cash (manual entry)
+- Unapplied payments dashboard — see all unmatched payments, match to invoices when ready
 
-### WEEK 3 — PARALLEL BUILD, PHASE 2 (Days 15-21)
+**Statements:**
+- Per customer: outstanding invoices, payments, credits, running balance
+- Send via email per customer preference
+- Batch statement run — all customers at once or filtered group
+- Configurable schedule (monthly, weekly, custom per customer)
+- Auto-send on schedule + manual send anytime
 
-All remaining modules built simultaneously:
+**Invoice Review & Finalization:**
+- End-of-week (configurable) review before invoices are "posted" to the ledger
+- **Rules-based flagging** — system flags potential issues: pricing anomalies, unusual quantities vs. customer history, missing deposits, duplicates, discount policy violations
+- Accountant reviews flags, corrects as needed, then finalizes → posted to ledger
 
-| Stream | What's Being Built | Depends On |
-|--------|--------------------|------------|
-| **Stream F** | Warehouse flow — order queue, pick assignment, digital pick, AI pick sheet (photo OCR), manager approval | Orders (Stream D) |
-| **Stream G** | Route planning & driver flow — route builder, stop ordering, driver route screen, delivery confirmation, GPS integration, Bluetooth printing | Orders (Stream D) |
-| **Stream H** | Invoicing & accounting — invoice generation from deliveries, payment processing (Authorize.NET), ledger entries, aging reports, statements | Orders + Delivery |
-| **Stream I** | Admin panel — user management, policy configuration (discount caps, invoice locks, credit tiers), system settings | All core entities |
-| **Stream J** | Manager dashboard — live route tracking (SignalR), KPI tiles, sales reports, custom report builder | All modules |
+**Monthly Statement Lock:**
+- Manual monthly process (same pattern as weekly invoice review)
+- Accounting reviews and locks monthly statements
 
-**Milestone: Full System Demo** — End of Week 3, every module is functional. You can walk through the complete flow: order → pick → route → deliver → invoice → pay.
-
----
-
-### WEEK 4 — INTEGRATION, TESTING & DELIVERY (Days 22-28)
-
-| Day | Task |
-|-----|------|
-| 22-23 | Integration testing — all modules talking to each other, end-to-end flow testing |
-| 23-24 | Bug fixing — issues found during integration |
-| 24-25 | Performance testing — load testing with realistic data volumes |
-| 25-26 | User acceptance testing (UAT) — your team tests the system hands-on, provides feedback |
-| 26-27 | Final fixes and polish from UAT feedback |
-| 28 | **Deployment to your production server + handover** |
-
-**Milestone: Go-Live** — End of Week 4, system is live on your server and your team starts using it.
-
----
-
-### Post-Launch Support (Included)
-
-- **2 weeks of bug-fix support** after go-live at no extra cost
-- Priority response for critical issues (system down, data problems)
-- Non-critical bugs addressed within 48 hours
+**Pricing Management:**
+- Create unlimited price levels (e.g. "Standard," "Preferred," "Chain Discount," "Zone A")
+- Assign prices to products per level (e.g. Product X = $10.00 in Standard, $9.00 in Preferred)
+- Assign customers to a price level — determines which prices they see and are charged
+- Levels can be based on: customer type, area, zip code, custom groups, or individual customer override
+- Admin can also access pricing for overrides
 
 ---
 
-<a name="6-base-package-pricing"></a>
-## 6. BASE PACKAGE — PRICING
+### 2.7 Accounting Engine (Under the Hood)
 
-### What's Included in the Base Package
+Everything below runs automatically — users never create journal entries manually.
 
-| Module | Included |
-|--------|----------|
-| Salesperson App (mobile + desktop) | ✅ |
-| Product catalog management | ✅ |
-| Order placement (browse, search, duplicate, voice) | ✅ |
+**Double-Entry Ledger:**
+- Every financial action creates proper journal entries automatically
+- Invoice created → Debit: Accounts Receivable, Credit: Sales Revenue + Deposits + Tax
+- Payment received → Debit: Cash/Bank, Credit: Accounts Receivable
+- Discount applied → Debit: Discounts Given, Credit: Accounts Receivable
+- Accountant CAN view the full ledger and drill into any entry
+
+**Chart of Accounts:** Pre-configured (Accounts Receivable, Sales Revenue, Deposit Revenue, Discounts Given, Cash/Bank, Unapplied Payments, Credit Memos, Tax Payable). Admin can add/rename accounts.
+
+**Standard Financial Reports:** AR Aging, Customer Statements, Transaction Journal, Revenue by period/product/customer/salesperson, Cash Receipts, Tax Report, Trial Balance.
+
+---
+
+### 2.8 Reports
+
+> Reports are a first-class feature. Every user gets answers from system data without asking IT or exporting to Excel.
+
+**Report Builder:**
+- User-friendly — no SQL knowledge needed
+- 3-step process: (1) Pick data source(s) — Orders, Invoices, Payments, Customers, Products, Deliveries, etc. (2) Select columns — drag/drop or checkbox. System auto-handles joins across data sources. (3) Filter & sort — date range, status, customer, salesperson, area, product, any field. AND/OR combinable.
+- **Live preview** — results update as filters change
+- **Auto-generated graphs** — bar, line, pie charts when report includes numeric columns. Interactive (hover, click to drill down)
+- **Export:** PDF, Excel (.xlsx), CSV
+- **Grouping & aggregation** — group by any dimension, auto-sum/average/count per group
+
+**Standard Pre-Built Reports (ready out of the box):**
+- **Sales:** by period, by salesperson (with leaderboard), by customer, by product/category, by area/zip, order volume trends
+- **Accounting:** AR Aging, statements, revenue, cash receipts, tax, trial balance, transaction journal, unapplied payments, credit memos
+- **Operations:** delivery performance (on-time, rejections), route efficiency, pick accuracy, driver performance, inventory movement
+- **Customer:** activity over time, new acquisition, retention/churn, credit utilization
+
+**Saved Reports & Scheduled Exports:**
+- Save any report with a name — preserves filters, columns, sort, chart settings
+- Recurring exports — schedule saved reports to auto-run and email (e.g. "Sales by Salesperson — Weekly" every Monday)
+- Report library per user + admin-published company-wide shared reports
+- Pin favorites to dashboard for one-click access
+
+**Role-Based Access:**
+- Salespeople see only their customers' data
+- Accounting sees all financial data
+- Managers see everything
+- Admin controls report access via the same permission engine
+
+---
+
+### 2.9 Admin / Back-End Control Panel
+
+> Separate area from field UI. Power-user settings — not visible to field workers.
+
+**Sections:**
+1. **Users & Roles** — create/edit users, assign roles, set granular permissions, manage teams
+2. **Product Catalog** — categories, subcategories, products, 5-digit codes, pricing, deposits, display units (sales vs. warehouse view), visibility rules
+3. **Pricing** — admin overrides and global settings (day-to-day pricing managed by accounting — see Section 2.6)
+4. **Policies** — discount caps, adjustment rules (pre-pick open → post-pick strict), invoice lock period, order modification rules, credit tier definitions, approval workflows
+5. **Notifications** — triggers, channels, timing, templates per event type
+6. **System Settings** — company info, delivery date defaults, payment gateway config, printer settings, statement schedules
+
+Each section has: list view with search/filter, detail/edit form, audit log.
+
+---
+
+### 2.10 Manager / Owner Dashboard
+
+- **All features included** — owner sees everything, can customize visible sections
+- **Multiple saved views** — "Daily Overview," "Sales Focus," "Collections Focus," etc.
+
+**Default view:**
+- **Live Route Tracker** — all drivers on a map in real time, per-driver stop progress
+- **KPI Tiles:** revenue today/week/month vs. prior period, deliveries, rejection rate, collection rate, outstanding receivables
+- **Salesperson Performance** — individual + comparison/leaderboard, revenue, orders, collection rate
+- **Alerts & Flags** — rejected deliveries, over-limit customers, overdue accounts, pending approvals
+- **Reports quick access** — links to full Report Builder and saved reports
+
+**Customization:** drag-and-drop tiles, show/hide sections, save multiple named views.
+
+---
+
+### 2.11 Notifications (Base — Email Only)
+
+- Built-in notification engine — email channel included in base
+- **Triggers:** invoice sent, payment due, payment received, delivery confirmed, credit limit approaching, statement ready, review date reached, custom triggers
+- **Timing:** configurable — e.g. reminder 3 days before due, again on due date, again 7 days after
+- **Templates:** customizable per event type
+- **Logging:** every notification logged — who, what, when, delivery status
+
+> SMS (Twilio) and WhatsApp channels are available as optional add-ons.
+
+---
+
+### 2.12 Offline Mode (Basic — Included)
+
+- Orders and delivery confirmations saved on device when connection drops
+- Product catalog and customer data cached locally
+- Sync engine queues offline actions → pushes to server on reconnect
+- Conflict resolution: server timestamp wins, user notified of any overrides
+- **Scope:** offline ordering + offline delivery. Accounting/admin always requires connection
+
+---
+
+### 2.13 Order Lifecycle & Policies
+
+> **Core design principle:** Almost every rule in the system is configurable through admin/accounting control panels — not hardcoded. Order rules, discount caps, credit tiers, invoice locks, modification limits, notification triggers, catalog visibility — all adjustable per user, per group, per role, or system-wide. Sensible defaults ship out of the box; you customize from there.
+
+**Order vs Invoice:**
+- Separate records — order tracks what was requested, invoice generated from what was actually delivered
+
+**Order Modification Rules (fully configurable):**
+- Before picking: salespeople/accounting can freely edit (add/remove items, adjust quantities, discounts, delivery date, cancel)
+- After picking begins: modifications become very strict — limited adjustments only
+- **Policy engine controls everything post-pick:** what adjustments are possible, who can make them, what caps/limits apply — all configurable per role, per user, per group
+- Cancellation rules, post-pick adjustments, return credits — all policy-controlled the same way
+- Every change at every stage logged with who, what, when, documented reason
+
+**Discount & Adjustment Caps (fully configurable):**
+- Admin sets per-role/per-user/per-group limits on discounts salespeople can give
+- System enforces caps automatically — salesperson can't exceed their limit
+- Deposit discounts/waivers also controlled by policy
+- Post-pick adjustments follow the same cap system
+
+**Customer Credit Tiers (fully configurable):**
+- Admin can create any number of tiers with custom names and rules
+- **Credit customers:** order → warehouse immediately, pay later per terms (net-15, net-30, etc.)
+- **Pay-first customers:** order held until payment clears, payment link sent automatically
+- New customers default to $0 credit limit / pay-on-order
+- Rules per tier: payment timing, credit limits, block vs. warn behavior, notification triggers, discount caps — all configurable
+- Credit limit review: manual scheduled feature — accountant sets a reminder date, system notifies on that date
+- All credit decisions and tier changes logged with full audit trail
+
+**Invoice Lock & Finalization (manual process):**
+- Accounting manually reviews and locks invoices (weekly review cycle, configurable)
+- Once locked, adjustments require documented reason and elevated permission
+- Credit memos can be issued against locked invoices
+- Monthly statement lock follows the same manual review-and-lock pattern
+
+**Product Codes:**
+- 5-digit numeric auto-generated codes with structured hierarchy
+- Universal identifier across all screens and printouts
+
+**Pricing:**
+- **Price levels** — admin creates unlimited named price levels (e.g. "Standard," "Preferred," "Chain Discount," "Zone A")
+- **Products are assigned to price levels** — each product/variant gets a price in each level (e.g. Product X = $10.00 in Standard, $9.00 in Preferred, $8.50 in Chain)
+- **Customers are assigned to a price level** — the customer's assigned level determines which prices they see and are charged
+- Price levels can be based on: customer type, area, zip code, custom groups, or individual customer override
+- When a salesperson opens an order for a customer, the system automatically shows that customer's price level prices
+- CRV deposits: per case, shown separately on invoice, tracked separately in accounting, not taxed
+- No sales tax (wholesale only)
+
+**Permissions & Visibility (fully configurable):**
+- Who sees what is NOT hardcoded by role — admin sets policies per user, per group, or per role
+- Salespeople see only their assigned customers; drivers see only their route; accounting sees all financial data; managers see everything
+- Admin can override any default (e.g. senior salesperson sees another's accounts)
+- Same policy engine controls data visibility, discount caps, adjustment limits, and order rules
+
+---
+
+### 2.14 Security (Included)
+
+- Device registration for mobile handhelds — unregistered devices blocked
+- PIN/biometric unlock after initial login
+- IP allowlist for desktop access
+- HTTPS everywhere (even on LAN)
+- Failed login lockout
+- Tamper-proof audit log (append-only, even admins can't delete)
+- Payment data (PCI compliant) — card numbers never touch the app, only Authorize.NET tokens
+- Reason codes required for sensitive actions
+- Admin can revoke devices and force-logout users remotely
+
+---
+
+<a name="3-data-migration"></a>
+## 3. DATA MIGRATION (Required — Billed Separately)
+
+This is a company with records going back to 2000 — starting from scratch is not an option. All existing data must be migrated into the new system.
+
+**What's included:**
+- Import existing customers, products, pricing, and historical invoices/transactions from your current system
+- Data cleaning, format conversion, deduplication, and verification
+- Mapping old data structures to the new system's schema
+- Validation reports — you review and confirm the imported data is correct before go-live
+
+**Pricing: $500 – $3,000** — exact cost depends on:
+- **What data needs to be migrated** — basic records (customers, products, invoices, transactions) are on the lower end. Adding saved pricing rules, discount structures, customer-specific prices, policies, credit terms, salesperson assignments, and other configuration data increases complexity and cost.
+- What data formats are available from the previous system (database export, spreadsheets, API, etc.)
+- Volume and complexity of historical records
+- How clean the existing data is (duplicates, inconsistencies, missing fields)
+- Whether I receive the data before development starts (preferred — allows me to build the import alongside the system)
+
+**Process:** I need access to your existing data as early as possible. I'll review it, assess the scope, and agree on a final migration price before work begins. Migration runs in parallel with the build — no impact on the 4-week timeline.
+
+---
+
+<a name="4-server-setup"></a>
+## 4. SERVER SETUP & DEPLOYMENT (Required — Choose One)
+
+The software price ($7,500) covers building the application. Getting it running requires server setup, which is a separate cost.
+
+**In both options, your database stays on-premises — your data never leaves your building.** The choice is where the web server (the part that processes requests and serves the application) runs.
+
+### Option A: Full On-Premises — $2,500 setup
+
+Both the web server and database run on your hardware in your office. I install and configure everything from scratch:
+- Windows Server OS configuration and hardening
+- PostgreSQL database installation, tuning, and backup scheduling
+- .NET 8+ runtime, web server (IIS/Kestrel), reverse proxy setup
+- SSL certificates (purchase and configuration)
+- Network configuration — firewall rules, port forwarding, DNS, static IP
+- Security hardening (IP restrictions, device registration, encryption at rest)
+- Initial performance testing and optimization
+
+**Why it costs more:** Everything is manual. I install the operating system, download and configure every package, set up networking from your router/firewall, troubleshoot hardware compatibility, and test the full stack on your specific hardware. If something doesn't work with your network setup, I diagnose and fix it.
+
+**Pros:** Data physically stays in your building, full hardware control, no cloud dependency
+**Cons:** Ongoing maintenance costs (hardware upkeep, power, internet, OS updates, physical security). If the server hardware fails, you're down until it's fixed or replaced. You are responsible for keeping the server running.
+
+### Option B: Hybrid — Cloud Web Server + On-Premises Database — setup & monthly costs vary
+
+The **web server** (application processing) runs on a cloud VPS (Azure, AWS, DigitalOcean, Hetzner, etc.). The **database** stays on your on-premises server — your data never leaves your building. The cloud web server connects securely to your local database through an encrypted tunnel.
+
+**The pitch: Your data is yours. Processing is in the cloud.**
+
+**Why setup is cheaper:** Cloud servers already come pre-configured with a compatible operating system (Ubuntu Server or Windows Server — ready to go out of the box). Installing .NET and all application dependencies is a one-command process through built-in package managers. There's no physical networking to configure for the web layer — firewalls, security groups, DNS, and SSL certificates are all built into the cloud dashboard and can be automated. No additional hardware to spec, purchase, ship, rack, cable, or test for the application server. You still need a local machine for PostgreSQL, but a database-only server is simpler and cheaper to set up than a full application stack.
+
+**Pros:**
+- Data stays in your building (database is local)
+- No additional hardware to buy for the web server
+- Automatic power and internet redundancy for the application layer (cloud data centers have generators, redundant connections)
+- Built-in backup for the application server (snapshots)
+- Easy to scale up processing power (need more? click a button, pick a bigger instance)
+- OS patches and security updates for the web server are simpler to apply
+- If you already have a machine for the database, total hardware cost is much lower
+
+**Cons:** Monthly recurring cost (depends on provider and server specs), requires a secure tunnel between cloud and local database, you still maintain the local database server
+
+**Impact on optional add-ons with hybrid deployment:**
+- **VPN Lockdown (OPT-9):** Cost reduced — the cloud-to-database tunnel is already secured. Cloud providers include private networking, security groups, and firewall rules as built-in features.
+- **Cloud Backup (OPT-15):** Cost reduced or unnecessary for the web layer — cloud VPS includes snapshot backups. Database backups are handled locally.
+- **Failover Server (OPT-17):** Cloud web server failover is significantly cheaper — spinning up a standby instance is built-in functionality. Database failover still requires a second local machine or replication setup.
+
+**Monthly cost context:** Cloud hosting monthly costs are often comparable to or less than the electricity, internet bandwidth, and IT time you'd spend maintaining a full on-premises application server — plus you don't need to buy a second machine for the web layer.
+
+---
+
+<a name="5-optional-add-ons"></a>
+## 5. OPTIONAL ADD-ONS
+
+Each add-on can be included now or added later. Building during the initial build is cheaper and faster than retrofitting.
+
+---
+
+### OPT-1: Digital Pick on Handheld — +$1,200 / +2-3 days
+Picker opens assigned order on tablet/handheld, sees line items with 5-digit codes and requested quantities, enters picked quantities per item. Submits to manager for approval. Replaces paper pick flow with a digital workflow.
+
+### OPT-2: AI Pick Sheet OCR — +$1,500 / +3-4 days
+Worker picks using paper and pen (current process). Manager photographs the completed pick sheet. AI reads handwritten quantities and maps them to line items using 5-digit product codes. Manager reviews AI readings on screen, confirms or corrects, and approves. Requires: OpenAI API key (ongoing usage cost ~$0.01-0.05 per photo).
+
+### OPT-3: Voice Ordering — +$1,500 / +3-4 days
+Salesperson speaks naturally ("three cases black cherry, eight cases lemon lime"). AI matches spoken words to actual products in your catalog — not just dictation. Plays back matches for confirmation. Three input methods: speak live in the app, paste a voice note (e.g. from WhatsApp or iMessage), or upload an audio file. Requires: OpenAI API key.
+
+### OPT-4: SMS Notifications (Twilio) — +$800 / +1-2 days
+Adds SMS as a notification channel. Same triggers and timing as email. Requires: Twilio account (SMS costs are yours, typically $0.01-0.02 per message). *Note: SMS messaging may require regulatory compliance registration (e.g. A2P 10DLC or toll-free verification) which involves a carrier approval process and may incur minor additional fees.*
+
+### OPT-5: WhatsApp Notifications — +$1,000 / +2-3 days
+Adds WhatsApp as a notification channel. Customers can reply (replies logged). Requires: WhatsApp Business API account (Meta approval process, messaging costs ~$0.01-0.05 per message). *Note: WhatsApp Business API requires Meta's business verification and approval process, which may involve regulatory compliance steps and minor additional fees.*
+
+### OPT-6a: Customer Credit Scoring — +$800 / +2-3 days
+Automatic credit rating based on customer behavior — order frequency, payment history, average days to pay, returned orders. System auto-flags, warns, or blocks based on configurable thresholds. **Scoring policies set and managed by accounting.** Scoring rules, weights, and thresholds are all configurable.
+
+### OPT-6b: Salesperson Performance Scoring — +$400 / +1-2 days
+Similar scoring system applied to salespeople — tracks order volume, revenue generated, collection rate, new customer acquisition, and other configurable metrics. Used for **reporting and performance visibility** (dashboards, leaderboards, trends). Scoring rules and weights configurable by management.
+
+### OPT-7: Customer Self-Service Portal — +$2,500 / +3-5 days
+Customers log in to view their account balance, invoices, statements, payment history, and make payments. Optionally enable customer-placed orders (per customer). Reduces phone calls to your office.
+
+### OPT-8: Customer-Facing Ordering Website — Pricing TBD
+A full branded website where smaller customers can browse your catalog, place orders, and manage their account. This is a larger standalone project — essentially a customer-facing e-commerce layer on top of the ERP. Login-required, feeds into the same order system. Requires OPT-7 (Customer Portal) as a foundation. Pricing and timeline will be scoped separately based on requirements.
+
+### OPT-9: Full Private Network Lockdown (VPN) — +$1,500 / +2-3 days
+App becomes completely invisible to the public internet. All mobile devices connect through VPN tunnel. Internal DNS only. Zero attack surface. Your IT manages the VPN server (I set it up). *Note: base package already includes device registration + IP allowlist + encryption, which is sufficient for most operations. VPN tunneling may have ongoing costs from your VPN provider depending on the solution chosen.*
+
+*☁️ Hybrid deployment: Reduced cost (~$800–$1,000) — the cloud-to-database tunnel is already secured. Cloud providers include private networking, security groups, and built-in firewall rules. Less manual VPN infrastructure to set up.*
+
+### OPT-10: SSO + Multi-Factor Authentication — +$400 / +2-3 days
+Users sign in with company accounts (Microsoft 365 / Azure AD / Google Workspace). MFA adds authenticator app or SMS verification. Enables secure remote access without VPN. Requires active Microsoft 365 or Google Workspace subscription.
+
+### OPT-12: Truck-Specific Navigation — +$600 / +1-2 days
+Integrates truck-specific nav (Sygic Truck or CoPilot) that accounts for low bridges, weight limits, no-truck zones. Important for dense urban delivery areas. Ongoing cost: ~$100-150/year per device for Sygic license.
+
+### OPT-13: Multi-Company / Multi-Tenant — +$1,800 / +3-4 days
+Run separate companies or divisions within one system — each with their own customers, products, invoicing, and accounting. Managed from one login. Significantly cheaper to build in from the start.
+
+### OPT-14: Additional Training Hours — +$85/hour
+Need more than the included 5 hours? Additional training sessions for new staff, advanced features, or refresher courses billed at $85/hour. Can be scheduled anytime.
+
+### OPT-15: Temp Cloud Backup — +$800 / +1-2 days
+Cloud fallback during server downtime. If your on-premises database server goes down, a cloud-hosted replica can serve cached/replicated data until the local server is restored. Ongoing cost: cloud hosting fees (~$30-60/month).
+
+*☁️ Hybrid deployment: Reduced cost (~$300–$500) — web server is already in the cloud, so only the database replication layer needs to be added. Snapshot backups of the web server are already included.*
+
+### OPT-16: AI-Powered Reports — +$2,000 / +4-5 days
+Ask questions in plain English: *"Show me total revenue by salesperson for the last 3 months compared to the previous 3 months."* AI writes a query and the system runs it.
+
+**Critical privacy guarantee — AI never sees your data:**
+- AI receives ONLY metadata: table names, column headers, column types, relationships
+- AI writes a read-only SQL query (SELECT only — no writes possible)
+- Query runs on your server, results display on your screen — results are NEVER sent back to the AI
+- Advanced mode: AI writes Python scripts for complex analysis (statistical, forecasting) — executed in a sandboxed environment on your server (isolated, no network, no filesystem access, memory/time limited)
+- Every AI-generated query is logged with user, timestamp, and query text
+
+Requires: OpenAI API key (usage cost ~$0.01-0.10 per query).
+
+### OPT-17: Backup / Failover Server — +$1,000–$2,000 / +2-3 days
+A standby server configured to take over automatically if the main server shuts down (hardware failure, power outage, maintenance). Includes:
+- Second server with identical configuration (database replica + application mirror)
+- PostgreSQL streaming replication — data syncs continuously from primary to standby
+- Automated health monitoring — detects when the primary is down
+- Automatic or manual failover — standby promotes itself to primary within minutes
+- After the main server is restored, data syncs back and roles return to normal
+
+**On-premises:** Requires a second physical server machine. Price toward the higher end ($1,500–$2,000) due to manual hardware setup and network configuration.
+**Cloud deployment:** Significantly cheaper ($800–$1,200) — spinning up a standby instance is built-in functionality. Cloud providers offer managed replication and automatic failover out of the box.
+
+---
+
+### Optional Add-On Summary
+
+| # | Add-On | Price | Timeline |
+|---|--------|-------|----------|
+| OPT-1 | Digital Pick on Handheld | +$1,200 | +2-3 days |
+| OPT-2 | AI Pick Sheet OCR | +$1,500 | +3-4 days |
+| OPT-3 | Voice Ordering | +$1,500 | +3-4 days |
+| OPT-4 | SMS Notifications | +$800 | +1-2 days |
+| OPT-5 | WhatsApp Notifications | +$1,000 | +2-3 days |
+| OPT-6a | Customer Credit Scoring | +$800 | +2-3 days |
+| OPT-6b | Salesperson Performance Scoring | +$400 | +1-2 days |
+| OPT-7 | Customer Portal | +$2,500 | +3-5 days |
+| OPT-8 | Customer Ordering Website | TBD | TBD |
+| OPT-9 | Full VPN Lockdown | +$1,500 | +2-3 days |
+| OPT-10 | SSO + MFA | +$400 | +2-3 days |
+| OPT-12 | Truck Navigation | +$600 | +1-2 days |
+| OPT-13 | Multi-Company | +$1,800 | +3-4 days |
+| OPT-14 | Additional Training Hours | +$85/hour | As needed |
+| OPT-15 | Temp Cloud Backup | +$800 | +1-2 days |
+| OPT-16 | AI-Powered Reports | +$2,000 | +4-5 days |
+| OPT-17 | Backup / Failover Server | +$1,000–$2,000 | +2-3 days |
+
+---
+
+<a name="6-technical-details"></a>
+## 6. TECHNICAL DETAILS
+
+### Where It Runs
+- **Database:** Always on-premises — PostgreSQL runs on your local server. Your data never leaves your building
+- **Web server:** Your choice — on-premises (same machine or separate) or cloud VPS (see [Section 4](#4-server-setup))
+- **Application:** ASP.NET Core (.NET 8+) — Microsoft's modern enterprise platform. Native on Windows and Linux
+- **Database engine:** PostgreSQL — powerful, free (zero licensing fees forever), includes geographic capabilities for driver tracking
+- **Web-based:** works in any browser (Chrome, Edge, Safari). No app store, no installations, no device updates
+
+### How It Feels
+- Modern web application — not clunky desktop software
+- Desktop: full-screen dashboards, tables, charts
+- Mobile: same app, auto-formatted for small screens, large buttons, minimal typing
+- Fast: server does the heavy lifting, sends ready-made pages — phones don't need to be powerful
+- Interactive sections (order builder, route planner, live map) use lightweight targeted JavaScript (~15-30KB)
+
+### Architecture
+- **Clean Architecture:** Web → Application → Core ← Infrastructure
+- Server-rendered pages (Razor) + HTMX for partial updates + Alpine.js for micro-interactions
+- SignalR for real-time features (driver tracking, live order status)
+- Authorize.NET SDK for payment processing (PCI compliant, tokenized vault)
+- SMTP for email notifications (base)
+- Google Maps JS API for tracking display + deep-link to nav apps for drivers
+
+### Security Summary
+- Private network — database never exposed externally
+- All traffic encrypted (HTTPS)
+- Device registration + PIN/biometric for mobile
+- IP allowlist for desktop
+- Role-based granular permissions
+- Append-only audit log
+- PCI-compliant payment handling (card data never touches your system)
+
+---
+
+<a name="7-pricing--timeline"></a>
+## 7. PRICING & TIMELINE
+
+### Software Development
+
+| | |
+|---|---|
+| **Software (application build)** | **$7,500** |
+| **Payment schedule** | No upfront payment — see milestones below |
+| **Development period** | 4 weeks |
+| **Training** | 5 hours included |
+| **Post-launch support** | First month free, then $85/hour |
+
+### Payment Milestones — You Pay Only After I Deliver
+
+| Milestone | What I Deliver | Payment |
+|-----------|---------------|--------|
+| **1. Development complete** | Full working demo — every feature running, you test it yourself | 40% ($3,000) |
+| **2. Server deployment** | System installed on your server, running, accessible, configured | 30% ($2,250) |
+| **3. Go-live** | Data migrated & verified, 5 hours of staff training, system live with real operations | 30% ($2,250) |
+
+*No money changes hands until you see results. Each payment is triggered by a tangible deliverable you can verify.*
+
+### Server Setup (billed separately — see [Section 4](#4-server-setup))
+
+| Deployment Option | Setup Cost | Monthly Cost |
+|---|---|---|
+| **Option A: Full On-Premises** | **$2,500** | Ongoing maintenance (hardware, power, updates — your responsibility) |
+| **Option B: Hybrid (cloud web + local DB)** | **Varies** | Varies (depends on cloud provider, server specs, region) |
+
+### What's in the Base ($7,500)
+
+| Feature | Included |
+|---------|----------|
+| Salesperson app (mobile + desktop) | ✅ |
+| Product catalog management (5-digit codes, dynamic pricing) | ✅ |
+| Order placement (browse, search, duplicate, favorites) | ✅ |
 | Customer management (profiles, tiers, multi-location) | ✅ |
-| Warehouse flow (digital pick + AI paper pick sheet) | ✅ |
+| Warehouse flow (paper pick + manual entry, manager approval) | ✅ |
 | Route planning & stop ordering | ✅ |
-| Driver app (route, navigation, delivery confirmation) | ✅ |
+| Driver app (route, nav, print, edit orders, digital signature) | ✅ |
 | Bluetooth invoice printing | ✅ |
 | Full invoicing & accounting (double-entry ledger) | ✅ |
-| Payment processing (Authorize.NET) | ✅ |
-| Statements (auto-send + manual) | ✅ |
-| Notification engine (email, SMS, WhatsApp) | ✅ |
-| Admin control panel (users, roles, permissions, policies) | ✅ |
-| Manager dashboard & reports | ✅ |
+| Rules-based invoice review & flagging | ✅ |
+| Payment processing (Authorize.NET — card, ACH) | ✅ |
+| Salesperson field payment collection | ✅ |
+| Statements (auto-send + manual, configurable schedule) | ✅ |
+| Notification engine (email channel) | ✅ |
+| Report Builder (sort/filter/join, graphs, export) | ✅ |
+| Standard pre-built reports (sales, accounting, operations, customer) | ✅ |
+| Saved reports & scheduled exports | ✅ |
+| Admin control panel (users, roles, permissions, policies, pricing) | ✅ |
+| Manager dashboard (live tracking, KPIs, performance) | ✅ |
 | Live driver tracking (real-time map) | ✅ |
 | Discount & adjustment policy engine | ✅ |
+| Basic offline mode (device storage, sync on reconnect) | ✅ |
 | Full audit trail | ✅ |
 | Security (device registration, IP allowlist, encryption) | ✅ |
-| On-premises deployment + server setup | ✅ |
-| 2 weeks post-launch bug support | ✅ |
-
-### Base Price
-
-| | |
-|---|---|
-| **Total Base Package** | **$10,000** |
-| Payment schedule | 40% upfront ($4,000) + 30% at Week 2 milestone ($3,000) + 30% at delivery ($3,000) |
-| Development period | 4 weeks |
-| Post-launch support | 2 weeks included |
-
----
-
-<a name="7-optional-add-ons"></a>
-## 7. OPTIONAL ADD-ONS — WITH TIMELINE & COST IMPACT
-
-Each add-on below can be included now or added later. Adding them during the initial build is cheaper and faster than retrofitting later.
-
----
-
-### OPT-1: Offline Mode
-**What it does:** Salespeople and drivers can use the app without an internet or network connection. Orders placed offline are saved on the device and sync automatically when the connection returns. Product catalog and customer data are cached locally.
-
-**Who needs it:** If your salespeople visit areas with poor connectivity (basements, rural areas, dead zones), or if your server goes down and you need operations to continue.
-
-**Timeline impact:** Adds **5-7 days** to the build (overlaps with Week 3-4, extends delivery to ~5 weeks)
-
-**Why it adds time:** Offline mode requires a separate local data layer on every device, a sync engine that resolves conflicts when the device reconnects, and encrypted local storage. This is a meaningful engineering addition.
-
-| | |
-|---|---|
-| **Price** | **+$2,500** |
-| **New delivery date** | ~5 weeks instead of 4 |
-
----
-
-### OPT-2: Customer Self-Service Portal
-**What it does:** Your customers log into their own portal where they can view their account balance, see invoices, download statements, make payments, and view order history. Optionally, they can place orders themselves (you can enable/disable this per customer).
-
-**Who needs it:** Reduces phone calls to your office. Customers who want to self-serve can check their balance and pay without calling.
-
-**Timeline impact:** Adds **4-5 days** (can run in parallel during Weeks 3-4, extends delivery by 3-5 days)
-
-| | |
-|---|---|
-| **Price** | **+$2,000** |
-| **New delivery date** | +3-5 days |
-
----
-
-### OPT-3: Customer-Facing Ordering Website
-**What it does:** A branded website where smaller customers can place orders directly — browse your catalog, build an order, submit. Orders feed into the same system as salesperson-placed orders. Can be restricted to approved customers only (login required).
-
-**Who needs it:** If you have smaller customers who don't warrant a dedicated salesperson visit but still want to order from you.
-
-**Timeline impact:** Adds **5-6 days** (mostly parallel, extends delivery by 4-5 days). Depends on Customer Portal (OPT-2) being built first.
-
-| | |
-|---|---|
-| **Price** | **+$2,000** |
-| **Requires** | OPT-2 (Customer Portal) |
-| **New delivery date** | +4-5 days (on top of OPT-2) |
-
----
-
-### OPT-4: Full Private Network Lockdown (VPN + Zero Public Exposure)
-**What it does:** The app becomes completely invisible to the public internet. All mobile devices connect through a VPN tunnel. Internal DNS only — no public domain name. Maximum network isolation.
-
-**Who needs it:** If you want enterprise-grade security where even knowing the app exists from outside is impossible.
-
-**What you already get without it:** The base package already includes device registration, IP allowlisting, encrypted connections, and role-based permissions — which is sufficient security for most wholesale operations.
-
-**Timeline impact:** Adds **2-3 days** (VPN server setup, certificate management, device VPN configuration)
-
-| | |
-|---|---|
-| **Price** | **+$1,500** |
-| **New delivery date** | +2-3 days |
-| **Ongoing cost** | Your IT manages the VPN server (we set it up) |
-
----
-
-### OPT-5: SSO + Multi-Factor Authentication (MFA)
-**What it does:** Users sign in with their existing company accounts (Microsoft 365 / Azure AD / Google Workspace). Multi-factor authentication adds a second verification step (authenticator app code or SMS code) on top of the password.
-
-**Who needs it:** If your team works remotely and needs secure access from outside the office network without VPN, or if you want centralized user management through your existing identity provider.
-
-**Timeline impact:** Adds **2-3 days**
-
-| | |
-|---|---|
-| **Price** | **+$1,200** |
-| **New delivery date** | +2-3 days |
-| **Requires** | Active Microsoft 365 or Google Workspace subscription |
-
----
-
-### OPT-6: Data Migration (From Existing System)
-**What it does:** We import your existing customer database, product catalog, and optionally historical invoices/transactions from your current system (QuickBooks, spreadsheets, or other) into the new platform. Includes data cleaning, format conversion, and verification.
-
-**Who needs it:** If you don't want to manually re-enter all your customers, products, and pricing. Strongly recommended.
-
-**Timeline impact:** Adds **2-4 days** depending on data volume and quality (can overlap with Week 1-2)
-
-| | |
-|---|---|
-| **Price** | **+$800 – $1,500** (depends on data complexity) |
-| **New delivery date** | Minimal — runs in parallel with build |
-
----
-
-### OPT-7: Truck-Specific Navigation Integration
-**What it does:** Instead of opening Google Maps/Waze for directions (which don't account for truck restrictions), the system integrates with a truck-specific navigation service (Sygic Truck or CoPilot) that accounts for low bridges, weight limits, no-truck zones, and truck-legal roads.
-
-**Who needs it:** If your trucks deliver in dense urban areas (NYC boroughs, restricted streets) where standard GPS routing could send a truck down a street it shouldn't be on.
-
-**Timeline impact:** Adds **1-2 days**
-
-| | |
-|---|---|
-| **Price** | **+$600** |
-| **Ongoing cost** | Sygic Truck license: ~$100-150/year per device |
-| **New delivery date** | +1-2 days |
-
----
-
-### OPT-8: Extended Post-Launch Support & Maintenance
-**What it does:** Extends the included 2-week post-launch support to 3 months. Includes priority bug fixing, minor feature adjustments based on real-world usage feedback, performance monitoring, and one database health check.
-
-**Timeline impact:** None — this happens after delivery.
-
-| | |
-|---|---|
-| **Price** | **+$2,000** (3 months total) |
-| **Covers** | Bug fixes, minor adjustments, monitoring, 1 DB health check |
-
----
-
-### OPT-9: Multi-Company / Multi-Tenant Support
-**What it does:** Run separate companies or business divisions within the same system — each with their own customers, products, invoicing, and accounting, but managed from one login. Useful if you have multiple business entities or want to offer the software to other wholesale distributors.
-
-**Who needs it:** If you operate under multiple company names or plan to expand.
-
-**Timeline impact:** Adds **3-4 days** (architectural change — better to include from the start)
-
-| | |
-|---|---|
-| **Price** | **+$1,800** |
-| **New delivery date** | +3-4 days |
-| **Note** | Significantly cheaper to build in from the start than to add later |
-
----
-
-<a name="8-total-investment-summary"></a>
-## 8. TOTAL INVESTMENT SUMMARY
-
-### Base Package
-
-| Item | Price | Timeline |
-|------|-------|----------|
-| **Complete Wholesale ERP System** | **$10,000** | **4 weeks** |
-
-### Optional Add-Ons
-
-| # | Add-On | Price | Timeline Impact |
-|---|--------|-------|-----------------|
-| OPT-1 | Offline Mode | +$2,500 | +5-7 days |
-| OPT-2 | Customer Portal | +$2,000 | +3-5 days |
-| OPT-3 | Customer Ordering Website | +$2,000 | +4-5 days (requires OPT-2) |
-| OPT-4 | Full VPN Lockdown | +$1,500 | +2-3 days |
-| OPT-5 | SSO + MFA | +$1,200 | +2-3 days |
-| OPT-6 | Data Migration | +$800–$1,500 | Minimal (parallel) |
-| OPT-7 | Truck Navigation | +$600 | +1-2 days |
-| OPT-8 | Extended Support (3 mo) | +$2,000 | None (post-launch) |
-| OPT-9 | Multi-Company / Multi-Tenant | +$1,800 | +3-4 days |
+- Deployment setup (on-prem or cloud — see Section 4) | ✅ |
+| 5 hours staff training | ✅ |
+| 1 month post-launch support (issues within reason) | ✅ |
+| After first month: $85/hour support rate | ✅ |
 
 ### Example Packages
 
-**Essentials (Base + recommended add-ons):**
+**Essentials — Full On-Premises:**
 
 | Item | Price |
 |------|-------|
-| Base Package | $10,000 |
-| Data Migration (OPT-6) | +$1,000 |
-| Extended Support (OPT-8) | +$2,000 |
-| **Total** | **$13,000** |
+| Software (base) | $7,500 |
+| On-Prem Server Setup | +$2,500 |
+| Data Migration (required) | +$500–$3,000 |
+| **Total** | **$10,500–$13,000** |
+| Monthly | Ongoing maintenance (your responsibility) |
 | Timeline | ~4.5 weeks |
 
-**Full Build (everything):**
+**Essentials — Hybrid (cloud web + local DB):**
 
 | Item | Price |
 |------|-------|
-| Base Package | $10,000 |
-| All optional add-ons | +$14,400 |
-| **Total** | **$24,400** |
-| Timeline | ~6-7 weeks |
+| Software (base) | $7,500 |
+| Hybrid Server Setup | Varies |
+| Data Migration (required) | +$500–$3,000 |
+| **Total** | **$8,000+ (depends on cloud infrastructure)** |
+| Monthly | Varies (cloud provider + local DB maintenance) |
+| Timeline | ~4.5 weeks |
+
+**Connected — Full On-Premises (Base + notifications + digital warehouse):**
+
+| Item | Price |
+|------|-------|
+| Software (base) | $7,500 |
+| On-Prem Server Setup | +$2,500 |
+| Digital Pick (OPT-1) | +$1,200 |
+| SMS Notifications (OPT-4) | +$800 |
+| WhatsApp Notifications (OPT-5) | +$1,000 |
+| Data Migration (required) | +$500–$3,000 |
+| **Total** | **$13,500–$16,000** |
+| Monthly | Ongoing maintenance (your responsibility) |
+| Timeline | ~5 weeks |
+
+**Connected — Hybrid (cloud web + local DB):**
+
+| Item | Price |
+|------|-------|
+| Software (base) | $7,500 |
+| Hybrid Server Setup | Varies |
+| Digital Pick (OPT-1) | +$1,200 |
+| SMS Notifications (OPT-4) | +$800 |
+| WhatsApp Notifications (OPT-5) | +$1,000 |
+| Data Migration (required) | +$500–$3,000 |
+| **Total** | **$11,000+ (depends on cloud infrastructure)** |
+| Monthly | Varies (cloud provider + local DB maintenance) |
+| Timeline | ~5 weeks |
+
+**Full Build — Full On-Premises (everything):**
+
+| Item | Price |
+|------|-------|
+| Software (base) | $7,500 |
+| On-Prem Server Setup | +$2,500 |
+| Data Migration (required) | +$500–$3,000 |
+| All optional add-ons (OPT-1 through OPT-17, excl. OPT-8 TBD, OPT-14 hourly) | +$17,800–$18,800 |
+| **Total** | **~$28,300–$31,800** |
+| Monthly | Ongoing maintenance (your responsibility) |
+| Timeline | ~7-8 weeks |
+
+**Full Build — Hybrid (cloud web + local DB, everything):**
+
+| Item | Price |
+|------|-------|
+| Software (base) | $7,500 |
+| Hybrid Server Setup | Varies |
+| Data Migration (required) | +$500–$3,000 |
+| All optional add-ons (OPT-1 through OPT-17, excl. OPT-8 TBD, OPT-14 hourly) | +$15,800–$16,400 |
+| **Total** | **$23,800+ (depends on cloud infrastructure)** |
+| Monthly | Varies (cloud provider + local DB maintenance) |
+| Timeline | ~7-8 weeks |
+
+*Hybrid full-build add-ons are lower because VPN (OPT-9), Cloud Backup (OPT-15), and Failover Server (OPT-17) cost less with cloud web server deployment.*
 
 ---
 
-<a name="9-what-we-need-from-you"></a>
-## 9. WHAT WE NEED FROM YOU
-
-Before development begins, we need the following:
-
-### Before Week 1
-
-| Item | Why |
-|------|-----|
-| Answers to the 22 open stakeholder questions (see separate document) | Finalizes requirements — some design decisions are blocked until these are answered |
-| Access to your Windows Server (or specs so we can advise on setup) | We need to know what we're deploying to |
-| A sample of your current product catalog (spreadsheet or export) | To design the data import and catalog structure |
-| A sample of your current customer list | Same — data migration planning |
-| Bluetooth printer model(s) in use or planned | Determines printing approach |
-| Authorize.NET account credentials (sandbox for testing) | Payment integration |
-| Twilio account (or we create one — SMS/WhatsApp costs are yours) | Notification integration |
-
-### During Development
-
-| Item | When |
-|------|------|
-| Wireframe review and sign-off | End of Week 1 |
-| Core demo review | End of Week 2 |
-| Full system demo + UAT | Week 4 |
-| 2-3 team members available for testing | Week 4 |
-
----
-
-<a name="10-terms--conditions"></a>
-## 10. TERMS & CONDITIONS
+<a name="8-terms--conditions"></a>
+## 8. TERMS & CONDITIONS
 
 ### Payment Terms
-- **40% due on contract signing** ($4,000) — triggers project start
-- **30% due at Week 2 milestone** ($3,000) — core demo delivered and approved
-- **30% due on final delivery** ($3,000) — system deployed to your server
+- **No upfront payment** — you pay only after I deliver
+- **Milestone 1 — Development complete** (40% / $3,000): Full working demo, you test every feature
+- **Milestone 2 — Server deployment** (30% / $2,250): Installed and running on your server
+- **Milestone 3 — Go-live** (30% / $2,250): Data migrated, staff trained (5 hours), system live
+- Server setup: billed separately at deployment (see [Section 4](#4-server-setup))
+- Optional add-ons: payment split proportionally across same milestones
 
-For optional add-ons: payment is split proportionally across the same milestones.
-
-### Scope & Change Requests
-- This proposal covers all features listed in the Base Package (Section 6) and any selected optional add-ons
-- Changes to requirements after development begins may affect timeline and cost
-- Minor adjustments (cosmetic, layout tweaks, wording changes) are included at no extra cost
-- Major scope additions (new modules, new user roles, new integrations not listed here) will be quoted separately before work begins
+### Scope & Changes
+- Covers all features listed in Base Package (Section 2) and selected optional add-ons
+- Minor adjustments (cosmetic, layout, wording) included at no extra cost
+- Major scope additions quoted separately before work begins
 - All changes documented and agreed in writing
 
 ### Intellectual Property
 - Upon final payment, you own the complete source code, database, and all project assets
 - You may modify, extend, or host the system however you choose
-- We retain the right to use general techniques and non-proprietary patterns in future work (no proprietary business logic)
+- I retain the right to use general techniques and non-proprietary patterns in future work
 
-### Warranty & Support
-- 2 weeks of bug-fix support included after go-live (extendable via OPT-8)
-- Bugs are defined as: system not working as described in this proposal
-- Feature requests beyond the agreed scope are not bugs
-- Critical bugs (system down, data loss) addressed within 4 hours during business hours
-- Non-critical bugs addressed within 48 hours
+### Support
+- **First month after go-live: free support** — bug fixes, issues, and reasonable adjustments at no cost
+- **After first month: $85/hour** — billed in 15-minute increments, quoted before work begins
+- **Availability:** Monday–Friday, 9 AM – 6 PM (Eastern). No weekends or holidays unless pre-arranged.
+- **Response times:**
+  - Critical issues (system down, data loss): response within 4 business hours
+  - Non-critical issues (bug, UI problem, minor feature not working): response within 1–2 business days
+- **What counts as "reasonable" during the free month:**
+  - Bug fixes — something doesn't work as designed
+  - Minor adjustments — small layout, wording, or behavior tweaks
+  - Configuration help — adjusting settings, policies, or rules within the admin panel
+  - Quick questions — "how do I do X?" via email or message
+- **What is NOT included (even during the free month):**
+  - New features or functionality not in the original scope
+  - Redesigning screens or workflows after sign-off
+  - Ongoing training beyond the included 5 hours
+  - IT/infrastructure issues (see section below)
+- Feature requests beyond agreed scope are quoted separately
+
+### IT vs. Application Responsibility (On-Premises Deployment)
+
+Once the system is installed, running, and handed off at Milestone 3, there is a clear line between **application issues** (my responsibility) and **IT/infrastructure issues** (your responsibility):
+
+**My responsibility (application issues):**
+- Software bugs — the application doesn't work as designed
+- Application errors, crashes, or unexpected behavior in the code
+- Database schema issues caused by the application
+- Issues introduced by any updates or patches I apply
+
+**Your responsibility (IT/infrastructure issues):**
+- Server hardware failures (disk, RAM, power supply, etc.)
+- Operating system updates, patches, and reboots
+- Network connectivity — internet outages, firewall changes, DNS, router/switch issues
+- Power outages and UPS/backup power
+- Server antivirus/security software conflicts
+- User account management on the Windows Server itself
+- Physical security of the server hardware
+- ISP issues, static IP changes, domain/SSL certificate renewals
+- Backup of the server and database files (I set up the schedule — you ensure it keeps running)
+- Any third-party software installed on the server that interferes with the application
+
+**Gray area — billed at $85/hour:**
+- "The app stopped working" caused by a Windows update, antivirus quarantine, or network change — I can diagnose and fix, but this is an infrastructure-caused issue
+- Server ran out of disk space, database can't write — infrastructure, but I can help clean up
+- You changed firewall rules and broke connectivity — I can help reconfigure
+
+*In short: if the application code is the problem, it's on me. If the server, network, hardware, or OS is the problem, it's on you. If you need me to help with infrastructure issues, I'm available at $85/hour.*
 
 ### Confidentiality
-- All business information, customer data, and trade secrets shared during the project are treated as confidential
-- No data will be shared with third parties except as required by the agreed integrations (Authorize.NET, Twilio, OpenAI API)
-- Data sent to AI services (voice clips, pick sheet photos, invoice data for review) is processed and not stored by the AI provider
+- All business information and customer data treated as confidential
+- No data shared with third parties except agreed integrations (Authorize.NET, SMTP provider)
+- Optional AI services (if selected): only specific data sent (audio, photo, metadata) — not your entire database. AI providers process and do not store data permanently
 
 ### Cancellation
-- If you cancel before development begins (Week 1): full refund minus $500 administrative fee
-- If you cancel during development: payment for completed milestones is non-refundable; work completed to date is delivered to you
-- We may pause the project if a milestone payment is more than 7 days overdue
+- Before development: no cost (no payment has been made)
+- During development: completed milestone payments non-refundable; work to date delivered to you
+- Project may pause if milestone payment is more than 7 days overdue
 
 ---
 
 ## NEXT STEP
 
-**To proceed:** Review this proposal, select any optional add-ons you want, and we'll schedule the stakeholder Q&A session to answer the 22 open questions. Once questions are answered and the first payment is received, development begins immediately.
+Review this proposal, select any optional add-ons, and confirm. Once first payment is received, development begins immediately.
 
-> **Note:** Some details in this proposal will be updated after the stakeholder Q&A session — specific workflow rules, data migration scope, and configuration details will be finalized based on your answers.
+> **Open items:** IT meeting needed for server specs and remote access requirements (Q35, Q36). These don't block project start — they can be resolved during Week 1.
 
 ---
 
 *This proposal is valid for 30 days from the date above.*
-
-*Prepared by: [Your Company Name]*
-*Contact: [Your Email / Phone]*

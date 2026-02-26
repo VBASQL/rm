@@ -1,114 +1,106 @@
 # Stakeholder Interview — Question List
 ### Wholesale ERP / Order-to-Cash Platform
-**Updated: February 25, 2026**
+**Updated: February 26, 2026 — Post-Meeting Answers**
 
-> **22 questions remaining** for the stakeholder call. Organized by topic. Check off answers as you get them.
-
----
-
-## 1 — Inventory & Manufacturing Model *(Critical — affects many other decisions)*
-
-- [ ] **[Q1a]** Is your ordering model **stock-based** (inventory on hand, orders ship from stock), **pre-order/made-to-order** (manufacture or source after receiving orders), or **both**?
-- [ ] **[Q1b]** If stock-based: does the system need to show **real-time stock levels** to salespeople? Should orders be blocked or warned when stock is insufficient (backorder)? How is stock currently tracked?
-- [ ] **[Q1c]** If pre-order/manufacturing: when an order is placed, how does it trigger manufacturing or sourcing? Does the manufacturing side have its own system that needs to receive orders and send back "ready" status?
-- [ ] **[Q8]** When a salesperson duplicates a past order, should the system check current inventory availability? *(Depends on Q1a/b)*
-- [ ] **[Q27]** If a product goes out of stock between order placement and warehouse picking — what should happen? Auto-remove, flag to salesperson, or let warehouse decide? *(Depends on Q1a/b)*
+> **Meeting held February 25, 2026.** Most questions answered. Remaining items noted below.
 
 ---
 
-## 2 — Product Codes & Integration
+## 1 — Inventory & Manufacturing Model ✅ ANSWERED
 
-- [ ] **[Q7a]** The system uses a new 6-digit product code. Does it need to map to product codes from other departments (manufacturing, purchasing, accounting)? Or is it standalone for this app only? Do we need a cross-reference table?
-
----
-
-## 3 — Customer Accounts & Credit
-
-- [ ] **[Q2]** Who controls what admin panels? Which roles/people have access to system settings, policies, user management? Map out who manages what.
-- [ ] **[Q3]** Is there a credit approval process when onboarding a new customer, or can any salesperson add one?
-- [ ] **[Q20]** How many credit tiers to start with? What are their names and rules? (e.g. Tier 1 = net-30 credit, Tier 2 = pay before delivery)
-- [ ] **[Q34]** Do you want to tag/classify customers by type (restaurant, grocery, gas station, chain, independent)? Would tags affect pricing, product visibility, or reporting?
+- [x] **[Q1a]** **Stock-based for now.** Inventory managed via manual updates or spreadsheet imports. Dynamic rules allow over-ordering on certain products or categories.
+- [x] **[Q1b]** Salespeople see stock levels. **Warning on out-of-stock — salesperson can override** and place the order anyway. Not a hard block.
+- [x] **[Q1c]** No manufacturing integration needed at this time. Standalone system.
+- [x] **[Q8]** Duplicating a past order — inventory check applies (same warning, can override).
+- [x] **[Q27]** Out of stock between order and picking — **warehouse decides** (partial pick allowed via policy settings). Salesperson already warned at order time.
 
 ---
 
-## 4 — Pricing, Deposits & Tax
+## 2 — Product Codes & Integration ✅ ANSWERED
 
-- [ ] **[Q9]** Are government deposits (CRV) per unit or per case? Do they vary by container type (can vs. bottle vs. size)? How should deposits be displayed on invoices — per line item, separate section, or rolled into price?
-- [ ] **[Q10]** Do some customers have fully custom price lists, or is it always standard price minus a discount?
-- [ ] **[Q11]** Are there automatic promotions or volume deals? (e.g. buy 10 cases get 1 free, tiered pricing)
-- [ ] **[Q12]** Is tax calculated on the deposit amount separately from the product price?
+- [x] **[Q7a]** **5-digit code** (not 6). Auto-generated when product is first added. Standalone — no mapping to external departments. Structured hierarchy preferred: code should encode category → subcategory → type → flavor where practical.
 
 ---
 
-## 5 — Returns & Credits
+## 3 — Customer Accounts & Credit ✅ ANSWERED
 
-- [ ] **[Q19a]** How are general product returns handled? Can a customer return delivered products? If yes — what is the process, who approves, and how is the credit/refund calculated? Credit memo, line item on next order, or cash refund?
-
----
-
-## 6 — Order Modifications & Cancellations
-
-- [ ] **[Q28/29]** What are your current rules for order cancellations and modifications? At what stage do restrictions kick in? (We'll use these as defaults in the configurable policy engine.)
+- [x] **[Q2]** **1-3 admins** control the admin panel. Small team.
+- [x] **[Q3]** **All new customers default to $0 credit / pay-on-order.** Even salespeople can add these. To upgrade to credit customer → must be reviewed and approved by accounting and/or owner.
+- [x] **[Q20]** Two starting tiers: **Pay-First** (default for new customers) and **Credit** (approved customers with set limits/terms). Credit scoring system requested as **OPTIONAL feature** — accounting sets policies for auto credit rating based on usage and payments, auto-block, flag for lowering, assist credit reviews.
+- [x] **[Q34]** **Yes — customer tags/types** used for pricing and grouping. Part of the dynamic price level system (type, area, zip, custom groups all affect pricing).
 
 ---
 
-## 7 — Invoicing & Accounting Workflow
+## 4 — Pricing, Deposits & Tax ✅ ANSWERED
 
-- [ ] **[Q32]** Confirm: orders and invoices are **separate records** — order tracks what was requested, invoice is generated from delivered quantities. Or does the order itself become the invoice?
-- [ ] **[Q33]** Before invoices are "posted" (permanently locked, no more edits): what does accounting review them **for**? What errors or discrepancies do you typically catch during your weekly review? (This tells us what AI should auto-flag.)
-
----
-
-## 8 — Data Migration
-
-- [ ] **[Q5]** What is your current invoicing system? What data needs to be migrated?
-- [ ] **[Q18]** Do you have an existing customer database? In what format (spreadsheet, accounting software, etc.)?
+- [x] **[Q9]** CRV **per case**. Separate line on invoices. Varies by product (set per product/variant in catalog).
+- [x] **[Q10]** **Dynamic, unlimited price levels.** Can be assigned by: individual customer, customer type, area, zip code, custom group, product, product category, or any combination. Not just "standard minus discount."
+- [x] **[Q11]** **No automatic promotions** or volume deals at this time.
+- [x] **[Q12]** **No sales tax.** Wholesale only. CRV is separate and not taxed.
 
 ---
 
-## 9 — Onboarding
+## 5 — Returns & Credits ✅ ANSWERED
 
-- [ ] **[Q26]** User onboarding: guided in-app setup wizard, or admin sets up accounts and trains in person?
-- [ ] **[Q30]** New customer onboarding: any required documents or approvals before a new customer can place their first order?
-
----
-
-## 10 — Security & Access
-
-- [ ] **[Q35]** Do users need remote access from outside the office network (working from home, remote accounting)? If yes — SSO with MFA, VPN, or both? *(Affects scope and pricing)*
-- [ ] **[Q36]** Are the Android handhelds managed through MDM (like Microsoft Intune), or just handed out as-is?
+- [x] **[Q19a]** **Yes, product returns happen.** Credit is applied to the customer's account (credit memo). Details of approval workflow TBD but accounting manages.
 
 ---
 
-## 📝 Notes from Call
+## 6 — Order Modifications & Cancellations ✅ ANSWERED
 
-| # | Question | Answer |
-|---|----------|--------|
-| Q1a | Stock-based, pre-order, or both? | |
-| Q1b | Real-time stock levels? Backorder behavior? | |
-| Q1c | Manufacturing trigger / system integration? | |
-| Q2 | Who controls what admin panels? | |
-| Q3 | Credit approval for new customers? | |
-| Q5 | Current invoicing system / migration? | |
-| Q7a | 6-digit code integration with other departments? | |
-| Q8 | Inventory check on order duplicate? | |
-| Q9 | CRV per unit/case? Display preference? | |
-| Q10 | Custom price lists? | |
-| Q11 | Auto promotions / volume deals? | |
-| Q12 | Tax on deposits separately? | |
-| Q18 | Existing customer database format? | |
-| Q19a | General returns process? | |
-| Q20 | Credit tier names and rules? | |
-| Q26 | User onboarding approach? | |
-| Q27 | Out-of-stock handling? | |
-| Q28/29 | Current cancellation/modification rules? | |
-| Q30 | New customer required docs? | |
-| Q32 | Order vs invoice — separate records? | |
-| Q33 | What does accounting review before posting? | |
-| Q34 | Customer classification tags? | |
-| Q35 | Remote access needs? | |
-| Q36 | Android device management (MDM)? | |
+- [x] **[Q28/29]** **Modifications allowed until picked.** Configurable rules per salesperson, per customer type, etc. After picking → treated as a return. **Invoice is only created on actual delivery** — not at order time.
 
 ---
 
-*Bring completed answers back to update the Living Document.*
+## 7 — Invoicing & Accounting Workflow ✅ ANSWERED
+
+- [x] **[Q32]** **Separate records.** Order = what was requested. Invoice = generated from delivered quantities.
+- [x] **[Q33]** **No AI review needed.** System should flag price differences between standard/assigned price level and actual invoice prices — per invoice and per product. Regular rules-based flagging, not AI.
+
+---
+
+## 8 — Data Migration ✅ ANSWERED
+
+- [x] **[Q5]** **Custom legacy system** — the one being replaced. Data migration required.
+- [x] **[Q18]** Data is in the legacy system. Will need export/import. **Custom invoice and statement templates** are critical — must be assignable per customer.
+
+---
+
+## 9 — Onboarding ✅ ANSWERED
+
+- [x] **[Q26]** Admin sets up accounts. No in-app wizard needed.
+- [x] **[Q30]** **No special documents.** New customers default to pay-first ($0 credit). Credit upgrade requires accounting approval.
+
+---
+
+## 10 — Security & Access ⚠️ PARTIALLY ANSWERED
+
+- [ ] **[Q35]** **Currently RDP only.** Need to discuss server specs and remote access with IT. **PENDING — requires IT conversation.**
+- [ ] **[Q36]** **PENDING** — will be discussed with IT.
+
+---
+
+## Additional Insights from Meeting
+
+| Topic | Detail |
+|-------|--------|
+| **Invoice/Statement Templates** | Critical requirement — customizable templates assignable per customer |
+| **Voice Ordering** | Moved to **OPTIONAL**. Includes uploading recordings/voice notes, not just live speech |
+| **AI Pick Sheet OCR** | Moved to **OPTIONAL** |
+| **AI Invoice Review** | **Removed.** Replaced with rules-based price difference flagging (not AI) |
+| **Credit Scoring System** | **New OPTIONAL feature** — auto credit rating, auto-block, flag for lowering, assist reviews |
+| **Printers** | Standard Bluetooth printers, system supports unlimited devices |
+| **Sales Tax** | None. Wholesale only. CRV is separate and not taxed |
+| **5-Digit Codes** | Changed from 6-digit to 5-digit, auto-generated with structured hierarchy |
+
+---
+
+## ⚠️ Still Pending (Requires IT Meeting)
+
+- Server specifications and current hardware
+- Remote access requirements (VPN/SSO/MFA)
+- Android device management approach (MDM or not)
+
+---
+
+*Answers documented February 26, 2026. Living Document updated accordingly.*

@@ -1,6 +1,6 @@
 # WHOLESALE ERP / ORDER-TO-CASH PLATFORM
 ### Living Design & Planning Document
-**Session 2 — February 25, 2026 | Status: Architecture Complete → Stakeholder Proposal Next**
+**Session 3 — February 26, 2026 | Status: Stakeholder Meeting Complete → Proposal Rebuild**
 
 ---
 
@@ -18,9 +18,29 @@
 >
 > **How to continue:** Read this whole document to restore context, then pick up from the **Next Steps** section at the bottom. Ask the next question in the Q&A flow. Update this document after every exchange.
 >
-> **Current focus:** Phases 1-4 complete (User Flow, UI Screens, Data Model, Architecture). Next: prepare stakeholder proposal with milestones, timeline, pricing, HTML mockups, and presentation flow script.
+> **Current focus:** Stakeholder meeting (Feb 25) answered most open questions. Living doc updated with all answers. Next: rebuild proposal in new format (concise, page-by-page script, required vs optional, pricing).
 >
 > **User:** Wholesale food distribution company. Food industry (bottles, cans, packaged goods). Company also does manufacturing and packaging. Currently on-premises setup. Plans to eventually move app to cloud, keep DB on-prem.
+>
+> **KEY CHANGES FROM MEETING (Feb 25-26):**
+> - 5-digit product codes (not 6), auto-generated with structured hierarchy
+> - No sales tax — wholesale only. CRV separate and not taxed
+> - Stock-based with manual/import updates, dynamic over-order rules
+> - Dynamic unlimited price levels (by product, category, customer, type, area, zip, custom groups)
+> - Salespeople collect payments in the field
+> - Warehouse basic = paper pick, manager manual entry. Digital pick = optional
+> - Driver can edit order before confirming (flags accounting + notifies salesperson)
+> - Digital signature option instead of printout for driver
+> - Basic offline included (device storage, sync on reconnect, conflict resolution)
+> - Email notifications = base. SMS + WhatsApp = optional
+> - AI features (voice, OCR, invoice review) all moved to optional or removed
+> - Invoice review = rules-based price flagging (not AI)
+> - Credit scoring system = new optional feature
+> - Monthly statement lock (manual, like weekly invoice review)
+> - New customers default to $0 credit / pay-on-order
+> - Base price: $8,000 / 4 weeks
+> - Reports: full report builder with sort/filter/join, standard reports, saved/scheduled reports, export + graphs = BASE
+> - AI Reports (plain English → read-only queries, metadata-only AI access, Python sandbox) = OPTIONAL
 
 ---
 
@@ -336,14 +356,24 @@
 
 | Module | Description | Priority |
 |--------|-------------|----------|
-| Offline Mode | App functions without live DB; saves locally, syncs on reconnect | High — current client need |
-| Cloud App Deployment | App on cloud, DB stays on-prem initially | Medium — future |
-| Temp Cloud Backup | Interim cloud backup during DB downtime | Medium |
-| Customer Portal | Customers view accounts, pay invoices, optionally place orders | Phase 2 |
-| Customer-Facing Website | For smaller customers — orders and account view | Phase 2 |
-| Multi-Company / Multi-Tenant | Each customer as separate accounting entity | Phase 2 — wholesale expansion |
-| Full Private Network Lockdown | VPN-only access, private DNS, zero public exposure | Optional — enterprise security |
-| SSO + MFA Integration | Azure AD / LDAP single sign-on with multi-factor auth | Optional — replaces IP-lock for remote access |
+| Basic Offline Mode | Orders + delivery saved on device, sync on reconnect, conflict resolution | **INCLUDED IN BASE** |
+| Temp Cloud Backup | Cloud fallback during server downtime | Optional |
+| Digital Pick on Handheld | Picker uses tablet/handheld, manager approves digitally | Optional |
+| AI Pick Sheet OCR | Photo scan of paper pick sheet, AI reads handwriting | Optional |
+| Voice Ordering | Speak or upload recording/voice note, AI matches to catalog | Optional |
+| SMS Notifications (Twilio) | SMS channel for notifications | Optional |
+| WhatsApp Notifications | WhatsApp channel for notifications | Optional |
+| Credit Scoring System | Auto credit rating based on usage/payments, auto-block, flag | Optional |
+| Customer Portal | Customers view accounts, pay invoices, optionally place orders | Optional |
+| Customer-Facing Website | For smaller customers — orders and account view | Optional |
+| Multi-Company / Multi-Tenant | Each customer as separate accounting entity | Optional |
+| Full Private Network Lockdown | VPN-only access, private DNS, zero public exposure | Optional |
+| SSO + MFA Integration | Azure AD / LDAP single sign-on with multi-factor auth | Optional |
+| Cloud App Deployment | App on cloud, DB stays on-prem initially | Future |
+| Extended Support (3 months) | Bug fixes, minor adjustments, monitoring post-launch | Optional |
+| Data Migration | Import from legacy system | Optional |
+| Truck-Specific Navigation | Sygic/CoPilot integration for truck restrictions | Optional |
+| AI-Powered Reports | Plain English → SQL/Python queries. AI sees metadata only, never data. Read-only execution. Server sandbox for Python scripts | Optional |
 
 ---
 
@@ -438,6 +468,7 @@
 - Route Planner: Open Orders, Route Builder, Route Assignment
 - Admin Back-end: User Management, Roles & Permissions, Product Catalog, Pricing & Policies, Invoice Rules, Notification Rules, Credit Tier Settings, Discount & Adjustment Caps
 - Manager: Reports Dashboard, Live Route Tracker, Sales Reports, Receivables
+- Reports: Report Builder, Standard Reports Library, Saved Reports, Scheduled Exports, AI Query Interface (optional)
 
 ---
 
@@ -508,7 +539,8 @@ Four tabs:
 
 ### 2.5 Product Display Rules
 
-- **All products must have a 6-digit numeric-only code** (e.g. 100234) — this is the universal product identifier across the system
+- **All products must have a 5-digit numeric-only code** (e.g. 10023) — this is the universal product identifier across the system
+- **Auto-generated** when product is first added, with structured hierarchy (encodes category → subcategory → type → flavor where practical)
 - **Catalog view differs by role — customizable:**
   - **Salesperson view:** consumer-oriented units — e.g. "10 × 12-packs"
   - **Warehouse worker view:** warehouse-oriented units — e.g. "1 pallet" or "10 cases"
@@ -527,24 +559,29 @@ Four tabs:
 - Status columns within each group: **New → Assigned → Picked → Approved**
 - Manager must approve picked orders before they move forward
 
-#### 2.6.2 Pick Flow — Two Modes
+#### 2.6.2 Pick Flow — Three Tiers
 
-**Option A: Digital Pick (picker on handheld)**
+**BASIC (included): Paper Pick + Manual Entry**
+- Manager prints pick list for the order
+- Worker picks using pen and physical clipboard — marks quantities by hand on the printout
+- Worker returns completed clipboard to manager
+- Manager manually enters results in the system: removes lines or edits quantities, rest is confirmed
+- Confirmed pick → order moves to approved status
+
+**OPTIONAL: Digital Pick (picker on handheld/tablet)**
 - Picker opens assigned order on device
-- Sees line items: 6-digit product code, product name, requested qty (in cases/pallets)
+- Sees line items: 5-digit product code, product name, requested qty (in cases/pallets)
 - Enters picked qty per item — can be less than requested (partial pick if allowed by policy)
 - Submits pick → goes to manager for approval
 
-**Option B: Paper + AI Pick (primary workflow)**
-- Manager enters/prints the pick list for the order
-- **Worker picks using pen and physical clipboard** — marks quantities by hand on the printout
-- Worker returns completed clipboard to manager
-- **Manager snaps a photo of the completed pick sheet**
-- **AI analyzes the photo** — extracts handwritten quantities, maps to line items using the 6-digit product codes
-- Manager sees AI-extracted data on screen → **reviews and confirms** (can correct any AI misreads)
+**OPTIONAL: Print & Scan (AI OCR)**
+- Worker picks using pen and physical clipboard — marks quantities by hand on the printout
+- Manager snaps a photo of the completed pick sheet
+- AI analyzes the photo — extracts handwritten quantities, maps to line items using the 5-digit product codes
+- Manager sees AI-extracted data on screen → reviews and confirms (can correct any AI misreads)
 - Confirmed pick → order moves to approved status
 
-> Both modes result in the same data: a confirmed pick with actual quantities per line item. Mode selection is configurable per warehouse or per manager preference.
+> All modes result in the same data: a confirmed pick with actual quantities per line item. Mode selection is configurable per warehouse or per manager preference.
 
 #### 2.6.3 Pick Approval
 - Manager reviews all picked orders before they are released
@@ -582,9 +619,11 @@ Four tabs:
 
 #### 2.8.2 Stop Detail
 - Customer name, address, contact phone
-- Order summary: line items with 6-digit codes, product names, quantities (cases)
+- Order summary: line items with 5-digit codes, product names, quantities (cases)
+- **Driver can view and EDIT the order before confirming** — e.g. customer spots a discrepancy at the door. Edits flag for accounting review and notify the salesperson automatically
 - **Print Invoice button** — prints to Bluetooth printer
   - ⚠️ **Location check:** If driver is NOT near the delivery address when they tap Print → **medium warning** ("You don't appear to be at this location. Print anyway?") — not a hard block, but logged
+- **Digital Signature option** — customer can sign on device screen instead of receiving printout
 - **Launch Navigation** — opens Google Maps / Waze / configured nav app with the stop address
 - **Delivery Confirmation:**
   - **Confirmed** — delivery accepted, tap to confirm
@@ -723,6 +762,107 @@ Four tabs:
 - Show/hide any section
 - Save multiple named views, switch between them
 - Admin can set a company-wide default view for managers; each manager can override with their own
+
+---
+
+### 2.14 Reports — Detailed Flow
+
+> **Design principle:** Reports are a first-class feature, not an afterthought. Every user should be able to get answers from system data without asking IT or exporting to Excel.
+
+#### 2.14.1 Report Builder (Base — All Roles)
+- **User-friendly interface** — no SQL knowledge needed, no technical jargon
+- **Build a report in 3 steps:**
+  1. **Pick data source(s)** — Orders, Invoices, Payments, Customers, Products, Deliveries, Routes, etc.
+  2. **Select columns** — drag/drop or checkbox to pick fields. System automatically handles joins when combining data from multiple sources (e.g. Orders + Customers + Products)
+  3. **Filter & sort** — date range, status, customer, salesperson, area, product category, any field. Multiple filters combinable with AND/OR
+- **Live preview** — results update as filters are changed
+- **Simple graphs auto-generated** — when the report includes numeric/metric columns (revenue, quantities, counts), system automatically offers chart options:
+  - Bar chart, line chart, pie chart — pick one or auto-suggested based on data shape
+  - Charts are interactive — hover for values, click to drill down
+- **Export options:** PDF, Excel (.xlsx), CSV
+- **Grouping & aggregation** — group by any dimension (customer, product, salesperson, date period), auto-calculate sums, averages, counts per group
+
+#### 2.14.2 Standard Pre-Built Reports (Base)
+Shipped with the system — ready to use out of the box, customizable:
+
+**Sales Reports:**
+- Sales by period (daily, weekly, monthly, custom range)
+- Sales by salesperson (with comparison/leaderboard)
+- Sales by customer (top customers, revenue ranking)
+- Sales by product / category / subcategory
+- Sales by area / zip code / customer group
+- Order volume trends (line chart over time)
+
+**Accounting Reports:**
+- Accounts Receivable Aging (current, 30, 60, 90+ days)
+- Customer statements (outstanding invoices, payments, credits, balance)
+- Revenue report by period
+- Cash receipts report (payments by method, by period)
+- Tax report (for government filing)
+- Trial balance
+- Transaction journal (chronological ledger)
+- Unapplied payments report
+- Credit memo report
+
+**Operations Reports:**
+- Delivery performance (on-time rate, rejection rate, reasons)
+- Route efficiency (stops per route, cases per route)
+- Warehouse pick accuracy
+- Driver performance
+- Inventory movement
+
+**Customer Reports:**
+- Customer activity (orders, payments, credits over time)
+- New customer acquisition by period
+- Customer retention / churn
+- Credit utilization
+
+#### 2.14.3 Saved Reports & Scheduled Exports (Base)
+- **Save any report** — give it a name, save filters/columns/sort/chart settings
+- **Recurring exports** — schedule a saved report to auto-run and export (e.g. "Sales by Salesperson — Weekly" auto-generates every Monday and emails to manager)
+- **Report library** — each user has their saved reports; admin can publish company-wide shared reports
+- **Quick-access dashboard** — pin favorite reports to dashboard for one-click access
+
+#### 2.14.4 Role-Based Report Access
+- Salespeople see only reports scoped to their assigned customers
+- Accounting sees all financial data
+- Managers see everything
+- Admin controls who can access which report types and data scopes via the same permission engine
+
+#### 2.14.5 AI-Powered Reports (OPTIONAL MODULE)
+
+> **CRITICAL PRIVACY GUARANTEE:** The AI model **NEVER sees actual business data**. It only receives **metadata** — table names, column headers, column data types, and relationships. The AI writes queries; it never reads results.
+
+**How it works — step by step:**
+1. User types a question in plain English: *"Show me total revenue by salesperson for the last 3 months, compared to the previous 3 months"*
+2. System sends **only metadata** to the AI model:
+   - Table names: `orders`, `invoices`, `users`
+   - Column headers: `invoice_date`, `grand_total`, `salesperson_id`, `full_name`
+   - Column types: `date`, `decimal`, `uuid`, `string`
+   - Table relationships: `invoices.salesperson_id → users.user_id`
+   - **NO actual data values are ever sent**
+3. AI writes a **read-only SQL query** based on the metadata
+4. Query is executed on the server against the database in **read-only mode** (SELECT only — no INSERT, UPDATE, DELETE, DROP, or any write operation possible)
+5. Results are displayed to the user in the report builder UI with auto-generated charts
+6. **Query results are NEVER sent back to the AI** — the AI's job is done after writing the query
+
+**Advanced mode — Python scripts (OPTIONAL, part of AI module):**
+- For complex analysis that SQL alone can't handle (statistical analysis, forecasting, custom calculations)
+- AI writes a Python script based on the same metadata-only approach
+- Script executes in a **sandboxed environment on the server** — isolated process, no network access, no file system access outside sandbox, memory-limited, time-limited
+- Script can only read data (read-only DB connection), perform calculations, and output results
+- Results displayed in the report builder UI
+- Scripts are logged and can be reviewed by admin
+
+**Security layers:**
+| Layer | Protection |
+|-------|------------|
+| AI input | Metadata only — table names, column headers, types. Zero data values |
+| AI output | SQL query or Python script text only |
+| Query execution | Read-only database connection (SELECT only) |
+| Data return | Results go to user's screen only. Never sent to AI |
+| Python sandbox | Isolated process, no network, no filesystem, memory cap, time cap |
+| Audit | Every AI-generated query logged with user, timestamp, query text |
 
 ---
 
