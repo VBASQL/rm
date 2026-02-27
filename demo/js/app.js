@@ -22,7 +22,6 @@ const ROLES = [
   { key: 'admin', label: 'Admin' },
   { key: 'manager', label: 'Manager' },
   { key: 'reports', label: 'Reports' },
-  { key: 'review', label: 'Inv/Stmt Review' },
 ];
 
 const HEADERS = {

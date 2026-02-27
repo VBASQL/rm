@@ -1,5 +1,6 @@
 // ===== Accounting Screens =====
 import { CUSTOMERS, INVOICES, PAYMENTS, ORDERS, PRODUCTS, CATEGORIES, JOURNAL_ENTRIES, PRICE_LEVELS, USERS, ORDER_CAPS, fmt$, customerName, customerById, productById, invoicesByCustomer, ordersByCustomer, paymentsByCustomer, SALES_PERFORMANCE, CUSTOMER_METRICS, PRODUCT_METRICS, SAVED_VIEWS_SEED } from '../data.js';
+import { renderReview } from './review.js';
 
 export function accountingNav() {
   return [
@@ -17,6 +18,7 @@ export function accountingNav() {
     { section: 'Ledger', icon: '📋', label: 'Chart of Accounts', page: 'coa' },
     { section: 'Tools', icon: '🔔', label: 'Notifications', page: 'notifications' },
     { section: 'Tools', icon: '📈', label: 'Reports', page: 'reports' },
+    { section: 'Tools', icon: '🔍', label: 'Inv/Stmt Review', page: 'inv-stmt-review' },
     { section: 'Credit', icon: '🏦', label: 'Credit Mgmt', page: 'credit' },
     { section: 'Credit', icon: '🎛️', label: 'Credit Tiers', page: 'credit-tiers' },
     { section: 'Credit', icon: '🚨', label: 'Flag Rules', page: 'credit-rules' },
@@ -55,6 +57,7 @@ export function renderAccounting(page) {
     case 'product-explorer': return productExplorerPage();
     case 'saved-views': return savedViewsPage();
     case 'price-merger': return priceMergerPage();
+    case 'inv-stmt-review': return renderReview(page);
     default: return dashboardPage();
   }
 }

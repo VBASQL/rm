@@ -178,8 +178,347 @@ function discBadge(n) {
   return `<span style="color:var(--red);font-weight:600">+${fmt$(n)}</span>`;
 }
 
-/* ─── Page State (module-level, resets on re-render) ─── */
+/* ─── Page State ─── */
 let _tab = 'weekly'; // 'weekly' | 'monthly'
+
+// Mutable session state — lives until the module is reloaded (page refresh)
+const _INV_STATE  = WEEKLY_INVOICES.map(i  => ({ status: i.status,  locked: i.locked }));
+const _STMT_STATE = MONTHLY_STATEMENTS.map(s => ({ status: s.status, locked: s.locked }));
+const _INV_EXP    = WEEKLY_INVOICES.map(i  => i.lines.map(l => ({ exp: l.expectedPrice, qty: l.qty })));
+const _STMT_EXP   = MONTHLY_STATEMENTS.map(s => ({ expBal: s.expectedBalance }));
+
+const _fmtMoney = n => '$' + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+function _refreshInvRow(idx) {
+  const st  = _INV_STATE[idx];
+  const row = document.getElementById('inv-row-' + idx);
+  const statusEl  = document.getElementById('inv-status-' + idx);
+  const actionsEl = document.getElementById('inv-actions-' + idx);
+  if (!row || !statusEl || !actionsEl) return;
+  if (st.locked) {
+    statusEl.innerHTML = '<span class="badge badge-dark">\uD83D\uDD12 Locked</span>';
+  } else if (st.status === 'approved') {
+    statusEl.innerHTML = '<span class="badge badge-green">\u2713 Approved</span>';
+  } else {
+    statusEl.innerHTML = '<span class="badge badge-yellow">\u26A0 Pending</span>';
+  }
+  let b = '<div style="display:flex;gap:4px;flex-wrap:wrap">';
+  b += '<button class="btn-outline btn-sm" onclick="reviewExpandInv(' + idx + ')">\uD83D\uDD0D Review</button>';
+  if (!st.locked && st.status !== 'approved')
+    b += '<button class="btn-success btn-sm" onclick="reviewApproveInv(' + idx + ')">\u2713 Approve</button>';
+  if (!st.locked)
+    b += '<button class="btn-outline btn-sm" style="color:var(--text-light)" onclick="reviewLockInv(' + idx + ')">\uD83D\uDD12 Lock</button>';
+  else
+    b += '<button class="btn-outline btn-sm" style="color:var(--orange)" onclick="reviewUnlockInv(' + idx + ')">\uD83D\uDD13 Unlock</button>';
+  b += '</div>';
+  actionsEl.innerHTML = b;
+  if (st.locked) row.style.background = '#f1f5f9';
+  else if (st.status === 'approved') row.style.background = '#f0fdf4';
+  else {
+    const flagsEl = document.getElementById('inv-flags-' + idx);
+    row.style.background = (flagsEl && flagsEl.querySelector('.badge-red,.badge-yellow')) ? 'var(--yellow-bg)' : '';
+  }
+}
+
+function _refreshStmtRow(idx) {
+  const st  = _STMT_STATE[idx];
+  const row = document.getElementById('stmt-row-' + idx);
+  const statusEl  = document.getElementById('stmt-status-' + idx);
+  const actionsEl = document.getElementById('stmt-actions-' + idx);
+  if (!row || !statusEl || !actionsEl) return;
+  if (st.locked) {
+    statusEl.innerHTML = '<span class="badge badge-dark">\uD83D\uDD12 Locked</span>';
+  } else if (st.status === 'approved') {
+    statusEl.innerHTML = '<span class="badge badge-green">\u2713 Approved</span>';
+  } else {
+    statusEl.innerHTML = '<span class="badge badge-yellow">\u26A0 Pending</span>';
+  }
+  let b = '<div style="display:flex;gap:4px;flex-wrap:wrap">';
+  b += '<button class="btn-outline btn-sm" onclick="reviewExpandStmt(' + idx + ')">\uD83D\uDD0D Review</button>';
+  if (!st.locked && st.status !== 'approved')
+    b += '<button class="btn-success btn-sm" onclick="reviewApproveStmt(' + idx + ')">\u2713 Approve</button>';
+  if (!st.locked)
+    b += '<button class="btn-outline btn-sm" style="color:var(--text-light)" onclick="reviewLockStmt(' + idx + ')">\uD83D\uDD12 Lock</button>';
+  else
+    b += '<button class="btn-outline btn-sm" style="color:var(--orange)" onclick="reviewUnlockStmt(' + idx + ')">\uD83D\uDD13 Unlock</button>';
+  b += '</div>';
+  actionsEl.innerHTML = b;
+  if (st.locked) row.style.background = '#f1f5f9';
+  else if (st.status === 'approved') row.style.background = '#f0fdf4';
+  else {
+    const flagsEl = document.getElementById('stmt-flags-' + idx);
+    row.style.background = (flagsEl && flagsEl.querySelector('.badge-red,.badge-yellow')) ? 'var(--yellow-bg)' : '';
+  }
+}
+
+/* ── Expand / Collapse ── */
+window.reviewExpandInv = function(idx) {
+  const row = document.getElementById('inv-detail-' + idx);
+  if (!row) return;
+  document.querySelectorAll('[id^="inv-detail-"]').forEach(r => { if (r.id !== 'inv-detail-' + idx) r.style.display = 'none'; });
+  row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+};
+window.reviewCollapseInv = function(idx) {
+  const r = document.getElementById('inv-detail-' + idx); if (r) r.style.display = 'none';
+};
+window.reviewExpandStmt = function(idx) {
+  const row = document.getElementById('stmt-detail-' + idx);
+  if (!row) return;
+  document.querySelectorAll('[id^="stmt-detail-"]').forEach(r => { if (r.id !== 'stmt-detail-' + idx) r.style.display = 'none'; });
+  row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+};
+window.reviewCollapseStmt = function(idx) {
+  const r = document.getElementById('stmt-detail-' + idx); if (r) r.style.display = 'none';
+};
+
+/* ── Approve / Lock / Unlock – Invoice ── */
+window.reviewApproveInv = function(idx) {
+  _INV_STATE[idx].status = 'approved';
+  _refreshInvRow(idx);
+  window.ERP.toast('INV-' + (5501 + idx) + ' approved \u2713', 'success');
+};
+window.reviewLockInv = function(idx) {
+  _INV_STATE[idx].locked = true; _INV_STATE[idx].status = 'approved';
+  _refreshInvRow(idx);
+  const d = document.getElementById('inv-detail-' + idx); if (d) d.style.display = 'none';
+  window.ERP.toast('INV-' + (5501 + idx) + ' locked \uD83D\uDD12', '');
+};
+window.reviewUnlockInv = function(idx) {
+  _INV_STATE[idx].locked = false;
+  _refreshInvRow(idx);
+  window.ERP.toast('INV-' + (5501 + idx) + ' unlocked', '');
+};
+
+/* ── Approve / Lock / Unlock – Statement ── */
+window.reviewApproveStmt = function(idx) {
+  _STMT_STATE[idx].status = 'approved';
+  _refreshStmtRow(idx);
+  window.ERP.toast('Statement approved \u2713', 'success');
+};
+window.reviewLockStmt = function(idx) {
+  _STMT_STATE[idx].locked = true; _STMT_STATE[idx].status = 'approved';
+  _refreshStmtRow(idx);
+  const d = document.getElementById('stmt-detail-' + idx); if (d) d.style.display = 'none';
+  window.ERP.toast('Statement locked \uD83D\uDD12', '');
+};
+window.reviewUnlockStmt = function(idx) {
+  _STMT_STATE[idx].locked = false;
+  _refreshStmtRow(idx);
+  window.ERP.toast('Statement unlocked', '');
+};
+
+/* ── Save invoice line adjustments ── */
+window.reviewSaveInvChanges = function(idx) {
+  const expLines = _INV_EXP[idx] || [];
+  let newBilled = 0, newExpected = 0, fc = 0;
+  expLines.forEach((l, li) => {
+    const inp = document.getElementById('price-' + idx + '-' + li);
+    const billed = inp ? (parseFloat(inp.value) || 0) : l.exp;
+    newBilled   += billed * l.qty;
+    newExpected += l.exp   * l.qty;
+    if (Math.abs(billed - l.exp) > 0.005) fc++;
+  });
+  const delta = newBilled - newExpected;
+  const billedEl = document.getElementById('inv-billed-' + idx);
+  if (billedEl) billedEl.textContent = _fmtMoney(newBilled);
+  const deltaEl = document.getElementById('inv-delta-' + idx);
+  if (deltaEl) deltaEl.innerHTML = delta === 0
+    ? '<span style="color:var(--green)">&mdash;</span>'
+    : '<span style="color:var(--red);font-weight:700">' + (delta > 0 ? '+' : '-') + _fmtMoney(delta) + '</span>';
+  const flagsEl = document.getElementById('inv-flags-' + idx);
+  if (flagsEl) flagsEl.innerHTML = fc === 0
+    ? '<span class="badge badge-green">\u2713 No Flags</span>'
+    : fc === 1 ? '<span class="badge badge-yellow">\u26A0 1 Flag</span>'
+    : '<span class="badge badge-red">\uD83D\uDEA8 ' + fc + ' Flags</span>';
+  const row = document.getElementById('inv-row-' + idx);
+  if (row && !_INV_STATE[idx].locked && _INV_STATE[idx].status !== 'approved')
+    row.style.background = fc > 0 ? 'var(--yellow-bg)' : '';
+  window.ERP.toast('Invoice adjustments saved', 'success');
+};
+
+/* ── Save statement changes ── */
+window.reviewSaveStmtChanges = function(idx) {
+  const noteEl = document.getElementById('stmt-notes-' + idx);
+  const adjEl  = document.getElementById('stmt-adj-'   + idx);
+  const note = noteEl ? noteEl.value : '';
+  const adj  = adjEl  ? (parseFloat(adjEl.value) || 0) : 0;
+  const expBal = (_STMT_EXP[idx] || {}).expBal || 0;
+  const diff = adj - expBal;
+  const balEl  = document.getElementById('stmt-bal-'  + idx);
+  const diffEl = document.getElementById('stmt-diff-' + idx);
+  if (balEl)  balEl.innerHTML  = diff !== 0 ? '<span style="color:var(--red);font-weight:700">' + _fmtMoney(adj)  + '</span>' : _fmtMoney(adj);
+  if (diffEl) diffEl.innerHTML = diff === 0  ? '<span style="color:var(--green)">&mdash;</span>' : '<span style="color:var(--red);font-weight:700">' + (diff > 0 ? '+' : '-') + _fmtMoney(diff) + '</span>';
+  window.ERP.toast('Statement saved' + (note ? ' \u2014 ' + note.substring(0, 30) : ''), 'success');
+};
+
+/* ── Line-level adjustment helpers ── */
+window.reviewRecalcLine = function(idx, li) {
+  const input   = document.getElementById('price-' + idx + '-' + li);
+  const totalEl = document.getElementById('linetotal-' + idx + '-' + li);
+  if (!input || !totalEl) return;
+  const cells = input.closest('tr').querySelectorAll('td');
+  const qty = parseInt(cells[2] ? cells[2].textContent : '1') || 1;
+  totalEl.textContent = _fmtMoney(parseFloat(input.value) * qty);
+};
+window.reviewAdjustLine = function(idx, li) {
+  const input = document.getElementById('price-' + idx + '-' + li);
+  if (!input) return;
+  const cells = input.closest('tr').querySelectorAll('td');
+  const expText = cells[4] ? cells[4].textContent.replace(/[^0-9.]/g, '') : '';
+  if (expText) { input.value = parseFloat(expText).toFixed(2); window.reviewRecalcLine(idx, li); }
+  window.ERP.toast('Line adjusted to expected price', 'success');
+};
+window.reviewAdjustAllLines = function(idx) {
+  const expLines = _INV_EXP[idx] || [];
+  expLines.forEach((l, li) => {
+    const inp = document.getElementById('price-' + idx + '-' + li);
+    if (inp) { inp.value = l.exp.toFixed(2); window.reviewRecalcLine(idx, li); }
+  });
+  window.ERP.toast('All lines adjusted to expected prices', 'success');
+};
+
+/* ── Bulk selection counter ── */
+window.reviewBulkCheck = function() {
+  const el = document.getElementById('inv-selected-count');
+  if (el) el.textContent = document.querySelectorAll('.inv-select:checked').length + ' selected';
+};
+window.reviewBulkCheckStmt = function() {
+  const el = document.getElementById('stmt-selected-count');
+  if (el) el.textContent = document.querySelectorAll('.stmt-select:checked').length + ' selected';
+};
+window.reviewSelectAllInv = function(checked) {
+  document.querySelectorAll('.inv-select').forEach(cb => { cb.checked = checked; });
+  window.reviewBulkCheck();
+};
+window.reviewSelectAllStmt = function(checked) {
+  document.querySelectorAll('.stmt-select').forEach(cb => { cb.checked = checked; });
+  window.reviewBulkCheckStmt();
+};
+
+/* ── Bulk actions – Invoices ── */
+window.reviewBulkApprove = function() {
+  const cbs = [...document.querySelectorAll('.inv-select:checked')];
+  if (!cbs.length) { window.ERP.toast('Select at least one invoice', ''); return; }
+  cbs.forEach(cb => { const i = +cb.dataset.idx; _INV_STATE[i].status = 'approved'; _refreshInvRow(i); });
+  window.ERP.toast(cbs.length + ' invoice(s) approved \u2713', 'success');
+};
+window.reviewBulkLock = function() {
+  const cbs = [...document.querySelectorAll('.inv-select:checked')];
+  if (!cbs.length) { window.ERP.toast('Select at least one invoice', ''); return; }
+  cbs.forEach(cb => { const i = +cb.dataset.idx; _INV_STATE[i].locked = true; _INV_STATE[i].status = 'approved'; _refreshInvRow(i); });
+  window.ERP.toast(cbs.length + ' invoice(s) locked \uD83D\uDD12', '');
+};
+window.reviewBulkAdjust = function() {
+  const cbs = [...document.querySelectorAll('.inv-select:checked')];
+  if (!cbs.length) { window.ERP.toast('Select at least one invoice', ''); return; }
+  cbs.forEach(cb => {
+    const i = +cb.dataset.idx;
+    (_INV_EXP[i] || []).forEach((l, li) => {
+      const inp = document.getElementById('price-' + i + '-' + li);
+      if (inp) { inp.value = l.exp.toFixed(2); window.reviewRecalcLine(i, li); }
+    });
+    const fe = document.getElementById('inv-flags-' + i); if (fe) fe.innerHTML = '<span class="badge badge-green">\u2713 No Flags</span>';
+    const de = document.getElementById('inv-delta-' + i); if (de) de.innerHTML = '<span style="color:var(--green)">&mdash;</span>';
+    const row = document.getElementById('inv-row-' + i);
+    if (row && !_INV_STATE[i].locked && _INV_STATE[i].status !== 'approved') row.style.background = '';
+  });
+  window.ERP.toast(cbs.length + ' invoice(s) adjusted to expected prices', 'success');
+};
+window.reviewBulkFlag = function() {
+  const cbs = [...document.querySelectorAll('.inv-select:checked')];
+  if (!cbs.length) { window.ERP.toast('Select at least one invoice', ''); return; }
+  cbs.forEach(cb => {
+    const i = +cb.dataset.idx;
+    if (!_INV_STATE[i].locked) { _INV_STATE[i].status = 'pending'; _refreshInvRow(i); const row = document.getElementById('inv-row-' + i); if (row) row.style.background = 'var(--red-bg)'; }
+  });
+  window.ERP.toast(cbs.length + ' invoice(s) flagged for supervisor review', '');
+};
+
+/* ── Bulk actions – Statements ── */
+window.reviewBulkApproveStmt = function() {
+  const cbs = [...document.querySelectorAll('.stmt-select:checked')];
+  if (!cbs.length) { window.ERP.toast('Select at least one statement', ''); return; }
+  cbs.forEach(cb => { const i = +cb.dataset.idx; _STMT_STATE[i].status = 'approved'; _refreshStmtRow(i); });
+  window.ERP.toast(cbs.length + ' statement(s) approved \u2713', 'success');
+};
+window.reviewBulkLockStmt = function() {
+  const cbs = [...document.querySelectorAll('.stmt-select:checked')];
+  if (!cbs.length) { window.ERP.toast('Select at least one statement', ''); return; }
+  cbs.forEach(cb => { const i = +cb.dataset.idx; _STMT_STATE[i].locked = true; _STMT_STATE[i].status = 'approved'; _refreshStmtRow(i); });
+  window.ERP.toast(cbs.length + ' statement(s) locked \uD83D\uDD12', '');
+};
+window.reviewBulkAdjustStmt = function() {
+  const cbs = [...document.querySelectorAll('.stmt-select:checked')];
+  if (!cbs.length) { window.ERP.toast('Select at least one statement', ''); return; }
+  cbs.forEach(cb => {
+    const i = +cb.dataset.idx;
+    const expBal = (_STMT_EXP[i] || {}).expBal || 0;
+    const de = document.getElementById('stmt-diff-' + i); if (de) de.innerHTML = '<span style="color:var(--green)">&mdash;</span>';
+    const be = document.getElementById('stmt-bal-'  + i); if (be) be.textContent = _fmtMoney(expBal);
+    const fe = document.getElementById('stmt-flags-'+ i); if (fe) fe.innerHTML = '<span class="badge badge-green">\u2713 No Flags</span>';
+    const row = document.getElementById('stmt-row-' + i);
+    if (row && !_STMT_STATE[i].locked && _STMT_STATE[i].status !== 'approved') row.style.background = '';
+  });
+  window.ERP.toast(cbs.length + ' statement balance(s) adjusted to expected', 'success');
+};
+window.reviewBulkFlagStmt = function() {
+  const cbs = [...document.querySelectorAll('.stmt-select:checked')];
+  if (!cbs.length) { window.ERP.toast('Select at least one statement', ''); return; }
+  cbs.forEach(cb => {
+    const i = +cb.dataset.idx;
+    if (!_STMT_STATE[i].locked) { _STMT_STATE[i].status = 'pending'; _refreshStmtRow(i); const row = document.getElementById('stmt-row-' + i); if (row) row.style.background = 'var(--red-bg)'; }
+  });
+  window.ERP.toast(cbs.length + ' statement(s) sent for review', '');
+};
+
+/* ── Search / filter ── */
+window.reviewFilterInv = function() {
+  const q  = (document.getElementById('inv-search')?.value || '').toLowerCase();
+  const sf = (document.getElementById('inv-status-filter')?.value || '').toLowerCase();
+  const ff = document.getElementById('inv-flag-filter')?.value || '';
+  document.querySelectorAll('#weekly-inv-body tr[id^="inv-row-"]').forEach(tr => {
+    const text = tr.textContent.toLowerCase();
+    const flags  = !!tr.querySelector('.badge-red,.badge-yellow');
+    const locked = text.includes('locked');
+    const appr   = text.includes('approved');
+    let show = true;
+    if (q  && !text.includes(q))              show = false;
+    if (sf === 'pending'  && (locked || appr)) show = false;
+    if (sf === 'approved' && !appr)            show = false;
+    if (sf === 'locked'   && !locked)          show = false;
+    if (sf === 'flagged'  && !flags)           show = false;
+    if (ff === 'flags'    && !flags)           show = false;
+    if (ff === 'clean'    && flags)            show = false;
+    const idx = tr.id.replace('inv-row-', '');
+    tr.style.display = show ? '' : 'none';
+    const det = document.getElementById('inv-detail-' + idx);
+    if (det && !show) det.style.display = 'none';
+  });
+};
+window.reviewFilterStmt = function() {
+  const q  = (document.getElementById('stmt-search')?.value || '').toLowerCase();
+  const sf = (document.getElementById('stmt-status-filter')?.value || '').toLowerCase();
+  const ff = document.getElementById('stmt-flag-filter')?.value || '';
+  document.querySelectorAll('#monthly-stmt-body tr[id^="stmt-row-"]').forEach(tr => {
+    const text  = tr.textContent.toLowerCase();
+    const flags  = !!tr.querySelector('.badge-red,.badge-yellow');
+    const diff   = !!tr.querySelector('[style*="color:var(--red)"]');
+    const locked = text.includes('locked');
+    const appr   = text.includes('approved');
+    let show = true;
+    if (q  && !text.includes(q))              show = false;
+    if (sf === 'pending'  && (locked || appr)) show = false;
+    if (sf === 'approved' && !appr)            show = false;
+    if (sf === 'locked'   && !locked)          show = false;
+    if (ff === 'flags'    && !flags)           show = false;
+    if (ff === 'diff'     && !diff)            show = false;
+    if (ff === 'clean'    && (flags || diff))   show = false;
+    const idx = tr.id.replace('stmt-row-', '');
+    tr.style.display = show ? '' : 'none';
+    const det = document.getElementById('stmt-detail-' + idx);
+    if (det && !show) det.style.display = 'none';
+  });
+};
 
 /* ─── Main Entry ─── */
 export function renderReview(page) {
@@ -490,13 +829,13 @@ function monthlyTab() {
         <td style="text-align:right">${fmt$(s.invoiceTotal)}</td>
         <td style="text-align:right">${fmt$(s.paymentsReceived)}</td>
         <td style="text-align:right">${fmt$(s.expectedBalance)}</td>
-        <td style="text-align:right">
+        <td id="stmt-bal-${idx}" style="text-align:right">
           ${diff === 0
             ? fmt$(s.statementBalance)
             : `<span style="color:var(--red);font-weight:700">${fmt$(s.statementBalance)}</span>`
           }
         </td>
-        <td style="text-align:right">
+        <td id="stmt-diff-${idx}" style="text-align:right">
           ${diff === 0
             ? '<span style="color:var(--green)">—</span>'
             : `<span style="color:var(--red);font-weight:700">${diff > 0 ? '+' : ''}${fmt$(diff)}</span>`
@@ -671,426 +1010,5 @@ function stmtDetailPanel(s, idx) {
 
 /* ─── Client-side Scripts ─── */
 function reviewScripts() {
-  // Serialize initial state so the client script can track mutations
-  const invStateJSON  = JSON.stringify(WEEKLY_INVOICES.map(i  => ({ status: i.status,  locked: i.locked  })));
-  const stmtStateJSON = JSON.stringify(MONTHLY_STATEMENTS.map(s => ({ status: s.status,  locked: s.locked  })));
-  const expectedJSON  = JSON.stringify(WEEKLY_INVOICES.map(i  => i.lines.map(l => ({ exp: l.expectedPrice, qty: l.qty }))));
-  const stmtExpJSON   = JSON.stringify(MONTHLY_STATEMENTS.map(s => ({ expBal: s.expectedBalance })));
-
-  return `
-<script>
-/* ── State (persists until page refresh) ── */
-const _INV_STATE  = ${invStateJSON};
-const _STMT_STATE = ${stmtStateJSON};
-const _INV_EXP    = ${expectedJSON};   // [{exp, qty}] per invoice per line
-const _STMT_EXP   = ${stmtExpJSON};    // [{expBal}] per statement
-
-function _fmtD(n) { return '$' + Math.abs(n).toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ','); }
-
-/* ── DOM refresh helpers ── */
-function _refreshInvRow(idx) {
-  const st  = _INV_STATE[idx];
-  const row = document.getElementById('inv-row-' + idx);
-  const statusEl  = document.getElementById('inv-status-' + idx);
-  const actionsEl = document.getElementById('inv-actions-' + idx);
-  if (!row || !statusEl || !actionsEl) return;
-
-  // Status badge
-  if (st.locked) {
-    statusEl.innerHTML = '<span class="badge badge-dark">\uD83D\uDD12 Locked</span>';
-  } else if (st.status === 'approved') {
-    statusEl.innerHTML = '<span class="badge badge-green">\u2713 Approved</span>';
-  } else {
-    statusEl.innerHTML = '<span class="badge badge-yellow">\u26A0 Pending</span>';
-  }
-
-  // Action buttons
-  let b = '<div style="display:flex;gap:4px;flex-wrap:wrap">';
-  b += '<button class="btn-outline btn-sm" onclick="reviewExpandInv(' + idx + ')">\uD83D\uDD0D Review</button>';
-  if (!st.locked && st.status !== 'approved') {
-    b += '<button class="btn-success btn-sm" onclick="reviewApproveInv(' + idx + ')">\u2713 Approve</button>';
-  }
-  if (!st.locked) {
-    b += '<button class="btn-outline btn-sm" style="color:var(--text-light)" onclick="reviewLockInv(' + idx + ')">\uD83D\uDD12 Lock</button>';
-  } else {
-    b += '<button class="btn-outline btn-sm" style="color:var(--orange)" onclick="reviewUnlockInv(' + idx + ')">\uD83D\uDD13 Unlock</button>';
-  }
-  b += '</div>';
-  actionsEl.innerHTML = b;
-
-  // Row background
-  if (st.locked) {
-    row.style.background = '#f1f5f9';
-  } else if (st.status === 'approved') {
-    row.style.background = '#f0fdf4';
-  } else {
-    const flagsEl = document.getElementById('inv-flags-' + idx);
-    const hasFlags = flagsEl && flagsEl.querySelector('.badge-red, .badge-yellow');
-    row.style.background = hasFlags ? 'var(--yellow-bg)' : '';
-  }
-}
-
-function _refreshStmtRow(idx) {
-  const st  = _STMT_STATE[idx];
-  const row = document.getElementById('stmt-row-' + idx);
-  const statusEl  = document.getElementById('stmt-status-' + idx);
-  const actionsEl = document.getElementById('stmt-actions-' + idx);
-  if (!row || !statusEl || !actionsEl) return;
-
-  if (st.locked) {
-    statusEl.innerHTML = '<span class="badge badge-dark">\uD83D\uDD12 Locked</span>';
-  } else if (st.status === 'approved') {
-    statusEl.innerHTML = '<span class="badge badge-green">\u2713 Approved</span>';
-  } else {
-    statusEl.innerHTML = '<span class="badge badge-yellow">\u26A0 Pending</span>';
-  }
-
-  let b = '<div style="display:flex;gap:4px;flex-wrap:wrap">';
-  b += '<button class="btn-outline btn-sm" onclick="reviewExpandStmt(' + idx + ')">\uD83D\uDD0D Review</button>';
-  if (!st.locked && st.status !== 'approved') {
-    b += '<button class="btn-success btn-sm" onclick="reviewApproveStmt(' + idx + ')">\u2713 Approve</button>';
-  }
-  if (!st.locked) {
-    b += '<button class="btn-outline btn-sm" style="color:var(--text-light)" onclick="reviewLockStmt(' + idx + ')">\uD83D\uDD12 Lock</button>';
-  } else {
-    b += '<button class="btn-outline btn-sm" style="color:var(--orange)" onclick="reviewUnlockStmt(' + idx + ')">\uD83D\uDD13 Unlock</button>';
-  }
-  b += '</div>';
-  actionsEl.innerHTML = b;
-
-  if (st.locked) {
-    row.style.background = '#f1f5f9';
-  } else if (st.status === 'approved') {
-    row.style.background = '#f0fdf4';
-  } else {
-    const flagsEl = document.getElementById('stmt-flags-' + idx);
-    const hasFlags = flagsEl && flagsEl.querySelector('.badge-red, .badge-yellow');
-    row.style.background = hasFlags ? 'var(--yellow-bg)' : '';
-  }
-}
-
-/* ── Invoice expand/collapse ── */
-window.reviewExpandInv = function(idx) {
-  const row = document.getElementById('inv-detail-' + idx);
-  if (!row) return;
-  const allDetails = document.querySelectorAll('[id^="inv-detail-"]');
-  allDetails.forEach(r => { if (r.id !== 'inv-detail-' + idx) r.style.display = 'none'; });
-  row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
-};
-window.reviewCollapseInv = function(idx) {
-  const row = document.getElementById('inv-detail-' + idx);
-  if (row) row.style.display = 'none';
-};
-
-/* ── Statement expand/collapse ── */
-window.reviewExpandStmt = function(idx) {
-  const row = document.getElementById('stmt-detail-' + idx);
-  if (!row) return;
-  const allDetails = document.querySelectorAll('[id^="stmt-detail-"]');
-  allDetails.forEach(r => { if (r.id !== 'stmt-detail-' + idx) r.style.display = 'none'; });
-  row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
-};
-window.reviewCollapseStmt = function(idx) {
-  const row = document.getElementById('stmt-detail-' + idx);
-  if (row) row.style.display = 'none';
-};
-
-/* ── Approve / Lock – Invoice ── */
-window.reviewApproveInv = function(idx) {
-  _INV_STATE[idx].status = 'approved';
-  _refreshInvRow(idx);
-  window.ERP.toast('INV-' + (5501 + idx) + ' approved \u2713', 'success');
-};
-window.reviewLockInv = function(idx) {
-  _INV_STATE[idx].locked = true;
-  _INV_STATE[idx].status = 'approved';
-  _refreshInvRow(idx);
-  // Collapse detail panel if open
-  const detail = document.getElementById('inv-detail-' + idx);
-  if (detail) detail.style.display = 'none';
-  window.ERP.toast('INV-' + (5501 + idx) + ' locked \uD83D\uDD12', '');
-};
-window.reviewUnlockInv = function(idx) {
-  _INV_STATE[idx].locked = false;
-  _refreshInvRow(idx);
-  window.ERP.toast('INV-' + (5501 + idx) + ' unlocked', '');
-};
-
-/* ── Approve / Lock – Statement ── */
-window.reviewApproveStmt = function(idx) {
-  _STMT_STATE[idx].status = 'approved';
-  _refreshStmtRow(idx);
-  window.ERP.toast('Statement approved \u2713', 'success');
-};
-window.reviewLockStmt = function(idx) {
-  _STMT_STATE[idx].locked = true;
-  _STMT_STATE[idx].status = 'approved';
-  _refreshStmtRow(idx);
-  const detail = document.getElementById('stmt-detail-' + idx);
-  if (detail) detail.style.display = 'none';
-  window.ERP.toast('Statement locked \uD83D\uDD12', '');
-};
-window.reviewUnlockStmt = function(idx) {
-  _STMT_STATE[idx].locked = false;
-  _refreshStmtRow(idx);
-  window.ERP.toast('Statement unlocked', '');
-};
-
-/* ── Save Changes ── */
-window.reviewSaveInvChanges = function(idx) {
-  // Recalculate billed total and delta from current input values
-  const expLines = _INV_EXP[idx] || [];
-  let newBilled = 0; let newExpected = 0; let flagCount = 0;
-  expLines.forEach((l, li) => {
-    const inp = document.getElementById('price-' + idx + '-' + li);
-    const billed = inp ? parseFloat(inp.value) || 0 : l.exp;
-    newBilled   += billed * l.qty;
-    newExpected += l.exp   * l.qty;
-    if (Math.abs(billed - l.exp) > 0.005) flagCount++;
-  });
-  const delta = newBilled - newExpected;
-  // Update billed cell
-  const billedEl = document.getElementById('inv-billed-' + idx);
-  if (billedEl) {
-    billedEl.innerHTML = '$' + newBilled.toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',');
-  }
-  // Update delta cell
-  const deltaEl = document.getElementById('inv-delta-' + idx);
-  if (deltaEl) {
-    deltaEl.innerHTML = delta === 0
-      ? '<span style="color:var(--green)">&mdash;</span>'
-      : '<span style="color:var(--red);font-weight:700">' + (delta > 0 ? '+' : '') + '$' + Math.abs(delta).toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',') + '</span>';
-  }
-  // Update flag badge
-  const flagsEl = document.getElementById('inv-flags-' + idx);
-  if (flagsEl) {
-    if (flagCount === 0) flagsEl.innerHTML = '<span class="badge badge-green">\u2713 No Flags</span>';
-    else if (flagCount === 1) flagsEl.innerHTML = '<span class="badge badge-yellow">\u26A0 1 Flag</span>';
-    else flagsEl.innerHTML = '<span class="badge badge-red">\uD83D\uDEA8 ' + flagCount + ' Flags</span>';
-  }
-  // Refresh row highlight based on updated flag state
-  const row = document.getElementById('inv-row-' + idx);
-  if (row && !_INV_STATE[idx].locked && _INV_STATE[idx].status !== 'approved') {
-    row.style.background = flagCount > 0 ? 'var(--yellow-bg)' : '';
-  }
-  window.ERP.toast('Invoice adjustments saved', 'success');
-};
-window.reviewSaveStmtChanges = function(idx) {
-  const noteEl = document.getElementById('stmt-notes-' + idx);
-  const adjEl  = document.getElementById('stmt-adj-' + idx);
-  const note = noteEl ? noteEl.value : '';
-  const adj  = adjEl  ? parseFloat(adjEl.value) || 0 : 0;
-  const expBal  = (_STMT_EXP[idx] || {}).expBal || 0;
-  const diff = adj - expBal;
-  // Update balance cell
-  const balEl  = document.getElementById('stmt-bal-'  + idx);
-  const diffEl = document.getElementById('stmt-diff-' + idx);
-  if (balEl) {
-    balEl.innerHTML = diff !== 0
-      ? '<span style="color:var(--red);font-weight:700">$' + adj.toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',') + '</span>'
-      : '$' + adj.toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',');
-  }
-  if (diffEl) {
-    diffEl.innerHTML = diff === 0
-      ? '<span style="color:var(--green)">&mdash;</span>'
-      : '<span style="color:var(--red);font-weight:700">' + (diff > 0 ? '+' : '') + '$' + Math.abs(diff).toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',') + '</span>';
-  }
-  window.ERP.toast('Statement saved' + (note ? ' \u2014 ' + note.substring(0,30) : ''), 'success');
-};
-
-/* ── Line adjustment ── */
-window.reviewAdjustLine = function(idx, li) {
-  const input = document.getElementById('price-' + idx + '-' + li);
-  if (!input) return;
-  const expectedCells = input.closest('tr').querySelectorAll('td');
-  // Use expected value shown in column 4
-  const expectedText = expectedCells[4] ? expectedCells[4].textContent.replace(/[^0-9.]/g,'') : '';
-  if (expectedText) { input.value = parseFloat(expectedText).toFixed(2); reviewRecalcLine(idx, li); }
-  window.ERP.toast('Line adjusted to expected price', 'success');
-};
-window.reviewAdjustAllLines = function(idx) {
-  const tbody = document.getElementById('detail-lines-' + idx);
-  if (!tbody) return;
-  tbody.querySelectorAll('tr').forEach((tr, li) => {
-    const input    = document.getElementById('price-' + idx + '-' + li);
-    const cells    = tr.querySelectorAll('td');
-    const expText  = cells[4] ? cells[4].textContent.replace(/[^0-9.]/g,'') : '';
-    if (input && expText) { input.value = parseFloat(expText).toFixed(2); reviewRecalcLine(idx, li); }
-  });
-  window.ERP.toast('All lines adjusted to expected prices', 'success');
-};
-window.reviewRecalcLine = function(idx, li) {
-  const input    = document.getElementById('price-' + idx + '-' + li);
-  const totalEl  = document.getElementById('linetotal-' + idx + '-' + li);
-  const row      = input ? input.closest('tr') : null;
-  if (!input || !totalEl || !row) return;
-  const cells = row.querySelectorAll('td');
-  const qty   = parseInt(cells[2] ? cells[2].textContent : '1') || 1;
-  const newTotal = parseFloat(input.value) * qty;
-  totalEl.textContent = '$' + newTotal.toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',');
-};
-
-/* ── Bulk selection – Invoices ── */
-window.reviewSelectAllInv = function(checked) {
-  document.querySelectorAll('.inv-select').forEach(cb => { cb.checked = checked; });
-  reviewBulkCheck();
-};
-window.reviewBulkCheck = function() {
-  const count = document.querySelectorAll('.inv-select:checked').length;
-  const el = document.getElementById('inv-selected-count');
-  if (el) el.textContent = count + ' selected';
-};
-window.reviewBulkApprove = function() {
-  const cbs = [...document.querySelectorAll('.inv-select:checked')];
-  if (!cbs.length) { window.ERP.toast('Select at least one invoice', ''); return; }
-  cbs.forEach(cb => { const i = +cb.dataset.idx; _INV_STATE[i].status = 'approved'; _refreshInvRow(i); });
-  window.ERP.toast(cbs.length + ' invoice(s) approved \u2713', 'success');
-};
-window.reviewBulkLock = function() {
-  const cbs = [...document.querySelectorAll('.inv-select:checked')];
-  if (!cbs.length) { window.ERP.toast('Select at least one invoice', ''); return; }
-  cbs.forEach(cb => { const i = +cb.dataset.idx; _INV_STATE[i].locked = true; _INV_STATE[i].status = 'approved'; _refreshInvRow(i); });
-  window.ERP.toast(cbs.length + ' invoice(s) locked \uD83D\uDD12', '');
-};
-window.reviewBulkAdjust = function() {
-  const cbs = [...document.querySelectorAll('.inv-select:checked')];
-  if (!cbs.length) { window.ERP.toast('Select at least one invoice', ''); return; }
-  cbs.forEach(cb => {
-    const i = +cb.dataset.idx;
-    const expLines = _INV_EXP[i] || [];
-    expLines.forEach((l, li) => {
-      const inp = document.getElementById('price-' + i + '-' + li);
-      if (inp) { inp.value = l.exp.toFixed(2); reviewRecalcLine(i, li); }
-    });
-    // Mark flags as clean and clear delta
-    const flagsEl = document.getElementById('inv-flags-' + i);
-    if (flagsEl) flagsEl.innerHTML = '<span class="badge badge-green">\u2713 No Flags</span>';
-    const deltaEl = document.getElementById('inv-delta-' + i);
-    if (deltaEl) deltaEl.innerHTML = '<span style="color:var(--green)">&mdash;</span>';
-    const row = document.getElementById('inv-row-' + i);
-    if (row && !_INV_STATE[i].locked && _INV_STATE[i].status !== 'approved') row.style.background = '';
-  });
-  window.ERP.toast(cbs.length + ' invoice(s) adjusted to expected prices', 'success');
-};
-window.reviewBulkFlag = function() {
-  const cbs = [...document.querySelectorAll('.inv-select:checked')];
-  if (!cbs.length) { window.ERP.toast('Select at least one invoice', ''); return; }
-  cbs.forEach(cb => {
-    const i = +cb.dataset.idx;
-    if (!_INV_STATE[i].locked) {
-      _INV_STATE[i].status = 'pending';
-      const row = document.getElementById('inv-row-' + i);
-      if (row) row.style.background = 'var(--red-bg)';
-      _refreshInvRow(i);
-    }
-  });
-  window.ERP.toast(cbs.length + ' invoice(s) flagged for supervisor review', '');
-};
-
-/* ── Bulk selection – Statements ── */
-window.reviewSelectAllStmt = function(checked) {
-  document.querySelectorAll('.stmt-select').forEach(cb => { cb.checked = checked; });
-  reviewBulkCheckStmt();
-};
-window.reviewBulkCheckStmt = function() {
-  const count = document.querySelectorAll('.stmt-select:checked').length;
-  const el = document.getElementById('stmt-selected-count');
-  if (el) el.textContent = count + ' selected';
-};
-window.reviewBulkApproveStmt = function() {
-  const cbs = [...document.querySelectorAll('.stmt-select:checked')];
-  if (!cbs.length) { window.ERP.toast('Select at least one statement', ''); return; }
-  cbs.forEach(cb => { const i = +cb.dataset.idx; _STMT_STATE[i].status = 'approved'; _refreshStmtRow(i); });
-  window.ERP.toast(cbs.length + ' statement(s) approved \u2713', 'success');
-};
-window.reviewBulkLockStmt = function() {
-  const cbs = [...document.querySelectorAll('.stmt-select:checked')];
-  if (!cbs.length) { window.ERP.toast('Select at least one statement', ''); return; }
-  cbs.forEach(cb => { const i = +cb.dataset.idx; _STMT_STATE[i].locked = true; _STMT_STATE[i].status = 'approved'; _refreshStmtRow(i); });
-  window.ERP.toast(cbs.length + ' statement(s) locked \uD83D\uDD12', '');
-};
-window.reviewBulkAdjustStmt = function() {
-  const cbs = [...document.querySelectorAll('.stmt-select:checked')];
-  if (!cbs.length) { window.ERP.toast('Select at least one statement', ''); return; }
-  cbs.forEach(cb => {
-    const i = +cb.dataset.idx;
-    const expBal = (_STMT_EXP[i] || {}).expBal || 0;
-    const diffEl = document.getElementById('stmt-diff-' + i);
-    const balEl  = document.getElementById('stmt-bal-'  + i);
-    if (diffEl) diffEl.innerHTML = '<span style="color:var(--green)">&mdash;</span>';
-    if (balEl)  balEl.innerHTML  = '$' + expBal.toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',');
-    const flagsEl = document.getElementById('stmt-flags-' + i);
-    if (flagsEl) flagsEl.innerHTML = '<span class="badge badge-green">\u2713 No Flags</span>';
-    const row = document.getElementById('stmt-row-' + i);
-    if (row && !_STMT_STATE[i].locked && _STMT_STATE[i].status !== 'approved') row.style.background = '';
-  });
-  window.ERP.toast(cbs.length + ' statement balance(s) adjusted to expected', 'success');
-};
-window.reviewBulkFlagStmt = function() {
-  const cbs = [...document.querySelectorAll('.stmt-select:checked')];
-  if (!cbs.length) { window.ERP.toast('Select at least one statement', ''); return; }
-  cbs.forEach(cb => {
-    const i = +cb.dataset.idx;
-    if (!_STMT_STATE[i].locked) {
-      _STMT_STATE[i].status = 'pending';
-      const row = document.getElementById('stmt-row-' + i);
-      if (row) row.style.background = 'var(--red-bg)';
-      _refreshStmtRow(i);
-    }
-  });
-  window.ERP.toast(cbs.length + ' statement(s) sent for review', '');
-};
-
-/* ── Search / filter – invoices ── */
-window.reviewFilterInv = function() {
-  const q     = (document.getElementById('inv-search')?.value || '').toLowerCase();
-  const sf    = (document.getElementById('inv-status-filter')?.value || '').toLowerCase();
-  const ff    = document.getElementById('inv-flag-filter')?.value || '';
-  document.querySelectorAll('#weekly-inv-body tr[id^="inv-row-"]').forEach(tr => {
-    const text   = tr.textContent.toLowerCase();
-    const flags  = tr.querySelector('.badge-red, .badge-yellow') !== null;
-    const locked = tr.textContent.includes('Locked');
-    const appr   = tr.textContent.includes('Approved');
-    let show = true;
-    if (q && !text.includes(q)) show = false;
-    if (sf === 'pending'  && (locked || appr)) show = false;
-    if (sf === 'approved' && !appr)            show = false;
-    if (sf === 'locked'   && !locked)          show = false;
-    if (sf === 'flagged'  && !flags)           show = false;
-    if (ff === 'flags' && !flags)              show = false;
-    if (ff === 'clean' && flags)               show = false;
-    const idx = tr.id.replace('inv-row-','');
-    tr.style.display = show ? '' : 'none';
-    const detail = document.getElementById('inv-detail-' + idx);
-    if (detail && !show) detail.style.display = 'none';
-  });
-};
-
-/* ── Search / filter – statements ── */
-window.reviewFilterStmt = function() {
-  const q  = (document.getElementById('stmt-search')?.value || '').toLowerCase();
-  const sf = (document.getElementById('stmt-status-filter')?.value || '').toLowerCase();
-  const ff = document.getElementById('stmt-flag-filter')?.value || '';
-  document.querySelectorAll('#monthly-stmt-body tr[id^="stmt-row-"]').forEach(tr => {
-    const text  = tr.textContent.toLowerCase();
-    const flags = tr.querySelector('.badge-red, .badge-yellow') !== null;
-    const diff  = tr.querySelector('[style*="color:var(--red)"]') !== null;
-    const locked = text.includes('locked');
-    const appr   = text.includes('approved');
-    let show = true;
-    if (q && !text.includes(q)) show = false;
-    if (sf === 'pending'  && (locked || appr)) show = false;
-    if (sf === 'approved' && !appr)            show = false;
-    if (sf === 'locked'   && !locked)          show = false;
-    if (ff === 'flags' && !flags)              show = false;
-    if (ff === 'diff'  && !diff)               show = false;
-    if (ff === 'clean' && (flags || diff))     show = false;
-    const idx = tr.id.replace('stmt-row-','');
-    tr.style.display = show ? '' : 'none';
-    const detail = document.getElementById('stmt-detail-' + idx);
-    if (detail && !show) detail.style.display = 'none';
-  });
-};
-<\/script>
-  `;
+  return ''; // all interactive functions registered at module load (window.review*)
 }
