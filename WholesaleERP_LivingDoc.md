@@ -159,8 +159,12 @@
 
 **At each stop:**
 - Driver opens the order on device
-- Prints invoice to Bluetooth printer on arrival
+- Driver can edit quantities or remove lines on-site (customer refused an item, short on truck, etc.)
+- On confirmation, the system **automatically generates the invoice** from the actual delivered quantities
+- Invoice is instantly posted to the system and visible to accounting in real time
+- Driver then either **prints it** (Bluetooth thermal printer) **or collects a digital signature** on the device — one or the other serves as handoff proof
 - Marks delivery as: **Confirmed** or **Rejected** (with reason)
+- Any quantity edits are flagged to accounting and the salesperson is notified automatically
 - Status updates in system in real time
 
 **Manager tracking dashboard:**
@@ -406,7 +410,7 @@
 - **[Q25]** Multi-location customers: confirm account hierarchy — parent account with child locations? Any cases where a location has its own separate billing?
 - **[Q26]** User onboarding: invest in guided in-app onboarding, or handle training in person with simple admin setup?
 - **[Q27]** When a product is out of stock between order placement and warehouse picking, what is the rule — auto-remove from order, flag to salesperson, or let warehouse decide? Are they a negative line item on the next order, a separate credit transaction, or something else?
-- **[Q32]** Order vs Invoice: confirm that orders and invoices are separate records (order is placed → invoice is generated from it once delivered). Or should the order become the invoice?
+- **[Q32]** ~~Order vs Invoice: confirm that orders and invoices are separate records (order is placed → invoice is generated from it once delivered). Or should the order become the invoice?~~ ✅ **ANSWERED:** Separate records. Invoice is auto-generated at the moment the driver confirms delivery, from the actual delivered quantities. Posted to system immediately.
 - **[Q33]** End-of-week invoice finalization: accounting mentioned they want to review and confirm/finalize all invoices before they are "posted" at end of week. What exactly does "posted" mean in your workflow — locked into the ledger? Sent to customer? Both? What specific discrepancies should AI flag during this review (pricing errors, unusual quantities, missing deposits, duplicate charges)?
 - **[Q34]** Customer classification/tags: do you want to tag/categorize customers by type (e.g. restaurant, grocery, gas station, chain, independent)? Would this affect pricing, catalog visibility, or reporting?
 

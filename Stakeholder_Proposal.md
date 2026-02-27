@@ -10,7 +10,7 @@
 2. [What's Included — Base Package](#2-whats-included)
 3. [Data Migration (Required)](#3-data-migration)
 4. [Server Setup & Deployment (Required)](#4-server-setup)
-5. [Optional Add-Ons](#5-optional-add-ons)
+5. [Optional Add-Ons](#5-optional-add-ons) *(separate document)*
 6. [Technical Details](#6-technical-details)
 7. [Pricing & Timeline](#7-pricing--timeline)
 8. [Terms & Conditions](#8-terms--conditions)
@@ -146,7 +146,13 @@ Everything below is included in the base price. Each section describes a screen 
 - **Launch Navigation** — opens Google Maps / Waze with destination
 - **Delivery status:** Confirmed (tap to confirm) or Rejected (select reason + optional note)
 
-**Auto-Confirmation Rule:** When the driver prints or sends the invoice, delivery is automatically marked as confirmed — no extra tap needed.
+**Auto-Confirmation & Invoice Generation Rule *(confirmed business rule)*:**
+- When the driver taps **Confirm Delivery**, the system **automatically generates the invoice** from the actual delivered quantities (which may differ from the original order if the driver made on-site edits or removed lines)
+- The invoice is immediately posted to the system and visible to accounting in real time
+- The driver then **prints it** (Bluetooth thermal printer) **or collects a digital signature** on the device — one or the other, not both required
+- Printing the invoice OR capturing a digital signature serves as the handoff proof
+- Delivery is marked Confirmed at this point — no additional tap required
+- If the driver edited any quantities or removed lines, accounting and the salesperson are automatically notified with a change summary
 
 **End of Route:** Summary of completed/rejected stops, driver confirms route complete.
 
@@ -308,7 +314,9 @@ Each section has: list view with search/filter, detail/edit form, audit log.
 > **Core design principle:** Almost every rule in the system is configurable through admin/accounting control panels — not hardcoded. Order rules, discount caps, credit tiers, invoice locks, modification limits, notification triggers, catalog visibility — all adjustable per user, per group, per role, or system-wide. Sensible defaults ship out of the box; you customize from there.
 
 **Order vs Invoice:**
-- Separate records — order tracks what was requested, invoice generated from what was actually delivered
+- Separate records — order tracks what was requested; invoice is **auto-generated at delivery confirmation** from the actual delivered quantities
+- If the driver adjusted quantities or removed lines on-site, the invoice reflects those changes — not the original order
+- Invoice is created and posted to the system the moment the driver confirms delivery
 
 **Order Modification Rules (fully configurable):**
 - Before picking: salespeople/accounting can freely edit (add/remove items, adjust quantities, discounts, delivery date, cancel)
@@ -400,12 +408,11 @@ This is a company with records going back to 2000 — starting from scratch is n
 
 The software price ($7,500) covers building the application. Getting it running requires server setup, which is a separate cost.
 
-**In both options, your database stays on-premises — your data never leaves your building.** The choice is where the web server (the part that processes requests and serves the application) runs.
+**Choose where your system runs.** Options A and B below cover on-premises and hybrid deployment. A fully cloud-hosted option is also available — see the [All-Inclusive Cloud Package](#cloud-package) in Section 7.
 
 ### Option A: Full On-Premises — $2,500 setup
 
-Both the web server and database run on your hardware in your office. I install and configure everything from scratch:
-- Windows Server OS configuration and hardening
+Both the web server and database run on your existing server in your office. I install and configure everything on your current machine — no new hardware, no OS installation, nothing for your team to set up:
 - PostgreSQL database installation, tuning, and backup scheduling
 - .NET 8+ runtime, web server (IIS/Kestrel), reverse proxy setup
 - SSL certificates (purchase and configuration)
@@ -413,9 +420,9 @@ Both the web server and database run on your hardware in your office. I install 
 - Security hardening (IP restrictions, device registration, encryption at rest)
 - Initial performance testing and optimization
 
-**Why it costs more:** Everything is manual. I install the operating system, download and configure every package, set up networking from your router/firewall, troubleshoot hardware compatibility, and test the full stack on your specific hardware. If something doesn't work with your network setup, I diagnose and fix it.
+**Why it costs more:** Everything is manual. I install and configure every package on your existing server, set up networking from your router/firewall, troubleshoot compatibility with your current environment, and test the full stack on your specific hardware. If something doesn't work with your network setup, I diagnose and fix it.
 
-**Pros:** Data physically stays in your building, full hardware control, no cloud dependency
+**Pros:** Data physically stays in your building, full hardware control, no cloud dependency, one machine to manage
 **Cons:** Ongoing maintenance costs (hardware upkeep, power, internet, OS updates, physical security). If the server hardware fails, you're down until it's fixed or replaced. You are responsible for keeping the server running.
 
 ### Option B: Hybrid — Cloud Web Server + On-Premises Database — setup & monthly costs vary
@@ -437,11 +444,6 @@ The **web server** (application processing) runs on a cloud VPS (Azure, AWS, Dig
 
 **Cons:** Monthly recurring cost (depends on provider and server specs), requires a secure tunnel between cloud and local database, you still maintain the local database server
 
-**Impact on optional add-ons with hybrid deployment:**
-- **VPN Lockdown (OPT-9):** Cost reduced — the cloud-to-database tunnel is already secured. Cloud providers include private networking, security groups, and firewall rules as built-in features.
-- **Cloud Backup (OPT-15):** Cost reduced or unnecessary for the web layer — cloud VPS includes snapshot backups. Database backups are handled locally.
-- **Failover Server (OPT-17):** Cloud web server failover is significantly cheaper — spinning up a standby instance is built-in functionality. Database failover still requires a second local machine or replication setup.
-
 **Monthly cost context:** Cloud hosting monthly costs are often comparable to or less than the electricity, internet bandwidth, and IT time you'd spend maintaining a full on-premises application server — plus you don't need to buy a second machine for the web layer.
 
 ---
@@ -449,105 +451,7 @@ The **web server** (application processing) runs on a cloud VPS (Azure, AWS, Dig
 <a name="5-optional-add-ons"></a>
 ## 5. OPTIONAL ADD-ONS
 
-Each add-on can be included now or added later. Building during the initial build is cheaper and faster than retrofitting.
-
----
-
-### OPT-1: Digital Pick on Handheld — +$1,200 / +2-3 days
-Picker opens assigned order on tablet/handheld, sees line items with 5-digit codes and requested quantities, enters picked quantities per item. Submits to manager for approval. Replaces paper pick flow with a digital workflow.
-
-### OPT-2: AI Pick Sheet OCR — +$1,500 / +3-4 days
-Worker picks using paper and pen (current process). Manager photographs the completed pick sheet. AI reads handwritten quantities and maps them to line items using 5-digit product codes. Manager reviews AI readings on screen, confirms or corrects, and approves. Requires: OpenAI API key (ongoing usage cost ~$0.01-0.05 per photo).
-
-### OPT-3: Voice Ordering — +$1,500 / +3-4 days
-Salesperson speaks naturally ("three cases black cherry, eight cases lemon lime"). AI matches spoken words to actual products in your catalog — not just dictation. Plays back matches for confirmation. Three input methods: speak live in the app, paste a voice note (e.g. from WhatsApp or iMessage), or upload an audio file. Requires: OpenAI API key.
-
-### OPT-4: SMS Notifications (Twilio) — +$800 / +1-2 days
-Adds SMS as a notification channel. Same triggers and timing as email. Requires: Twilio account (SMS costs are yours, typically $0.01-0.02 per message). *Note: SMS messaging may require regulatory compliance registration (e.g. A2P 10DLC or toll-free verification) which involves a carrier approval process and may incur minor additional fees.*
-
-### OPT-5: WhatsApp Notifications — +$1,000 / +2-3 days
-Adds WhatsApp as a notification channel. Customers can reply (replies logged). Requires: WhatsApp Business API account (Meta approval process, messaging costs ~$0.01-0.05 per message). *Note: WhatsApp Business API requires Meta's business verification and approval process, which may involve regulatory compliance steps and minor additional fees.*
-
-### OPT-6a: Customer Credit Scoring — +$800 / +2-3 days
-Automatic credit rating based on customer behavior — order frequency, payment history, average days to pay, returned orders. System auto-flags, warns, or blocks based on configurable thresholds. **Scoring policies set and managed by accounting.** Scoring rules, weights, and thresholds are all configurable.
-
-### OPT-6b: Salesperson Performance Scoring — +$400 / +1-2 days
-Similar scoring system applied to salespeople — tracks order volume, revenue generated, collection rate, new customer acquisition, and other configurable metrics. Used for **reporting and performance visibility** (dashboards, leaderboards, trends). Scoring rules and weights configurable by management.
-
-### OPT-7: Customer Self-Service Portal — +$2,500 / +3-5 days
-Customers log in to view their account balance, invoices, statements, payment history, and make payments. Optionally enable customer-placed orders (per customer). Reduces phone calls to your office.
-
-### OPT-8: Customer-Facing Ordering Website — Pricing TBD
-A full branded website where smaller customers can browse your catalog, place orders, and manage their account. This is a larger standalone project — essentially a customer-facing e-commerce layer on top of the ERP. Login-required, feeds into the same order system. Requires OPT-7 (Customer Portal) as a foundation. Pricing and timeline will be scoped separately based on requirements.
-
-### OPT-9: Full Private Network Lockdown (VPN) — +$1,500 / +2-3 days
-App becomes completely invisible to the public internet. All mobile devices connect through VPN tunnel. Internal DNS only. Zero attack surface. Your IT manages the VPN server (I set it up). *Note: base package already includes device registration + IP allowlist + encryption, which is sufficient for most operations. VPN tunneling may have ongoing costs from your VPN provider depending on the solution chosen.*
-
-*☁️ Hybrid deployment: Reduced cost (~$800–$1,000) — the cloud-to-database tunnel is already secured. Cloud providers include private networking, security groups, and built-in firewall rules. Less manual VPN infrastructure to set up.*
-
-### OPT-10: SSO + Multi-Factor Authentication — +$400 / +2-3 days
-Users sign in with company accounts (Microsoft 365 / Azure AD / Google Workspace). MFA adds authenticator app or SMS verification. Enables secure remote access without VPN. Requires active Microsoft 365 or Google Workspace subscription.
-
-### OPT-12: Truck-Specific Navigation — +$600 / +1-2 days
-Integrates truck-specific nav (Sygic Truck or CoPilot) that accounts for low bridges, weight limits, no-truck zones. Important for dense urban delivery areas. Ongoing cost: ~$100-150/year per device for Sygic license.
-
-### OPT-13: Multi-Company / Multi-Tenant — +$1,800 / +3-4 days
-Run separate companies or divisions within one system — each with their own customers, products, invoicing, and accounting. Managed from one login. Significantly cheaper to build in from the start.
-
-### OPT-14: Additional Training Hours — +$85/hour
-Need more than the included 5 hours? Additional training sessions for new staff, advanced features, or refresher courses billed at $85/hour. Can be scheduled anytime.
-
-### OPT-15: Temp Cloud Backup — +$800 / +1-2 days
-Cloud fallback during server downtime. If your on-premises database server goes down, a cloud-hosted replica can serve cached/replicated data until the local server is restored. Ongoing cost: cloud hosting fees (~$30-60/month).
-
-*☁️ Hybrid deployment: Reduced cost (~$300–$500) — web server is already in the cloud, so only the database replication layer needs to be added. Snapshot backups of the web server are already included.*
-
-### OPT-16: AI-Powered Reports — +$2,000 / +4-5 days
-Ask questions in plain English: *"Show me total revenue by salesperson for the last 3 months compared to the previous 3 months."* AI writes a query and the system runs it.
-
-**Critical privacy guarantee — AI never sees your data:**
-- AI receives ONLY metadata: table names, column headers, column types, relationships
-- AI writes a read-only SQL query (SELECT only — no writes possible)
-- Query runs on your server, results display on your screen — results are NEVER sent back to the AI
-- Advanced mode: AI writes Python scripts for complex analysis (statistical, forecasting) — executed in a sandboxed environment on your server (isolated, no network, no filesystem access, memory/time limited)
-- Every AI-generated query is logged with user, timestamp, and query text
-
-Requires: OpenAI API key (usage cost ~$0.01-0.10 per query).
-
-### OPT-17: Backup / Failover Server — +$1,000–$2,000 / +2-3 days
-A standby server configured to take over automatically if the main server shuts down (hardware failure, power outage, maintenance). Includes:
-- Second server with identical configuration (database replica + application mirror)
-- PostgreSQL streaming replication — data syncs continuously from primary to standby
-- Automated health monitoring — detects when the primary is down
-- Automatic or manual failover — standby promotes itself to primary within minutes
-- After the main server is restored, data syncs back and roles return to normal
-
-**On-premises:** Requires a second physical server machine. Price toward the higher end ($1,500–$2,000) due to manual hardware setup and network configuration.
-**Cloud deployment:** Significantly cheaper ($800–$1,200) — spinning up a standby instance is built-in functionality. Cloud providers offer managed replication and automatic failover out of the box.
-
----
-
-### Optional Add-On Summary
-
-| # | Add-On | Price | Timeline |
-|---|--------|-------|----------|
-| OPT-1 | Digital Pick on Handheld | +$1,200 | +2-3 days |
-| OPT-2 | AI Pick Sheet OCR | +$1,500 | +3-4 days |
-| OPT-3 | Voice Ordering | +$1,500 | +3-4 days |
-| OPT-4 | SMS Notifications | +$800 | +1-2 days |
-| OPT-5 | WhatsApp Notifications | +$1,000 | +2-3 days |
-| OPT-6a | Customer Credit Scoring | +$800 | +2-3 days |
-| OPT-6b | Salesperson Performance Scoring | +$400 | +1-2 days |
-| OPT-7 | Customer Portal | +$2,500 | +3-5 days |
-| OPT-8 | Customer Ordering Website | TBD | TBD |
-| OPT-9 | Full VPN Lockdown | +$1,500 | +2-3 days |
-| OPT-10 | SSO + MFA | +$400 | +2-3 days |
-| OPT-12 | Truck Navigation | +$600 | +1-2 days |
-| OPT-13 | Multi-Company | +$1,800 | +3-4 days |
-| OPT-14 | Additional Training Hours | +$85/hour | As needed |
-| OPT-15 | Temp Cloud Backup | +$800 | +1-2 days |
-| OPT-16 | AI-Powered Reports | +$2,000 | +4-5 days |
-| OPT-17 | Backup / Failover Server | +$1,000–$2,000 | +2-3 days |
+Optional add-ons are available to extend the system's capabilities. See the separate **[Optional Add-Ons document](Optional_AddOns.md)** for the full list with descriptions, pricing, and timelines.
 
 ---
 
@@ -555,8 +459,8 @@ A standby server configured to take over automatically if the main server shuts 
 ## 6. TECHNICAL DETAILS
 
 ### Where It Runs
-- **Database:** Always on-premises — PostgreSQL runs on your local server. Your data never leaves your building
-- **Web server:** Your choice — on-premises (same machine or separate) or cloud VPS (see [Section 4](#4-server-setup))
+- **Database:** PostgreSQL — on your local server (on-premises/hybrid) or cloud-hosted (cloud package). Daily backups ensure you always have your data
+- **Web server:** Your choice — on-premises (same machine as database), cloud VPS with local database (hybrid), or fully cloud-hosted (see [Section 4](#4-server-setup) and [Cloud Package](#cloud-package))
 - **Application:** ASP.NET Core (.NET 8+) — Microsoft's modern enterprise platform. Native on Windows and Linux
 - **Database engine:** PostgreSQL — powerful, free (zero licensing fees forever), includes geographic capabilities for driver tracking
 - **Web-based:** works in any browser (Chrome, Edge, Safari). No app store, no installations, no device updates
@@ -616,6 +520,7 @@ A standby server configured to take over automatically if the main server shuts 
 |---|---|---|
 | **Option A: Full On-Premises** | **$2,500** | Ongoing maintenance (hardware, power, updates — your responsibility) |
 | **Option B: Hybrid (cloud web + local DB)** | **Varies** | Varies (depends on cloud provider, server specs, region) |
+| **Option C: Fully Cloud** | **Included in [$10K Cloud Package](#cloud-package)** | Cloud hosting fees (~$50–$150/month) |
 
 ### What's in the Base ($7,500)
 
@@ -650,83 +555,34 @@ A standby server configured to take over automatically if the main server shuts 
 | 1 month post-launch support (issues within reason) | ✅ |
 | After first month: $85/hour support rate | ✅ |
 
-### Example Packages
+<a name="cloud-package"></a>
+### All-Inclusive Cloud Package — $10,000 Flat
 
-**Essentials — Full On-Premises:**
+Everything in the base package + fully cloud-hosted deployment (web server AND database) + basic data migration — one price, no surprises.
 
-| Item | Price |
-|------|-------|
-| Software (base) | $7,500 |
-| On-Prem Server Setup | +$2,500 |
-| Data Migration (required) | +$500–$3,000 |
-| **Total** | **$10,500–$13,000** |
-| Monthly | Ongoing maintenance (your responsibility) |
-| Timeline | ~4.5 weeks |
+| Item | Included |
+|------|----------|
+| Software (all base features) | ✅ |
+| Cloud server setup (web + database) | ✅ |
+| Basic data migration (customers, products, invoices, transactions) | ✅ |
+| Daily automatic data download to your local machine | Optional |
+| 5 hours staff training | ✅ |
+| 1 month post-launch support | ✅ |
+| **Total** | **$10,000** |
+| **Monthly** | Cloud hosting fees (varies by provider, typically $50–$150/month) |
 
-**Essentials — Hybrid (cloud web + local DB):**
+**How it works:**
+- The entire system — web server and database — runs on a cloud server (Azure, AWS, DigitalOcean, Hetzner, etc.)
+- Pre-configured server images may be available on cloud marketplaces for faster deployment
+- **Daily automatic data download (optional):** a full copy of your database can be exported and sent to a local machine in your office every night — so you always have your data on-site if you want it
+- **You own your data** — even though it's hosted in the cloud, the data is 100% yours. The cloud provider only provides and maintains the infrastructure; they have no ownership or rights over your data
+- No hardware to buy, maintain, or replace
 
-| Item | Price |
-|------|-------|
-| Software (base) | $7,500 |
-| Hybrid Server Setup | Varies |
-| Data Migration (required) | +$500–$3,000 |
-| **Total** | **$8,000+ (depends on cloud infrastructure)** |
-| Monthly | Varies (cloud provider + local DB maintenance) |
-| Timeline | ~4.5 weeks |
-
-**Connected — Full On-Premises (Base + notifications + digital warehouse):**
-
-| Item | Price |
-|------|-------|
-| Software (base) | $7,500 |
-| On-Prem Server Setup | +$2,500 |
-| Digital Pick (OPT-1) | +$1,200 |
-| SMS Notifications (OPT-4) | +$800 |
-| WhatsApp Notifications (OPT-5) | +$1,000 |
-| Data Migration (required) | +$500–$3,000 |
-| **Total** | **$13,500–$16,000** |
-| Monthly | Ongoing maintenance (your responsibility) |
-| Timeline | ~5 weeks |
-
-**Connected — Hybrid (cloud web + local DB):**
-
-| Item | Price |
-|------|-------|
-| Software (base) | $7,500 |
-| Hybrid Server Setup | Varies |
-| Digital Pick (OPT-1) | +$1,200 |
-| SMS Notifications (OPT-4) | +$800 |
-| WhatsApp Notifications (OPT-5) | +$1,000 |
-| Data Migration (required) | +$500–$3,000 |
-| **Total** | **$11,000+ (depends on cloud infrastructure)** |
-| Monthly | Varies (cloud provider + local DB maintenance) |
-| Timeline | ~5 weeks |
-
-**Full Build — Full On-Premises (everything):**
-
-| Item | Price |
-|------|-------|
-| Software (base) | $7,500 |
-| On-Prem Server Setup | +$2,500 |
-| Data Migration (required) | +$500–$3,000 |
-| All optional add-ons (OPT-1 through OPT-17, excl. OPT-8 TBD, OPT-14 hourly) | +$17,800–$18,800 |
-| **Total** | **~$28,300–$31,800** |
-| Monthly | Ongoing maintenance (your responsibility) |
-| Timeline | ~7-8 weeks |
-
-**Full Build — Hybrid (cloud web + local DB, everything):**
-
-| Item | Price |
-|------|-------|
-| Software (base) | $7,500 |
-| Hybrid Server Setup | Varies |
-| Data Migration (required) | +$500–$3,000 |
-| All optional add-ons (OPT-1 through OPT-17, excl. OPT-8 TBD, OPT-14 hourly) | +$15,800–$16,400 |
-| **Total** | **$23,800+ (depends on cloud infrastructure)** |
-| Monthly | Varies (cloud provider + local DB maintenance) |
-| Timeline | ~7-8 weeks |
-
-*Hybrid full-build add-ons are lower because VPN (OPT-9), Cloud Backup (OPT-15), and Failover Server (OPT-17) cost less with cloud web server deployment.*
+**Topics to discuss before choosing this option:**
+- **Data security in the cloud** — encryption at rest, encryption in transit, access controls, provider compliance certifications. We'll review exactly what protections are in place and what's configurable
+- **Cloud provider selection** — what's available, pricing tiers, data residency options, SLAs
+- **Your comfort level** — some operators prefer physical control of their data. The daily download ensures you always have a local copy regardless
+- **Ongoing costs** — monthly hosting fees vs. on-premises hardware/maintenance costs
 
 ---
 
@@ -814,7 +670,7 @@ Once the system is installed, running, and handed off at Milestone 3, there is a
 
 ## NEXT STEP
 
-Review this proposal, select any optional add-ons, and confirm. Once first payment is received, development begins immediately.
+Review this proposal and the **[Optional Add-Ons document](Optional_AddOns.md)**. Select any add-ons you want and confirm your deployment preference. Once confirmed, development begins immediately.
 
 > **Open items:** IT meeting needed for server specs and remote access requirements (Q35, Q36). These don't block project start — they can be resolved during Week 1.
 

@@ -9,6 +9,7 @@ import { renderAccounting, accountingNav } from './pages/accounting.js';
 import { renderAdmin, adminNav } from './pages/admin.js';
 import { renderManager, managerNav } from './pages/manager.js';
 import { renderReports, reportsNav } from './pages/reports.js';
+import { renderReview, reviewNav } from './pages/review.js';
 
 // ── ROLES ──
 const ROLES = [
@@ -21,6 +22,7 @@ const ROLES = [
   { key: 'admin', label: 'Admin' },
   { key: 'manager', label: 'Manager' },
   { key: 'reports', label: 'Reports' },
+  { key: 'review', label: 'Inv/Stmt Review' },
 ];
 
 const HEADERS = {
@@ -32,28 +34,36 @@ const HEADERS = {
   admin: { logo: '📦 WholesaleERP', user: 'Admin', initials: 'AD', notifs: 0 },
   manager: { logo: '📦 WholesaleERP', user: 'Karen Miller', initials: 'KM', notifs: 4 },
   reports: { logo: '📦 WholesaleERP', user: 'Karen Miller', initials: 'KM', notifs: 0 },
+  review: { logo: '📦 WholesaleERP', user: 'Lisa Chen', initials: 'LC', notifs: 2 },
 };
 
 const NAVS = {
   sales: salesNav, warehouse: warehouseNav, driver: driverNav, route: routeNav,
   accounting: accountingNav, admin: adminNav, manager: managerNav, reports: reportsNav,
+  review: reviewNav,
 };
 
 const RENDERERS = {
   login: renderLogin, sales: renderSales, warehouse: renderWarehouse, driver: renderDriver,
   route: renderRoute, accounting: renderAccounting, admin: renderAdmin,
   manager: renderManager, reports: renderReports,
+  review: renderReview,
 };
 
 // ── STATE ──
 let currentRole = 'login';
 let currentPage = '';
+let viewMode = 'desktop'; // 'desktop' | 'mobile'
 
 // ── ROUTING ──
 function parseHash() {
   const h = location.hash.slice(1) || '/login';
-  const parts = h.split('/').filter(Boolean);
-  return { role: parts[0] || 'login', page: parts.slice(1).join('/') || 'main' };
+  const qIdx = h.indexOf('?');
+  const pathPart = qIdx >= 0 ? h.slice(0, qIdx) : h;
+  const query    = qIdx >= 0 ? h.slice(qIdx)    : '';
+  const parts = pathPart.split('/').filter(Boolean);
+  // Preserve query string so detail pages (order-detail?id=, customer?id=) can read it
+  return { role: parts[0] || 'login', page: (parts.slice(1).join('/') || 'main') + query };
 }
 
 export function navigate(path) {
@@ -69,9 +79,16 @@ function onHashChange() {
 
 // ── RENDERING ──
 function renderRoleBar() {
+  const toggleBtn = (currentRole === 'sales')
+    ? `<div class="view-toggle">
+        <button class="toggle-btn ${viewMode === 'desktop' ? 'active' : ''}" onclick="window.ERP.setViewMode('desktop')" title="Desktop view">🖥️</button>
+        <button class="toggle-btn ${viewMode === 'mobile' ? 'active' : ''}" onclick="window.ERP.setViewMode('mobile')" title="Mobile view">📱</button>
+       </div>`
+    : '';
   return `<div class="role-bar">
     <span>Demo</span>
     ${ROLES.map(r => `<button class="role-btn ${r.key === currentRole ? 'active' : ''}" onclick="window.ERP.switchRole('${r.key}')">${r.label}</button>`).join('')}
+    ${toggleBtn}
   </div>`;
 }
 
@@ -111,31 +128,74 @@ function renderSidebar(role) {
   return html;
 }
 
+function renderMobileBottomNav(role) {
+  const navFn = NAVS[role];
+  if (!navFn) return '';
+  const items = navFn();
+  const allItems = items.slice(0, 6);
+  if (allItems.length === 0) return '';
+  return `<div class="m-bottom-nav">
+    ${allItems.map(item => {
+      const active = currentPage === item.page || (currentPage === 'main' && item.default) ? ' active' : '';
+      return `<a class="m-nav-item${active}" onclick="window.ERP.nav('#/${role}/${item.page}')">
+        <span class="m-nav-icon">${item.icon}</span>
+        <span class="m-nav-label">${item.label}</span>
+      </a>`;
+    }).join('')}
+  </div>`;
+}
+
 function render() {
   const app = document.getElementById('app');
   const rendererFn = RENDERERS[currentRole];
   if (!rendererFn) { app.innerHTML = renderRoleBar(); return; }
 
-  // Update role bar buttons
-  document.querySelectorAll('.role-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent.toLowerCase().includes(currentRole));
-  });
-
+  // Login page — no layout
   if (currentRole === 'login') {
+    window.ERP._isMobile = false;
     app.innerHTML = renderRoleBar() + rendererFn(currentPage);
     return;
   }
-  if (currentRole === 'driver') {
-    // Driver uses mobile layout — no sidebar
-    app.innerHTML = renderRoleBar() + `<div class="app-shell active">` + renderHeader(currentRole)
-      + `<div style="padding:24px">${rendererFn(currentPage)}</div></div>`;
+
+  // Set mobile flag BEFORE rendering so page functions can branch
+  window.ERP._isMobile = (viewMode === 'mobile' && currentRole === 'sales');
+  const pageContent = rendererFn(currentPage);
+
+  // ── Mobile view (sales only) — phone device frame ──
+  if (window.ERP._isMobile) {
+    app.innerHTML = renderRoleBar()
+      + `<div class="mobile-preview-wrapper">
+          <div class="mobile-device-frame">
+            <div class="mobile-device-notch"></div>
+            <div class="mobile-device-screen">
+              <div class="m-header">
+                <span class="m-logo">📦 WholesaleERP</span>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="m-notif">🔔<span class="m-notif-count">3</span></span>
+                  <div class="m-avatar">MJ</div>
+                </div>
+              </div>
+              <div class="m-content">${pageContent}</div>
+              ${renderMobileBottomNav(currentRole)}
+            </div>
+          </div>
+        </div>`;
     return;
   }
+
+  // ── Desktop view ──
+  if (currentRole === 'driver') {
+    app.innerHTML = renderRoleBar() + `<div class="app-shell active">`
+      + renderHeader(currentRole)
+      + `<div style="padding:24px">${pageContent}</div></div>`;
+    return;
+  }
+
   app.innerHTML = renderRoleBar() + `<div class="app-shell active">`
     + renderHeader(currentRole)
     + `<div class="layout">`
     + renderSidebar(currentRole)
-    + `<div class="content">${rendererFn(currentPage)}</div>`
+    + `<div class="content">${pageContent}</div>`
     + `</div></div>`;
 }
 
@@ -231,8 +291,17 @@ export function closeModal() {
 
 // ── EXPOSE GLOBALS ──
 Object.assign(window.ERP, {
-  switchRole(role) { navigate(`#/${role}/main`); },
+  _isMobile: false,
+  switchRole(role) { if (role !== 'sales') viewMode = 'desktop'; navigate(`#/${role}/main`); },
   nav(path) { navigate(path); },
+  setViewMode(mode) { viewMode = mode; render(); },
+  // Generic tab switcher — finds all .tab and .tab-content inside the element with the given id
+  _tab(id, tab) {
+    const wrap = document.getElementById(id);
+    if (!wrap) return;
+    wrap.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    wrap.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.dataset.tab === tab));
+  },
   toast, showModal, closeModal, navigate,
   initTabs, initSearch,
 });

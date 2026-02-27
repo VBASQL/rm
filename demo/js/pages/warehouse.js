@@ -1,5 +1,5 @@
 // ===== Warehouse Screens =====
-import { ORDERS, CUSTOMERS, PRODUCTS, fmt$, customerName } from '../data.js';
+import { ORDERS, CUSTOMERS, PRODUCTS, CATEGORIES, ROUTES, USERS, fmt$, customerName, productById } from '../data.js';
 
 export function warehouseNav() {
   return [
@@ -9,6 +9,7 @@ export function warehouseNav() {
     { section: 'Tools', icon: '🤖', label: 'AI Pick Review', page: 'ai-review' },
     { section: 'Tools', icon: '🖨', label: 'Print Management', page: 'print' },
     { section: 'Tools', icon: '📊', label: 'Reports', page: 'reports' },
+    { section: 'Inventory', icon: '🗃️', label: 'Inventory', page: 'inventory' },
   ];
 }
 
@@ -19,6 +20,7 @@ export function renderWarehouse(page) {
     case 'ai-review': return aiReviewPage();
     case 'print': return printManagementPage();
     case 'reports': return whReportsPage();
+    case 'inventory': return inventoryPage();
     default: return queuePage();
   }
 }
@@ -86,7 +88,7 @@ function pickOrderPage() {
 
     <div class="card" style="padding:0;overflow:hidden">
       <table>
-        <thead><tr><th>Loc</th><th>Code</th><th>Product</th><th>Pack</th><th style="text-align:center">Ordered</th><th style="text-align:center">Picked</th><th>Status</th></tr></thead>
+        <thead><tr><th>Loc</th><th>Code</th><th>Product</th><th>Pack</th><th style="text-align:center">Ordered</th><th style="text-align:center">Picked</th><th>Status</th><th title="Remove line if out of stock"></th></tr></thead>
         <tbody>${pickItems.map(item => {
           const done = item.picked >= item.ordered;
           return `<tr class="${done ? '' : 'row-highlight'}">
@@ -94,6 +96,7 @@ function pickOrderPage() {
             <td style="text-align:center">${item.ordered}</td>
             <td style="text-align:center"><input class="inline-input${done ? '' : ' edit'}" type="number" value="${item.picked}" min="0" max="${item.ordered}"></td>
             <td>${done ? '<span class="badge badge-green">✓ Picked</span>' : '<span class="badge badge-yellow">Pending</span>'}</td>
+            <td><button class="btn-danger btn-sm" title="Remove line (out of stock)" onclick="if(confirm('Remove this line from the pick?')){this.closest('tr').style.opacity='0.4';this.closest('tr').style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed — will be short-picked','')}">✕</button></td>
           </tr>`;
         }).join('')}</tbody>
       </table>
@@ -119,17 +122,34 @@ function pickApprovalPage() {
         <div><strong>ORD-2603 — Ocean Prime Seafood</strong><br><span class="text-sm text-light">Picked by Rachel Green · 9:42 AM</span></div>
         <span class="badge badge-yellow">Short Pick</span>
       </div>
-      <table><thead><tr><th>Product</th><th style="text-align:center">Ordered</th><th style="text-align:center">Picked</th><th>Issue</th></tr></thead>
+      <table><thead><tr><th>Product</th><th style="text-align:center">Ordered</th><th style="text-align:center">Picked</th><th>Issue</th><th title="Remove line"></th></tr></thead>
       <tbody>
-        <tr class="row-warn"><td>Atlantic Salmon Fillet</td><td style="text-align:center">3</td><td style="text-align:center">2</td><td><span class="text-red">Short 1 — Out of stock</span></td></tr>
-        <tr><td>Jumbo Shrimp 16/20</td><td style="text-align:center">4</td><td style="text-align:center">4</td><td><span class="text-green">Complete</span></td></tr>
-        <tr><td>NY Strip Steak</td><td style="text-align:center">2</td><td style="text-align:center">2</td><td><span class="text-green">Complete</span></td></tr>
+        <tr class="row-warn" id="appr-salmon">
+          <td>Atlantic Salmon Fillet</td>
+          <td style="text-align:center">3</td>
+          <td style="text-align:center"><input class="inline-input edit" type="number" value="2" min="0" max="3" title="Adjust quantity" style="width:64px"></td>
+          <td><span class="text-red">Short — adjust qty or remove line</span></td>
+          <td><button class="btn-danger btn-sm" title="Remove line" onclick="if(confirm('Remove Salmon Fillet from this order?')){document.getElementById('appr-salmon').style.opacity='0.4';document.getElementById('appr-salmon').style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td>
+        </tr>
+        <tr id="appr-shrimp">
+          <td>Jumbo Shrimp 16/20</td>
+          <td style="text-align:center">4</td>
+          <td style="text-align:center"><input class="inline-input" type="number" value="4" min="0" max="4" style="width:64px"></td>
+          <td><span class="text-green">Complete</span></td>
+          <td><button class="btn-danger btn-sm" title="Remove line" onclick="if(confirm('Remove Jumbo Shrimp from this order?')){document.getElementById('appr-shrimp').style.opacity='0.4';document.getElementById('appr-shrimp').style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td>
+        </tr>
+        <tr id="appr-steak">
+          <td>NY Strip Steak</td>
+          <td style="text-align:center">2</td>
+          <td style="text-align:center"><input class="inline-input" type="number" value="2" min="0" max="2" style="width:64px"></td>
+          <td><span class="text-green">Complete</span></td>
+          <td><button class="btn-danger btn-sm" title="Remove line" onclick="if(confirm('Remove NY Strip Steak from this order?')){document.getElementById('appr-steak').style.opacity='0.4';document.getElementById('appr-steak').style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td>
+        </tr>
       </tbody></table>
       <div class="flex-between mt-16">
-        <div class="form-group" style="flex:1;margin-right:12px;margin-bottom:0"><input placeholder="Approval notes — e.g., customer notified of short"></div>
+        <div class="form-group" style="flex:1;margin-right:12px;margin-bottom:0"><input placeholder="Approval notes — e.g., customer notified of short, qty adjusted to 2"></div>
         <div style="display:flex;gap:8px">
-          <button class="btn-outline" onclick="window.ERP.toast('Sent back for re-pick','')">Send Back</button>
-          <button class="btn-success" onclick="window.ERP.toast('Pick approved — ready to load','success')">✅ Approve</button>
+          <button class="btn-success" onclick="window.ERP.toast('Pick approved with adjustments — ready to load','success')">✅ Approve</button>
         </div>
       </div>
     </div>
@@ -151,7 +171,7 @@ function pickApprovalPage() {
 function aiReviewPage() {
   return `
     <div class="section-title"><h2>🤖 AI Pick Verification</h2></div>
-    <div class="info-box mb-16">AI-powered OCR scans the pick sheet photo and compares against the digital order. Discrepancies are highlighted.</div>
+    <div class="info-box mb-16">Scans the pick sheet photo and compares against the order. Mismatches automatically adjust the order quantity to match what was scanned.</div>
 
     <div class="grid-2">
       <div class="card">
@@ -165,22 +185,21 @@ function aiReviewPage() {
         </div>
       </div>
       <div class="card">
-        <h3>🔍 AI Extracted vs System</h3>
+        <h3>🔍 Scan vs Order</h3>
         <table>
-          <thead><tr><th>Product</th><th style="text-align:center">AI Read</th><th style="text-align:center">System</th><th>Match</th></tr></thead>
+          <thead><tr><th>Product</th><th style="text-align:center">Scan</th><th style="text-align:center">Order</th><th>Match</th></tr></thead>
           <tbody>
-            <tr><td>Whole Milk</td><td style="text-align:center">4</td><td style="text-align:center">4</td><td><span class="text-green bold">✓</span></td></tr>
-            <tr><td>Tomatoes Vine-Ripe</td><td style="text-align:center">2</td><td style="text-align:center">2</td><td><span class="text-green bold">✓</span></td></tr>
-            <tr><td>Chicken Breast</td><td style="text-align:center">1</td><td style="text-align:center">1</td><td><span class="text-green bold">✓</span></td></tr>
-            <tr class="row-danger"><td>Romaine Hearts</td><td style="text-align:center">2</td><td style="text-align:center">3</td><td><span class="text-red bold">✗ Mismatch</span></td></tr>
-            <tr><td>Large Eggs</td><td style="text-align:center">2</td><td style="text-align:center">2</td><td><span class="text-green bold">✓</span></td></tr>
-            <tr><td>Salmon Fillet</td><td style="text-align:center">1</td><td style="text-align:center">1</td><td><span class="text-green bold">✓</span></td></tr>
+            <tr><td>Whole Milk</td><td style="text-align:center"><input class="inline-input" type="number" value="4" min="0" style="width:60px"></td><td style="text-align:center">4</td><td><span class="text-green bold">✓</span></td></tr>
+            <tr><td>Tomatoes Vine-Ripe</td><td style="text-align:center"><input class="inline-input" type="number" value="2" min="0" style="width:60px"></td><td style="text-align:center">2</td><td><span class="text-green bold">✓</span></td></tr>
+            <tr><td>Chicken Breast</td><td style="text-align:center"><input class="inline-input" type="number" value="1" min="0" style="width:60px"></td><td style="text-align:center">1</td><td><span class="text-green bold">✓</span></td></tr>
+            <tr class="row-warn" id="ai-romaine"><td>Romaine Hearts</td><td style="text-align:center"><input class="inline-input edit" type="number" value="2" min="0" style="width:60px" title="Adjust scan quantity"></td><td style="text-align:center"><span style="text-decoration:line-through;color:#999;margin-right:4px">3</span>→ 2</td><td><span class="badge badge-yellow">↻ Order Adjusted</span></td></tr>
+            <tr><td>Large Eggs</td><td style="text-align:center"><input class="inline-input" type="number" value="2" min="0" style="width:60px"></td><td style="text-align:center">2</td><td><span class="text-green bold">✓</span></td></tr>
+            <tr><td>Salmon Fillet</td><td style="text-align:center"><input class="inline-input" type="number" value="1" min="0" style="width:60px"></td><td style="text-align:center">1</td><td><span class="text-green bold">✓</span></td></tr>
           </tbody>
         </table>
-        <div class="warn-box mt-16">⚠️ <strong>1 discrepancy found:</strong> Romaine Hearts — AI read 2, system expected 3. Please verify.</div>
+        <div class="info-box mt-16">ℹ️ <strong>1 order adjusted:</strong> Romaine Hearts — order updated from 3 → 2 to match scan.</div>
         <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn-outline" onclick="window.ERP.toast('Sent for re-count','')">Re-count Item</button>
-          <button class="btn-success" onclick="window.ERP.toast('Accepted with note','success')">Accept as 2</button>
+          <button class="btn-success" onclick="window.ERP.toast('Scan accepted — order quantities updated','success')">✅ Accept Scan</button>
         </div>
       </div>
     </div>`;
@@ -233,7 +252,281 @@ function whReportsPage() {
     </div>`;
 }
 
+/* ── INVENTORY MANAGEMENT ── */
+const _INV_CONTAINER_TYPES = [
+  { key: '12oz Can',          label: '12oz Can',    icon: '🥤' },
+  { key: '20oz Bottle',       label: '20oz Bottle', icon: '🍶' },
+  { key: '2L Bottle',         label: '2L Bottle',   icon: '🧃' },
+  { key: '12oz Glass Bottle', label: '12oz Glass',  icon: '🫙' },
+];
+
+function inventoryPage() {
+  const availableContainers = _INV_CONTAINER_TYPES.filter(ct => PRODUCTS.some(p => p.size === ct.key));
+
+  // Build rows: Container → Pack Size → Flavors
+  let prodRows = '';
+  for (const ct of availableContainers) {
+    const ctProds = PRODUCTS.filter(p => p.size === ct.key);
+    const packSizes = [...new Set(ctProds.map(p => p.packSize))]
+      .sort((a, b) => (parseInt(b) || 0) - (parseInt(a) || 0));
+
+    prodRows += `<tr class="inv-cont-header" data-container-header="${ct.key}">
+      <td colspan="5" style="background:#e2e8f0;font-weight:700;font-size:0.85rem;color:#334155;padding:10px 14px;border-top:2px solid #94a3b8;letter-spacing:.04em">
+        ${ct.icon} ${ct.label}
+      </td>
+    </tr>`;
+
+    for (const ps of packSizes) {
+      const psProds = ctProds.filter(p => p.packSize === ps);
+      prodRows += `<tr class="inv-pack-header" data-pack-hdr-container="${ct.key}" data-pack-hdr-key="${ps}">
+        <td colspan="5" style="background:#f8fafc;font-weight:600;font-size:0.78rem;color:#64748b;padding:7px 14px 7px 28px;border-top:1px solid #e2e8f0">
+          📦 ${ps}
+        </td>
+      </tr>`;
+
+      for (const p of psProds) {
+        const stockStatus = p.stock === 0 ? 'out' : p.stock <= 10 ? 'low' : 'ok';
+        const stockBadge = stockStatus === 'out'
+          ? '<span class="badge badge-red">Out of Stock</span>'
+          : stockStatus === 'low'
+            ? '<span class="badge badge-yellow">Low Stock</span>'
+            : '<span class="badge badge-green">In Stock</span>';
+        const flavorLabel = p.flavor !== p.name ? p.flavor : p.name;
+        prodRows += `<tr data-prod="${p.id}" data-name="${(p.name + ' ' + p.flavor + ' ' + p.code).toLowerCase()}" data-container="${p.size}" data-pack="${p.packSize}">
+          <td style="padding-left:28px"><code>${p.code}</code></td>
+          <td><strong>${flavorLabel}</strong></td>
+          <td style="text-align:center">
+            <input class="inline-input edit" type="number" value="${p.stock}" min="0" style="width:72px"
+              onchange="window.ERP._invUpdateStock(${p.id}, this.value)" title="Edit stock">
+          </td>
+          <td style="text-align:center">
+            <input class="inline-input" type="number" value="${p.overStockLimit === null ? '' : p.overStockLimit}" min="0" placeholder="∞" style="width:64px"
+              onchange="window.ERP._invUpdateCap(${p.id}, this.value)" title="Max cases per order">
+          </td>
+          <td>${stockBadge}</td>
+        </tr>`;
+      }
+    }
+  }
+
+  return `
+    <div class="section-title"><h2>🗃️ Inventory Management</h2></div>
+
+    <div id="inv-page-wrap">
+      <div class="tabs" id="inv-tabs" style="margin-bottom:0">
+        <div class="tab active" data-tab="manual" onclick="window.ERP._switchInvTab(this)">✏️ Manual Update</div>
+        <div class="tab" data-tab="import" onclick="window.ERP._switchInvTab(this)">📂 Import / CSV</div>
+      </div>
+
+      <!-- ── Manual Update Tab ── -->
+      <div class="inv-tab-panel" data-tab="manual">
+        <div class="card" style="padding:12px 16px;margin-top:12px">
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <input type="text" id="inv-search" placeholder="🔍 Search flavor or code…"
+              oninput="window.ERP._invSearch(this.value)"
+              style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;width:240px;font-size:0.9rem">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn-outline btn-sm inv-cont-btn active-cat" data-key="" onclick="window.ERP._invFilterContainer('',this)">All</button>
+              ${availableContainers.map(ct => `<button class="btn-outline btn-sm inv-cont-btn" data-key="${ct.key}" onclick="window.ERP._invFilterContainer('${ct.key}',this)">${ct.icon} ${ct.label}</button>`).join('')}
+            </div>
+            <button class="btn-success" style="margin-left:auto" onclick="window.ERP._invSaveAll()">💾 Save All Changes</button>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;margin-top:12px">
+          <table id="inv-table">
+            <thead><tr>
+              <th>Code</th>
+              <th>Flavor</th>
+              <th style="text-align:center">Stock (CS)</th>
+              <th style="text-align:center" title="Max cases per order — blank = unlimited">Order Cap</th>
+              <th>Status</th>
+            </tr></thead>
+            <tbody id="inv-tbody">${prodRows}</tbody>
+          </table>
+        </div>
+        <div class="info-box mt-12">💡 <strong>Order Cap</strong> = max cases any customer can order per order. Leave blank for unlimited.</div>
+      </div>
+
+      <!-- ── Import / CSV Tab ── -->
+      <div class="inv-tab-panel" data-tab="import" style="display:none">
+        <div class="grid-2 mt-16" style="gap:16px">
+          <div class="card">
+            <h3 style="margin-top:0">📋 Paste or Upload CSV</h3>
+            <div class="info-box mb-12">
+              <strong>Required columns:</strong> <code>code</code>, <code>stock</code><br>
+              Optional: <code>order_cap</code><br>
+              Example: <code>COL-12C-24, 180, 20</code>
+            </div>
+            <textarea id="inv-csv-input" rows="10"
+              placeholder="Paste CSV data here…&#10;code, stock, order_cap&#10;COL-12C-24, 180, 20&#10;LEM-12C-24, 95, 15&#10;…"
+              style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-family:monospace;font-size:0.82rem;resize:vertical;box-sizing:border-box"></textarea>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn-primary" onclick="window.ERP._invProcessCSV()">🔍 Preview Import</button>
+              <label class="btn-outline" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+                📁 Upload .csv <input type="file" accept=".csv,.txt" style="display:none" onchange="window.ERP._invFileUpload(this)">
+              </label>
+              <button class="btn-outline btn-sm" onclick="window.ERP._invDownloadSample()">⬇️ Sample CSV</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin-top:0">🔍 Import Preview</h3>
+            <div id="inv-import-preview">
+              <p class="text-light text-sm">Paste CSV data and click <em>Preview Import</em> to see a summary before applying.</p>
+            </div>
+            <div id="inv-import-actions" style="display:none;margin-top:12px">
+              <button class="btn-success" onclick="window.ERP._invApplyImport()">✅ Apply Import</button>
+              <button class="btn-outline btn-sm" style="margin-left:8px" onclick="window.ERP._invClearImport()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── (Order Overrides removed) ── */
+function _invRefreshHeaders(tbody) {
+  tbody.querySelectorAll('tr[data-pack-hdr-key]').forEach(hdr => {
+    const container = hdr.dataset.packHdrContainer;
+    const pack = hdr.dataset.packHdrKey;
+    const visible = Array.from(tbody.querySelectorAll(`tr[data-container="${container}"][data-pack="${pack}"]`))
+      .some(r => r.style.display !== 'none');
+    hdr.style.display = visible ? '' : 'none';
+  });
+  tbody.querySelectorAll('tr[data-container-header]').forEach(hdr => {
+    const key = hdr.dataset.containerHeader;
+    const visible = Array.from(tbody.querySelectorAll(`tr[data-container="${key}"]`))
+      .some(r => r.style.display !== 'none');
+    hdr.style.display = visible ? '' : 'none';
+  });
+}
+
+
 function badge(status) {
   const map = { Delivered: 'green', Pending: 'yellow', Picking: 'orange', 'Out for Delivery': 'purple', Confirmed: 'blue', Hold: 'red' };
   return `<span class="badge badge-${map[status] || 'blue'}">${status}</span>`;
 }
+
+/* ── INVENTORY HANDLERS ── */
+window.ERP._invStock  = {};
+window.ERP._invCaps   = {};
+window.ERP._invImportData = null;
+
+window.ERP._switchInvTab = function(el) {
+  const wrap = document.getElementById('inv-page-wrap');
+  if (!wrap) return;
+  wrap.querySelectorAll('#inv-tabs .tab').forEach(t => t.classList.remove('active'));
+  wrap.querySelectorAll('.inv-tab-panel').forEach(c => c.style.display = 'none');
+  el.classList.add('active');
+  wrap.querySelector(`.inv-tab-panel[data-tab="${el.dataset.tab}"]`).style.display = '';
+};
+
+window.ERP._invSearch = function(q) {
+  q = (q || '').toLowerCase();
+  const tbody = document.getElementById('inv-tbody');
+  if (!tbody) return;
+  tbody.querySelectorAll('tr[data-prod]').forEach(r => {
+    r.style.display = (!q || r.dataset.name.includes(q)) ? '' : 'none';
+  });
+  _invRefreshHeaders(tbody);
+};
+
+window.ERP._invFilterContainer = function(key, btn) {
+  document.querySelectorAll('.inv-cont-btn').forEach(b => b.classList.remove('active-cat','btn-primary'));
+  btn.classList.add('active-cat','btn-primary');
+  const tbody = document.getElementById('inv-tbody');
+  if (!tbody) return;
+  tbody.querySelectorAll('tr[data-prod]').forEach(r => {
+    r.style.display = (!key || r.dataset.container === key) ? '' : 'none';
+  });
+  _invRefreshHeaders(tbody);
+};
+
+window.ERP._invUpdateStock = function(productId, val) {
+  window.ERP._invStock[productId] = parseInt(val) || 0;
+};
+
+window.ERP._invUpdateCap = function(productId, val) {
+  window.ERP._invCaps[productId] = val === '' ? null : parseInt(val);
+};
+
+window.ERP._invSaveAll = function() {
+  const changes = Object.keys(window.ERP._invStock).length + Object.keys(window.ERP._invCaps).length;
+  if (changes === 0) { window.ERP.toast('No changes to save',''); return; }
+  window.ERP.toast(`✅ Inventory saved — ${changes} field${changes > 1 ? 's' : ''} updated`,'success');
+  window.ERP._invStock = {};
+  window.ERP._invCaps  = {};
+};
+
+window.ERP._invProcessCSV = function() {
+  const raw = document.getElementById('inv-csv-input').value.trim();
+  if (!raw) { window.ERP.toast('Paste CSV data first',''); return; }
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const dataLines = lines[0].toLowerCase().includes('code') ? lines.slice(1) : lines;
+  const results = [];
+  dataLines.forEach(line => {
+    const parts = line.split(',').map(s => s.trim());
+    if (parts.length < 2) return;
+    const [code, stock, cap] = parts;
+    const prod = PRODUCTS.find(p => p.code.toLowerCase() === code.toLowerCase());
+    results.push({ code, stock, cap: cap || '—', found: !!prod, name: prod ? prod.name + (prod.flavor !== prod.name ? ' — ' + prod.flavor : '') + ' · ' + prod.size + ' ' + prod.packSize : '⚠️ Not found' });
+  });
+  const good = results.filter(r => r.found);
+  const bad  = results.filter(r => !r.found);
+  window.ERP._invImportData = good;
+  const preview = document.getElementById('inv-import-preview');
+  preview.innerHTML = `
+    <div class="flex-between mb-8">
+      <span class="text-sm"><strong>${good.length}</strong> products matched · <span class="${bad.length ? 'text-red' : ''}">${bad.length} not found</span></span>
+    </div>
+    <div style="max-height:260px;overflow-y:auto">
+      <table><thead><tr><th>Code</th><th>Product</th><th>New Stock</th><th>New Cap</th><th></th></tr></thead>
+      <tbody>
+        ${results.map(r => `<tr ${r.found ? '' : 'style="color:var(--red)"'}>
+          <td><code>${r.code}</code></td>
+          <td>${r.name}</td>
+          <td>${r.found ? r.stock : '—'}</td>
+          <td>${r.found ? r.cap : '—'}</td>
+          <td>${r.found ? '<span class="text-green">✓</span>' : '<span class="text-red">✗</span>'}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+    ${bad.length ? `<div class="info-box mt-8" style="border-color:var(--red)">⚠️ ${bad.length} row${bad.length>1?'s':''} skipped — product code not found.</div>` : ''}`;
+  document.getElementById('inv-import-actions').style.display = good.length ? '' : 'none';
+};
+
+window.ERP._invApplyImport = function() {
+  if (!window.ERP._invImportData || !window.ERP._invImportData.length) return;
+  const n = window.ERP._invImportData.length;
+  document.getElementById('inv-import-preview').innerHTML = `<div class="text-green bold">✅ ${n} product${n>1?'s':''} updated successfully.</div>`;
+  document.getElementById('inv-import-actions').style.display = 'none';
+  window.ERP._invImportData = null;
+  window.ERP.toast(`Import applied — ${n} products updated`,'success');
+};
+
+window.ERP._invClearImport = function() {
+  document.getElementById('inv-import-preview').innerHTML = '<p class="text-light text-sm">Paste CSV data and click <em>Preview Import</em> to see a summary before applying.</p>';
+  document.getElementById('inv-import-actions').style.display = 'none';
+  window.ERP._invImportData = null;
+};
+
+window.ERP._invFileUpload = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('inv-csv-input').value = e.target.result;
+    window.ERP.toast('File loaded — click Preview Import','success');
+  };
+  reader.readAsText(file);
+  input.value = '';
+};
+
+window.ERP._invDownloadSample = function() {
+  const header = 'code,stock,order_cap\n';
+  const rows = PRODUCTS.slice(0,8).map(p => `${p.code},${p.stock},${p.overStockLimit ?? ''}`).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'inventory_sample.csv'; a.click();
+};
+
+/* end of warehouse module */

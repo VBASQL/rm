@@ -105,24 +105,25 @@ function myRoutePage() {
       <!-- FRAME 3: Action Frame -->
       <div class="mobile-frame">
         <div class="mobile-header green"><span onclick="window.ERP.nav('#/driver/stop')" style="cursor:pointer">←</span><h2>Delivery Confirmation</h2><span></span></div>
-        <div class="mobile-content">
-          <div class="text-center mb-16">
-            <div style="font-size:40px">✅</div>
-            <h3>Ocean Prime Seafood</h3>
-            <div class="text-sm text-light">ORD-2603 · 18 items · ${fmt$(4200)}</div>
+        <div class="mobile-content" style="padding:14px">
+
+          <div class="success-box" style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <span style="font-size:20px">📄</span>
+            <div>
+              <div class="bold" style="font-size:13px">✓ Invoice INV-2603 generated</div>
+              <div class="text-xs text-light">Posted to system · ${fmt$(4200)} · 18 items</div>
+            </div>
           </div>
 
           <div class="form-group"><label>Items Verified</label>
             <div class="success-box">All 18 items confirmed as delivered ✓</div>
           </div>
 
-          <div class="form-group"><label>Signature</label>
-            <div class="signature-pad signed">✓ Signed by David Park</div>
-          </div>
-
-          <div class="form-group"><label>Photo Proof</label>
-            <div style="background:#f1f5f9;padding:16px;border-radius:8px;text-align:center">
-              📷 <span class="text-sm text-light">Photo captured at 8:32 AM</span>
+          <div class="form-group"><label>Invoice Handoff</label>
+            <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px">
+              <div style="background:#f1f5f9;border-radius:8px;padding:10px;text-align:center;font-size:12px">🖨 Printed<br><span class="text-xs text-light">8:31 AM</span></div>
+              <span class="text-xs text-light">OR</span>
+              <div style="background:#f0fdf4;border-radius:8px;padding:10px;text-align:center;font-size:12px;color:var(--green)">✏️ Signed<br><span class="text-xs">David Park</span></div>
             </div>
           </div>
 
@@ -179,23 +180,25 @@ function stopDetailPage() {
       <!-- EDIT ORDER (driver) -->
       <div class="mobile-frame">
         <div class="mobile-header" style="background:var(--orange)"><span onclick="window.ERP.nav('#/driver/stop')" style="cursor:pointer">←</span><h2>Edit Order</h2><span></span></div>
-        <div class="mobile-content">
-          <div class="warn-box">⚠️ You can adjust quantities on-site. Changes are tracked and reflected on the invoice.</div>
-          <table style="font-size:12px">
-            <thead><tr><th>Product</th><th style="text-align:center">Original</th><th style="text-align:center">Actual</th></tr></thead>
-            <tbody>
-              <tr><td>Whole Milk</td><td style="text-align:center">4</td><td style="text-align:center"><input class="inline-input edit" type="number" value="4" min="0"></td></tr>
-              <tr><td>Romaine Hearts</td><td style="text-align:center">3</td><td style="text-align:center"><input class="inline-input edit" type="number" value="3" min="0"></td></tr>
-              <tr class="row-warn"><td>NY Strip Steak</td><td style="text-align:center">2</td><td style="text-align:center"><input class="inline-input edit" type="number" value="1" min="0"></td></tr>
-              <tr><td>Salmon Fillet</td><td style="text-align:center">3</td><td style="text-align:center"><input class="inline-input edit" type="number" value="3" min="0"></td></tr>
-              <tr><td>Jumbo Shrimp</td><td style="text-align:center">4</td><td style="text-align:center"><input class="inline-input edit" type="number" value="4" min="0"></td></tr>
-              <tr><td>Heavy Cream</td><td style="text-align:center">2</td><td style="text-align:center"><input class="inline-input edit" type="number" value="2" min="0"></td></tr>
-            </tbody>
-          </table>
-          <div class="form-group mt-16"><label>Reason for Change</label>
-            <select><option>Customer request — didn't need full qty</option><option>Item damaged</option><option>Item missing from truck</option><option>Other</option></select>
+        <div class="mobile-content" style="padding:12px 14px">
+          <div class="warn-box" style="margin-bottom:12px">⚠️ Adjust quantities or remove lines not delivered. All changes are logged and reflected on the invoice.</div>
+          <div style="overflow-x:auto;border-radius:8px;border:1px solid var(--border)">
+            <table style="font-size:12px;margin:0">
+              <thead><tr><th>Product</th><th style="text-align:center">Orig</th><th style="text-align:center">Actual</th><th></th></tr></thead>
+              <tbody>
+                <tr id="erow-milk"><td>Whole Milk</td><td style="text-align:center">4</td><td style="text-align:center"><input class="inline-input edit" type="number" value="4" min="0" style="width:52px"></td><td><button class="btn-danger btn-sm" onclick="if(confirm('Remove Whole Milk from this delivery?')){var r=document.getElementById('erow-milk');r.style.opacity='0.4';r.style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td></tr>
+                <tr id="erow-romaine"><td>Romaine Hearts</td><td style="text-align:center">3</td><td style="text-align:center"><input class="inline-input edit" type="number" value="3" min="0" style="width:52px"></td><td><button class="btn-danger btn-sm" onclick="if(confirm('Remove Romaine Hearts from this delivery?')){var r=document.getElementById('erow-romaine');r.style.opacity='0.4';r.style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td></tr>
+                <tr id="erow-steak" class="row-warn"><td>NY Strip Steak</td><td style="text-align:center">2</td><td style="text-align:center"><input class="inline-input edit" type="number" value="1" min="0" style="width:52px"></td><td><button class="btn-danger btn-sm" onclick="if(confirm('Remove NY Strip Steak from this delivery?')){var r=document.getElementById('erow-steak');r.style.opacity='0.4';r.style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td></tr>
+                <tr id="erow-salmon"><td>Salmon Fillet</td><td style="text-align:center">3</td><td style="text-align:center"><input class="inline-input edit" type="number" value="3" min="0" style="width:52px"></td><td><button class="btn-danger btn-sm" onclick="if(confirm('Remove Salmon Fillet from this delivery?')){var r=document.getElementById('erow-salmon');r.style.opacity='0.4';r.style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td></tr>
+                <tr id="erow-shrimp"><td>Jumbo Shrimp</td><td style="text-align:center">4</td><td style="text-align:center"><input class="inline-input edit" type="number" value="4" min="0" style="width:52px"></td><td><button class="btn-danger btn-sm" onclick="if(confirm('Remove Jumbo Shrimp from this delivery?')){var r=document.getElementById('erow-shrimp');r.style.opacity='0.4';r.style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td></tr>
+                <tr id="erow-cream"><td>Heavy Cream</td><td style="text-align:center">2</td><td style="text-align:center"><input class="inline-input edit" type="number" value="2" min="0" style="width:52px"></td><td><button class="btn-danger btn-sm" onclick="if(confirm('Remove Heavy Cream from this delivery?')){var r=document.getElementById('erow-cream');r.style.opacity='0.4';r.style.textDecoration='line-through';this.disabled=true;window.ERP.toast('Line removed','')}">✕</button></td></tr>
+              </tbody>
+            </table>
           </div>
-          <button class="btn-primary w-full mt-8" onclick="window.ERP.toast('Order updated. Invoice will be adjusted.','success')">Save Changes</button>
+          <div class="form-group mt-12"><label>Reason for Change</label>
+            <select style="font-size:13px"><option>Customer request — didn't need full qty</option><option>Item damaged</option><option>Item missing from truck</option><option>Other</option></select>
+          </div>
+          <button class="btn-primary w-full mt-8" onclick="window.ERP.toast('Order updated. Accounting and salesperson notified.','success')">Save Changes</button>
         </div>
       </div>
     </div>`;
@@ -207,34 +210,64 @@ function deliveryConfirmPage() {
     <div style="max-width:420px;margin:0 auto">
       <div class="mobile-frame">
         <div class="mobile-header green"><span onclick="window.ERP.nav('#/driver/stop')" style="cursor:pointer">←</span><h2>Confirm Delivery</h2><span></span></div>
-        <div class="mobile-content">
-          <div class="card mb-8" style="text-align:center;padding:16px">
-            <h3>Ocean Prime Seafood</h3>
-            <div class="text-sm text-light">ORD-2603 · 18 items · ${fmt$(4200)}</div>
+        <div class="mobile-content" style="padding:14px">
+
+          <!-- Invoice auto-generated banner -->
+          <div class="success-box" style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <span style="font-size:20px">📄</span>
+            <div>
+              <div class="bold" style="font-size:13px">✓ Invoice INV-2603 generated</div>
+              <div class="text-xs text-light">Posted to system · ${fmt$(4200)} · 18 items</div>
+            </div>
           </div>
 
-          <div class="form-group"><label>1. Verify Items</label>
+          <div class="card mb-12" style="padding:12px">
+            <div class="flex-between"><strong>Ocean Prime Seafood</strong><span class="badge badge-blue">ORD-2603</span></div>
+            <div class="text-xs text-light mt-4">321 Atlantic Ave, Boston · David Park</div>
+          </div>
+
+          <!-- Step 1: Verify -->
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:700;color:var(--text-light)">STEP 1 — VERIFY ITEMS</label>
             <div style="display:flex;gap:8px">
-              <button class="btn-success btn-sm" style="flex:1" onclick="this.style.opacity='1';this.nextElementSibling.style.opacity='.5'">✓ All Correct</button>
-              <button class="btn-outline btn-sm" style="flex:1;opacity:.5" onclick="window.ERP.nav('#/driver/stop')">✏️ Edit Items</button>
+              <button class="btn-success btn-sm" style="flex:1" id="btn-verify" onclick="document.getElementById('btn-verify').style.opacity='1';document.getElementById('btn-edit-items').style.opacity='.5';window.ERP.toast('Items verified','')">✓ All Correct</button>
+              <button class="btn-outline btn-sm" style="flex:1" id="btn-edit-items" onclick="window.ERP.nav('#/driver/stop')">✏️ Edit Items</button>
             </div>
           </div>
 
-          <div class="form-group"><label>2. Collect Signature</label>
-            <div class="signature-pad" onclick="this.classList.add('signed');this.textContent='✓ Signature captured'">
-              Tap to capture signature
+          <!-- Step 2: Print or Sign -->
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:700;color:var(--text-light)">STEP 2 — INVOICE HANDOFF</label>
+            <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px">
+              <button class="btn-outline" style="padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:10px" id="btn-print"
+                onclick="document.getElementById('btn-print').style.borderColor='var(--green)';document.getElementById('btn-print').style.color='var(--green)';document.getElementById('lbl-print').textContent='Printed ✓';window.ERP.toast('Printing invoice…','success')">
+                <span style="font-size:22px">🖨</span>
+                <span id="lbl-print" style="font-size:12px;font-weight:600">Print Invoice</span>
+                <span style="font-size:10px;color:var(--text-light)">Bluetooth printer</span>
+              </button>
+              <div style="font-size:11px;font-weight:700;color:var(--text-light);text-align:center">OR</div>
+              <button class="btn-outline" style="padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:10px" id="btn-sign"
+                onclick="document.getElementById('sig-pad').style.display='block';document.getElementById('btn-sign').style.borderColor='var(--blue)';document.getElementById('btn-sign').style.color='var(--blue)')">
+                <span style="font-size:22px">✏️</span>
+                <span style="font-size:12px;font-weight:600">Digital Signature</span>
+                <span style="font-size:10px;color:var(--text-light)">Customer signs on screen</span>
+              </button>
+            </div>
+            <div id="sig-pad" style="display:none;margin-top:10px">
+              <div class="signature-pad" onclick="this.classList.add('signed');this.innerHTML='<span style=font-size:13px>✓ Signed by David Park<\/span>';document.getElementById('btn-sign').style.borderColor='var(--green)';document.getElementById('btn-sign').style.color='var(--green)'">
+                Tap to capture signature
+              </div>
             </div>
           </div>
 
-          <div class="form-group"><label>3. Photo Proof (Optional)</label>
-            <button class="btn-outline w-full" onclick="this.textContent='📷 Photo captured ✓';this.style.borderColor='var(--green)';this.style.color='var(--green)'">📷 Take Photo</button>
+          <!-- Step 3: Notes -->
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:700;color:var(--text-light)">STEP 3 — NOTES (OPTIONAL)</label>
+            <textarea rows="2" placeholder="e.g., left at loading dock, received by kitchen manager…" style="font-size:13px"></textarea>
           </div>
 
-          <div class="form-group"><label>4. Delivery Notes</label>
-            <textarea rows="2" placeholder="e.g., left at loading dock, received by…"></textarea>
-          </div>
-
-          <button class="btn-success w-full" style="font-size:16px;padding:14px" onclick="window.ERP.toast('✅ Delivery confirmed! Moving to next stop…','success');setTimeout(()=>window.ERP.nav('#/driver/main'),1000)">
+          <button class="btn-success w-full" style="font-size:15px;padding:14px;margin-top:4px"
+            onclick="window.ERP.toast('✅ Delivery confirmed — next stop loaded','success');setTimeout(()=>window.ERP.nav('#/driver/main'),900)">
             Confirm Delivery
           </button>
         </div>
