@@ -1,0 +1,209 @@
+/* ============================================================
+   FILE: ProductModal.module.css
+   PURPOSE: Product detail overlay / bottom sheet styles.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: var(--z-index-modal);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  padding: var(--space-lg);
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+  width: 100%;
+  max-width: var(--max-content-width);
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--bg-primary);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.productName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+  padding-right: 40px;
+}
+
+.productDetail {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 4px;
+}
+
+.productCode {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-lg);
+}
+
+.fieldGroup {
+  margin-bottom: var(--space-md);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.quantityRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  justify-content: center;
+}
+
+.qtyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  background: var(--bg-card);
+  color: var(--color-primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.qtyBtn:active {
+  background: var(--bg-primary);
+}
+
+.qtyInput {
+  width: 64px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--space-sm);
+  color: var(--text-primary);
+}
+
+.qtyInput::-webkit-inner-spin-button,
+.qtyInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.unitsCalc {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-md);
+}
+
+.priceInput {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.dollarSign {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.priceField {
+  flex: 1;
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.priceField:focus {
+  outline: none;
+}
+
+.priceField::-webkit-inner-spin-button,
+.priceField::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.totalsRow {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-xs) 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.lineTotal {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.favoriteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm);
+  margin: var(--space-md) 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: none;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.favoriteActive {
+  color: #f4b400;
+  border-color: #f4b400;
+}
+
+.addBtn {
+  margin-top: var(--space-sm);
+}

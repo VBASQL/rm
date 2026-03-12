@@ -1,0 +1,142 @@
+/* ============================================================
+   FILE: Settings.module.css
+   PURPOSE: Settings page styles — user card, rows, sign out.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.content {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+}
+
+.section {
+  margin-bottom: var(--space-lg);
+}
+
+.sectionTitle {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+/* User card */
+.userCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 1.0625rem;
+  color: var(--text-primary);
+}
+
+.userEmail {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.userRole {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+/* Setting rows */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-xs);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.row:active {
+  background: var(--bg-primary);
+}
+
+.rowIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.rowText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rowText span:first-child {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.rowSub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.badge {
+  padding: 2px 8px;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Sign out */
+.signOutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-md);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--border-radius);
+  background: none;
+  color: var(--color-danger);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: var(--space-lg);
+}
+
+.signOutBtn:active {
+  background: rgba(234, 67, 53, 0.05);
+}

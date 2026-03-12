@@ -1,0 +1,166 @@
+/* ============================================================
+   FILE: PaymentModal.module.css
+   PURPOSE: Payment modal overlay styles.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal {
+  background: var(--bg-card);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: var(--max-content-width);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.body {
+  padding: var(--space-md);
+}
+
+.custInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+
+.custName {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.invCount {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.field {
+  margin-bottom: var(--space-lg);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Amount */
+.amountWrap {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.amountWrap:focus-within {
+  border-color: var(--color-primary);
+}
+
+.amountPrefix {
+  padding: var(--space-sm) var(--space-sm);
+  background: var(--bg-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.amountInput {
+  flex: 1;
+  border: none;
+  padding: var(--space-sm);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  outline: none;
+  min-width: 0;
+}
+
+/* Method */
+.methodGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+}
+
+.methodBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-sm);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.methodActive {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: #e8f0fe;
+}
+
+/* Reference */
+.refInput {
+  width: 100%;
+  padding: var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+  box-sizing: border-box;
+}
+
+.refInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.footer {
+  padding: var(--space-md);
+  border-top: 1px solid var(--border-color);
+}

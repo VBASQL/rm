@@ -1,0 +1,85 @@
+/* ============================================================
+   FILE: CustomerRow.module.css
+   PURPOSE: Customer list item styles.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.row {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: box-shadow 0.15s;
+}
+
+.row:active {
+  box-shadow: var(--shadow-md);
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.topLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: 4px;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lastOrder {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.balance {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.overdueBadge {
+  color: var(--color-danger);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.newOrderBtn {
+  padding: 6px 12px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  background: none;
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.newOrderBtn:active {
+  background: var(--color-primary-light);
+}

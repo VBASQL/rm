@@ -1,0 +1,36 @@
+/* ============================================================
+   FILE: AddCustomer.module.css
+   PURPOSE: Add customer form styles.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.form {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-xxl));
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.checkboxRow input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+.prepaidNotice {
+  background: #e8f0fe;
+  border-radius: var(--border-radius);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.8125rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-lg);
+  line-height: 1.5;
+}

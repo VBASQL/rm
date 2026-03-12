@@ -1,0 +1,67 @@
+/* ============================================================
+   FILE: Toast.module.css
+   PURPOSE: Floating toast notification styles.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.toast {
+  position: fixed;
+  top: calc(var(--header-height) + var(--space-sm));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-index-toast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 16px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  max-width: calc(100vw - 32px);
+  animation: slideDown 0.25s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.success {
+  background: #1e7e34;
+  color: #fff;
+}
+
+.error {
+  background: #c5221f;
+  color: #fff;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.message {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: var(--space-xs);
+}

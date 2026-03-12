@@ -1,0 +1,59 @@
+/* ============================================================
+   FILE: ConfirmDialog.module.css
+   PURPOSE: Confirmation modal overlay + dialog panel styles.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: var(--z-index-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dialog {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-lg);
+  width: 100%;
+  max-width: 340px;
+  box-shadow: var(--shadow-lg);
+}
+
+.title {
+  margin: 0 0 var(--space-sm);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.message {
+  margin: 0 0 var(--space-lg);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+}
+
+.cancelBtn,
+.confirmBtn {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 0.9375rem;
+}

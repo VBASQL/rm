@@ -1,0 +1,33 @@
+/* ============================================================
+   FILE: CustomerList.module.css
+   PURPOSE: Customer list page layout.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.content {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.addBtn:active {
+  background: var(--bg-primary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,349 @@
+/* ============================================================
+   FILE: NewOrder.module.css
+   PURPOSE: Order wizard styles — all 4 steps.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.stepContent {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + 140px);
+}
+
+/* Step 1: Customer selection */
+.searchWrap {
+  margin-bottom: var(--space-md);
+}
+
+.customerList {
+  display: flex;
+  flex-direction: column;
+}
+
+.customerOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--space-sm);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.customerOption:active {
+  box-shadow: var(--shadow-md);
+}
+
+.custName {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.custMeta {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+/* Step 2: Catalog */
+.customerBar {
+  background: var(--color-primary);
+  color: var(--text-inverse);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-md);
+}
+
+.modeToggle {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.modeBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modeBtnActive {
+  background: var(--color-primary);
+  color: var(--text-inverse);
+  border-color: var(--color-primary);
+}
+
+.categoryRow {
+  display: flex;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
+  -webkit-overflow-scrolling: touch;
+}
+
+.categoryRow::-webkit-scrollbar {
+  display: none;
+}
+
+.categoryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 72px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.categoryActive {
+  border-color: var(--color-primary);
+  background: #e8f0fe;
+}
+
+.catIcon {
+  font-size: 1.25rem;
+  margin-bottom: 2px;
+}
+
+.catName {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.categoryActive .catName {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.productList {
+  display: flex;
+  flex-direction: column;
+}
+
+.productRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--space-sm);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.productRow:active {
+  box-shadow: var(--shadow-md);
+}
+
+.productInfo {
+  min-width: 0;
+}
+
+.productName {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.productMeta {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.stockWarning {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-danger);
+  background: #fce8e6;
+  padding: 2px 8px;
+  border-radius: var(--border-radius-pill);
+  white-space: nowrap;
+}
+
+.emptyProducts {
+  text-align: center;
+  color: var(--text-muted);
+  padding: var(--space-xl);
+  font-size: 0.875rem;
+}
+
+/* Step 3: Review */
+.reviewTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--text-primary);
+}
+
+.reviewCustomer {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-md);
+}
+
+.invoiceTable {
+  margin-bottom: var(--space-lg);
+  font-size: 0.75rem;
+  overflow-x: auto;
+}
+
+.invoiceHeader {
+  display: grid;
+  grid-template-columns: 50px 1fr 30px 60px 60px;
+  gap: 4px;
+  padding: var(--space-xs) 0;
+  border-bottom: 2px solid var(--text-primary);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.invoiceLine {
+  display: grid;
+  grid-template-columns: 50px 1fr 30px 60px 60px;
+  gap: 4px;
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.invoiceProductName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.depositLine {
+  display: grid;
+  grid-template-columns: 50px 1fr 30px 60px 60px;
+  gap: 4px;
+  padding: 2px 0 var(--space-xs);
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.totalSection {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.grandTotal {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+  border-top: 2px solid var(--text-primary);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.deliverySection {
+  margin-bottom: var(--space-md);
+}
+
+.deliverNowRow {
+  margin-bottom: var(--space-md);
+}
+
+.deliverNowLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.deliverNowLabel input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+.reviewActions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.reviewActions .btn {
+  flex: 1;
+}
+
+/* Step 4: Confirmation */
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-xxl) 0;
+}
+
+.checkCircle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #e6f4ea;
+  color: #1e7e34;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.confirmation h2 {
+  margin: 0 0 var(--space-sm);
+}
+
+.confirmOrderNum {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 4px;
+}
+
+.confirmDetail {
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-xl);
+}
+
+.confirmActions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}

@@ -1,0 +1,214 @@
+/* ============================================================
+   FILE: Reports.module.css
+   PURPOSE: Reports page styles — tabs, aging buckets, invoice list, balances.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.content {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--space-sm);
+  border: none;
+  background: none;
+  border-radius: var(--border-radius);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.tabActive {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* Summary card */
+.summaryCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius);
+  margin-bottom: var(--space-lg);
+}
+
+.summaryLabel {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.summaryValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Aging buckets */
+.bucketSection {
+  margin-bottom: var(--space-md);
+}
+
+.bucketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-primary);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.bucketTotal {
+  font-weight: 700;
+}
+
+.bucketList {
+  background: var(--bg-card);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.bucketRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.bucketRow:last-child {
+  border-bottom: none;
+}
+
+.bucketInvNum {
+  font-weight: 500;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  margin-right: var(--space-sm);
+}
+
+.bucketCust {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.bucketAmt {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+/* Open invoices */
+.invoiceList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.invoiceRow {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.invoiceRowTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.invoiceNum {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.invoiceRowMid {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.invoiceRowBot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.balanceText {
+  font-weight: 600;
+  color: var(--color-danger);
+}
+
+/* Customer balances */
+.balanceList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.balanceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.balanceRow:active {
+  background: var(--bg-primary);
+}
+
+.balanceRow > div {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.balanceName {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.balanceAmt {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.emptyText {
+  text-align: center;
+  color: var(--text-muted);
+  padding: var(--space-xl);
+}

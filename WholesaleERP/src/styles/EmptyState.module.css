@@ -1,0 +1,40 @@
+/* ============================================================
+   FILE: EmptyState.module.css
+   PURPOSE: Empty list placeholder styles.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-xxl) var(--space-lg);
+  min-height: 200px;
+}
+
+.icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-md);
+  color: var(--text-muted);
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-xs);
+}
+
+.message {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-lg);
+  max-width: 280px;
+}
+
+.action {
+  min-width: 160px;
+}

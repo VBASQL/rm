@@ -1,0 +1,214 @@
+/* ============================================================
+   FILE: Payment.module.css
+   PURPOSE: Payment page styles — customer picker, invoice list, pay bar.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.content {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + 80px);
+}
+
+/* Customer search */
+.searchWrap {
+  position: relative;
+  margin-bottom: var(--space-md);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.searchInput {
+  width: 100%;
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) 40px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+  background: var(--bg-card);
+  box-sizing: border-box;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Customer list */
+.customerList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.customerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.customerRow:active {
+  background: var(--bg-primary);
+}
+
+.custName {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.custBalance {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+/* Selected customer header */
+.customerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-md);
+}
+
+.custHeaderName {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.custHeaderBalance {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.changeBtn {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  background: none;
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Select all */
+.selectAllRow {
+  margin-bottom: var(--space-sm);
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* Invoice list */
+.invoiceList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.invoiceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  border: 2px solid transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.invoiceSelected {
+  border-color: var(--color-primary);
+  background: #e8f0fe;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.invoiceInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.invoiceTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.invoiceNum {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.invoiceBottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.invoiceAmt {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Pay bar */
+.payBar {
+  position: fixed;
+  bottom: var(--bottom-nav-height);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+  padding: var(--space-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: var(--z-sticky);
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+}
+
+.payBarInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.payBarTotal {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}

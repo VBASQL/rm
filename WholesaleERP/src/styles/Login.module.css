@@ -1,0 +1,101 @@
+/* ============================================================
+   FILE: Login.module.css
+   PURPOSE: Styles for the Login page — centered card layout.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.loginContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: var(--space-md);
+}
+
+.loginCard {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-xl) var(--space-lg);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.logo {
+  margin-bottom: var(--space-xl);
+}
+
+.logoIcon {
+  font-size: 3rem;
+  margin-bottom: var(--space-sm);
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.errorMessage {
+  background: #fce8e6;
+  color: var(--color-danger);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--space-md);
+  font-size: 0.875rem;
+}
+
+.signInButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 12px var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, box-shadow 0.15s;
+  margin-bottom: var(--space-md);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.signInButton:active {
+  transform: scale(0.98);
+}
+
+.buttonIcon {
+  flex-shrink: 0;
+}
+
+.googleButton {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.googleButton:hover {
+  background: #f8f9fa;
+  box-shadow: var(--shadow-sm);
+}
+
+.microsoftButton {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.microsoftButton:hover {
+  background: #f8f9fa;
+  box-shadow: var(--shadow-sm);
+}
+
+.footerText {
+  margin-top: var(--space-lg);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}

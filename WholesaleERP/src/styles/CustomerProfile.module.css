@@ -1,0 +1,234 @@
+/* ============================================================
+   FILE: CustomerProfile.module.css
+   PURPOSE: Customer profile page — header, action bar, tabs, content.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.customerHeader {
+  padding: 0 var(--space-md) var(--space-sm);
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.customerType {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+/* Action bar — always visible per §5.5 */
+.actionBar {
+  display: flex;
+  gap: var(--space-xs);
+  padding: 0 var(--space-md) var(--space-sm);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.actionBar::-webkit-scrollbar {
+  display: none;
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  color: var(--color-primary);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.actionItem:active {
+  background: var(--bg-primary);
+}
+
+/* Tabs */
+.tabBar {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabBar::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tabActive {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.tabContent {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+}
+
+/* Info sections */
+.infoSection {
+  margin-bottom: var(--space-lg);
+}
+
+.infoTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 var(--space-sm);
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+}
+
+.infoRow span:first-child {
+  color: var(--text-secondary);
+}
+
+.infoRow span:last-child,
+.infoRow a {
+  color: var(--text-primary);
+  font-weight: 500;
+  text-align: right;
+}
+
+.infoRow a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* List rows (orders, invoices, payments) */
+.listRow {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-sm);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.listRowMain {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.listRowTitle {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.listRowSub {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.paymentMethod {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  padding: 1px 8px;
+  border-radius: var(--border-radius-pill);
+}
+
+/* Balance card */
+.balanceCard {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.balanceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-xs) 0;
+  font-size: 0.9375rem;
+}
+
+.balanceAmount {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.creditAmount {
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+/* Notes */
+.noteInput {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.notesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.noteItem {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.noteItem p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.emptyText {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  padding: var(--space-lg);
+}

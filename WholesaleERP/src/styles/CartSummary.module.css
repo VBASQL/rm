@@ -1,0 +1,128 @@
+/* ============================================================
+   FILE: CartSummary.module.css
+   PURPOSE: Floating cart bar and expanded cart view styles.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.container {
+  position: fixed;
+  bottom: var(--bottom-nav-height);
+  left: 0;
+  right: 0;
+  z-index: var(--z-index-nav);
+  background: var(--bg-card);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--space-sm) var(--space-md);
+  padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: var(--space-xs) 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.barInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.barTotal {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.reviewBtn {
+  margin-top: var(--space-sm);
+}
+
+/* Expanded cart */
+.expanded {
+  max-height: 40vh;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: var(--space-sm);
+}
+
+.expandedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.expandedHeader h4 {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.closeExpandBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cartItem:last-child {
+  border-bottom: none;
+}
+
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.itemName {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemQty {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.removeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  color: var(--color-danger);
+  cursor: pointer;
+}

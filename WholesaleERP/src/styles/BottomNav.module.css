@@ -1,0 +1,55 @@
+/* ============================================================
+   FILE: BottomNav.module.css
+   PURPOSE: Styles for the mobile bottom navigation bar.
+   MODIFICATION HISTORY:
+     [2026-03-12] Initial creation.
+   ============================================================ */
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-height);
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: var(--z-bottom-nav);
+  /* WHY: Safe area for phones with gesture bars / notches */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  padding: 6px 0;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+
+.navItem.active {
+  color: var(--color-primary);
+}
+
+.navLabel {
+  font-size: 0.625rem;
+  font-weight: 500;
+}
+
+.centerItem {
+  color: var(--color-primary);
+}
+
+.centerItem.active {
+  color: var(--color-primary-dark);
+}
