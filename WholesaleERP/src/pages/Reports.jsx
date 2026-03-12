@@ -76,7 +76,7 @@ class Reports extends React.Component {
     };
 
     openInvoices.forEach(inv => {
-      const balance = inv.totalAmount - inv.amountPaid;
+      const balance = inv.grandTotal - inv.amountPaid;
       const days = this._getDaysOverdue(inv.dueDate);
       const entry = { ...inv, balance, daysOverdue: days, customerName: custMap[inv.customerId]?.name || 'Unknown' };
 
@@ -137,7 +137,7 @@ class Reports extends React.Component {
     return (
       <div className={styles.invoiceList}>
         {open.map(inv => {
-          const balance = inv.totalAmount - inv.amountPaid;
+          const balance = inv.grandTotal - inv.amountPaid;
           return (
             <div key={inv.id} className={styles.invoiceRow}>
               <div className={styles.invoiceRowTop}>
@@ -149,7 +149,7 @@ class Reports extends React.Component {
                 <span>Due: {this._formatDate(inv.dueDate)}</span>
               </div>
               <div className={styles.invoiceRowBot}>
-                <span>Total: {this._formatCurrency(inv.totalAmount)}</span>
+                <span>Total: {this._formatCurrency(inv.grandTotal)}</span>
                 <span className={styles.balanceText}>Balance: {this._formatCurrency(balance)}</span>
               </div>
             </div>
@@ -165,9 +165,9 @@ class Reports extends React.Component {
   _renderBalances() {
     const { customers } = this.state;
     const sorted = [...customers]
-      .filter(c => c.currentBalance > 0)
-      .sort((a, b) => b.currentBalance - a.currentBalance);
-    const totalBalance = sorted.reduce((sum, c) => sum + c.currentBalance, 0);
+      .filter(c => c.balance > 0)
+      .sort((a, b) => b.balance - a.balance);
+    const totalBalance = sorted.reduce((sum, c) => sum + c.balance, 0);
 
     return (
       <div>
@@ -189,7 +189,7 @@ class Reports extends React.Component {
                 <span className={styles.balanceName}>{c.name}</span>
                 <StatusBadge status={c.status} small />
               </div>
-              <span className={styles.balanceAmt}>{this._formatCurrency(c.currentBalance)}</span>
+              <span className={styles.balanceAmt}>{this._formatCurrency(c.balance)}</span>
             </div>
           ))}
           {sorted.length === 0 && (

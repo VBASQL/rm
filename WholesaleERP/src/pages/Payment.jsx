@@ -87,7 +87,7 @@ class Payment extends React.Component {
     const { invoices, selectedInvoiceIds } = this.state;
     return invoices
       .filter(inv => selectedInvoiceIds.includes(inv.id))
-      .reduce((sum, inv) => sum + (inv.totalAmount - inv.amountPaid), 0);
+      .reduce((sum, inv) => sum + (inv.grandTotal - inv.amountPaid), 0);
   }
 
   _handlePayment = (paymentData) => {
@@ -99,12 +99,21 @@ class Payment extends React.Component {
       .filter(inv => selectedInvoiceIds.includes(inv.id))
       .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
+    // WHY: Distribute payment across invoices oldest-first, matching MockStorageService appliedTo format
+    let remaining = paymentData.amount;
+    const appliedTo = selectedInvoices.map(inv => {
+      const invBalance = inv.grandTotal - inv.amountPaid;
+      const applied = Math.min(remaining, invBalance);
+      remaining -= applied;
+      return { invoiceId: inv.id, amount: applied };
+    }).filter(a => a.amount > 0);
+
     storage.createPayment({
       customerId: selectedCustomer.id,
       amount: paymentData.amount,
       method: paymentData.method,
       reference: paymentData.reference,
-      invoiceIds: selectedInvoices.map(inv => inv.id),
+      appliedTo,
       date: new Date().toISOString(),
     });
 
@@ -163,7 +172,7 @@ class Payment extends React.Component {
                   >
                     <span className={styles.custName}>{c.name}</span>
                     <span className={styles.custBalance}>
-                      Balance: {this._formatCurrency(c.currentBalance)}
+                      Balance: {this._formatCurrency(c.balance)}
                     </span>
                   </div>
                 ))}
@@ -176,7 +185,7 @@ class Payment extends React.Component {
                 <div>
                   <h3 className={styles.custHeaderName}>{selectedCustomer.name}</h3>
                   <span className={styles.custHeaderBalance}>
-                    Balance: {this._formatCurrency(selectedCustomer.currentBalance)}
+                    Balance: {this._formatCurrency(selectedCustomer.balance)}
                   </span>
                 </div>
                 <button
@@ -189,7 +198,7 @@ class Payment extends React.Component {
 
               {invoices.length === 0 ? (
                 <EmptyState
-                  icon={DollarSign}
+                  icon={<DollarSign size={40} />}
                   title="No open invoices"
                   message="This customer has no outstanding invoices"
                 />
@@ -208,7 +217,7 @@ class Payment extends React.Component {
 
                   <div className={styles.invoiceList}>
                     {invoices.map(inv => {
-                      const balance = inv.totalAmount - inv.amountPaid;
+                      const balance = inv.grandTotal - inv.amountPaid;
                       const isSelected = selectedInvoiceIds.includes(inv.id);
                       return (
                         <div

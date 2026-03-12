@@ -24,12 +24,12 @@ import EmptyState from '../components/EmptyState';
 import styles from '../styles/OrderHistory.module.css';
 
 const FILTERS = [
-  { key: 'all', label: 'All' },
-  { key: 'Submitted', label: 'Submitted' },
-  { key: 'Picking', label: 'Picking' },
-  { key: 'Shipped', label: 'Shipped' },
-  { key: 'Delivered', label: 'Delivered' },
-  { key: 'Cancelled', label: 'Cancelled' },
+  { value: 'all', label: 'All' },
+  { value: 'Submitted', label: 'Submitted' },
+  { value: 'Picking', label: 'Picking' },
+  { value: 'Shipped', label: 'Shipped' },
+  { value: 'Delivered', label: 'Delivered' },
+  { value: 'Cancelled', label: 'Cancelled' },
 ];
 
 class OrderHistory extends React.Component {
@@ -108,7 +108,7 @@ class OrderHistory extends React.Component {
 
           {filtered.length === 0 ? (
             <EmptyState
-              icon={FileText}
+              icon={<FileText size={40} />}
               title="No orders"
               message={search || filter !== 'all' ? 'Try different search or filters' : 'No orders yet'}
             />

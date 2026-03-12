@@ -156,9 +156,9 @@ class Dashboard extends React.Component {
                   <div key={idx} className={styles.activityItem}>
                     <span className={styles.activityDot} />
                     <div className={styles.activityContent}>
-                      <span className={styles.activityText}>{item.description}</span>
+                      <span className={styles.activityText}>{item.text}</span>
                       <span className={styles.activityTime}>
-                        {new Date(item.timestamp).toLocaleDateString('en-US', {
+                        {new Date(item.date).toLocaleDateString('en-US', {
                           month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
                         })}
                       </span>
