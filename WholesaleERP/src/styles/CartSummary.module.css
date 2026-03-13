@@ -10,7 +10,7 @@
   bottom: var(--bottom-nav-height);
   left: 0;
   right: 0;
-  z-index: var(--z-index-nav);
+  z-index: var(--z-bottom-nav);
   background: var(--bg-card);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   padding: var(--space-sm) var(--space-md);
