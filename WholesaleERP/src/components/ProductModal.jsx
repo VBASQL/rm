@@ -87,79 +87,82 @@ class ProductModal extends React.Component {
     return (
       <div className={styles.overlay} onClick={onClose}>
         <div className={styles.modal} onClick={e => e.stopPropagation()}>
-          <button className={styles.closeBtn} onClick={onClose}>
-            <X size={24} />
-          </button>
+          <div className={styles.modalBody}>
+            <button className={styles.closeBtn} onClick={onClose}>
+              <X size={24} />
+            </button>
 
-          <h2 className={styles.productName}>
-            {product.name} — {product.flavor}
-          </h2>
-          <p className={styles.productDetail}>
-            {product.size} · {product.packSize}
-          </p>
-          <p className={styles.productCode}>Code: {product.code}</p>
+            <h2 className={styles.productName}>
+              {product.name} — {product.flavor}
+            </h2>
+            <p className={styles.productDetail}>
+              {product.size} · {product.packSize}
+            </p>
+            <p className={styles.productCode}>Code: {product.code}</p>
 
-          {/* Quantity */}
-          <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel}>Quantity (cases)</label>
-            <div className={styles.quantityRow}>
-              <button className={styles.qtyBtn} onClick={() => this.handleQuantityChange(-1)}>
-                <Minus size={20} />
-              </button>
-              <input
-                type="number"
-                className={styles.qtyInput}
-                value={quantity}
-                onChange={this.handleQuantityInput}
-                min={1}
-              />
-              <button className={styles.qtyBtn} onClick={() => this.handleQuantityChange(1)}>
-                <Plus size={20} />
-              </button>
+            {/* Quantity */}
+            <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel}>Quantity (cases)</label>
+              <div className={styles.quantityRow}>
+                <button className={styles.qtyBtn} onClick={() => this.handleQuantityChange(-1)}>
+                  <Minus size={20} />
+                </button>
+                <input
+                  type="number"
+                  className={styles.qtyInput}
+                  value={quantity}
+                  onChange={this.handleQuantityInput}
+                  min={1}
+                />
+                <button className={styles.qtyBtn} onClick={() => this.handleQuantityChange(1)}>
+                  <Plus size={20} />
+                </button>
+              </div>
             </div>
-          </div>
 
-          <p className={styles.unitsCalc}>
-            Units: {units} ({quantity} × {product.unitsPerCase})
-          </p>
+            <p className={styles.unitsCalc}>
+              Units: {units} ({quantity} × {product.unitsPerCase})
+            </p>
 
-          {/* Case Price — editable */}
-          <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel}>Case Price</label>
-            <div className={styles.priceInput}>
-              <span className={styles.dollarSign}>$</span>
-              <input
-                type="number"
-                className={styles.priceField}
-                value={casePrice}
-                onChange={this.handlePriceChange}
-                step="0.01"
-                min="0"
-              />
+            {/* Case Price — editable */}
+            <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel}>Case Price</label>
+              <div className={styles.priceInput}>
+                <span className={styles.dollarSign}>$</span>
+                <input
+                  type="number"
+                  className={styles.priceField}
+                  value={casePrice}
+                  onChange={this.handlePriceChange}
+                  step="0.01"
+                  min="0"
+                />
+              </div>
             </div>
+
+            <div className={styles.totalsRow}>
+              <span>Deposit/case: ${product.depositPerCase.toFixed(2)}</span>
+            </div>
+            <div className={styles.totalsRow}>
+              <span>Line total:</span>
+              <span className={styles.lineTotal}>${(lineTotal + depositTotal).toFixed(2)}</span>
+            </div>
+
+            {/* Favorite toggle */}
+            <button
+              className={`${styles.favoriteBtn} ${isFavorite ? styles.favoriteActive : ''}`}
+              onClick={this.handleToggleFavorite}
+            >
+              <Star size={16} fill={isFavorite ? 'currentColor' : 'none'} />
+              {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+            </button>
           </div>
 
-          <div className={styles.totalsRow}>
-            <span>Deposit/case: ${product.depositPerCase.toFixed(2)}</span>
+          <div className={styles.modalFooter}>
+            <button className={`btn btn-primary btn-full ${styles.addBtn}`} onClick={this.handleAdd}>
+              {existingItem ? 'UPDATE ORDER' : 'ADD TO ORDER'}
+            </button>
           </div>
-          <div className={styles.totalsRow}>
-            <span>Line total:</span>
-            <span className={styles.lineTotal}>${(lineTotal + depositTotal).toFixed(2)}</span>
-          </div>
-
-          {/* Favorite toggle */}
-          <button
-            className={`${styles.favoriteBtn} ${isFavorite ? styles.favoriteActive : ''}`}
-            onClick={this.handleToggleFavorite}
-          >
-            <Star size={16} fill={isFavorite ? 'currentColor' : 'none'} />
-            {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-          </button>
-
-          {/* Add / Update button */}
-          <button className={`btn btn-primary btn-full ${styles.addBtn}`} onClick={this.handleAdd}>
-            {existingItem ? 'UPDATE ORDER' : 'ADD TO ORDER'}
-          </button>
         </div>
       </div>
     );

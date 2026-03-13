@@ -24,13 +24,27 @@
 .modal {
   background: var(--bg-card);
   border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-  padding: var(--space-lg);
-  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+  padding: 0;
   width: 100%;
   max-width: var(--max-content-width);
   max-height: 85vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   animation: slideUp 0.25s ease-out;
+}
+
+.modalBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  padding-bottom: var(--space-sm);
+}
+
+.modalFooter {
+  padding: var(--space-sm) var(--space-lg);
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-color);
 }
 
 @keyframes slideUp {
