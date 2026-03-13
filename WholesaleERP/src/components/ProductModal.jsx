@@ -11,6 +11,7 @@
 //   "ADD TO ORDER" or "UPDATE" if already in cart.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Added per-item discount % field with cap enforcement.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
@@ -26,6 +27,8 @@ class ProductModal extends React.Component {
       quantity: existingItem ? existingItem.quantity : 1,
       casePrice: existingItem ? existingItem.casePrice : product.casePrice,
       isFavorite: props.isFavorite || false,
+      // [MOD #001] Per-item discount % with cap enforcement
+      discountPercent: existingItem ? (existingItem.discount || 0) : 0,
     };
   }
 
@@ -58,7 +61,11 @@ class ProductModal extends React.Component {
 
   handleAdd = () => {
     const { product, onAdd } = this.props;
-    const { quantity, casePrice } = this.state;
+    const { quantity, casePrice, discountPercent } = this.state;
+
+    // [MOD #001] Apply discount to line total
+    const rawLineTotal = casePrice * quantity;
+    const discountAmount = rawLineTotal * (discountPercent / 100);
 
     const lineItem = {
       productId: product.id,
@@ -68,8 +75,8 @@ class ProductModal extends React.Component {
       unitsPerCase: product.unitsPerCase,
       casePrice,
       depositPerCase: product.depositPerCase,
-      discount: 0,
-      lineTotal: casePrice * quantity,
+      discount: discountPercent,
+      lineTotal: rawLineTotal - discountAmount,
       depositTotal: product.depositPerCase * quantity,
     };
 
@@ -77,12 +84,21 @@ class ProductModal extends React.Component {
   };
 
   render() {
-    const { product, existingItem, onClose } = this.props;
-    const { quantity, casePrice, isFavorite } = this.state;
+    const { product, existingItem, onClose, discountCaps } = this.props;
+    const { quantity, casePrice, isFavorite, discountPercent } = this.state;
 
     const units = quantity * product.unitsPerCase;
-    const lineTotal = casePrice * quantity;
+    const rawLineTotal = casePrice * quantity;
+    const discountAmount = rawLineTotal * (discountPercent / 100);
+    const lineTotal = rawLineTotal - discountAmount;
     const depositTotal = product.depositPerCase * quantity;
+
+    // [MOD #001] Determine cap and color coding
+    const cap = discountCaps ? discountCaps.perItemPercent : 15;
+    const discountColor = discountPercent === 0 ? '' :
+      discountPercent <= cap * 0.5 ? styles.discountGreen :
+      discountPercent <= cap ? styles.discountOrange :
+      styles.discountRed;
 
     return (
       <div className={styles.overlay} onClick={onClose}>
@@ -138,6 +154,31 @@ class ProductModal extends React.Component {
                   min="0"
                 />
               </div>
+            </div>
+
+            {/* [MOD #001] Per-item discount % field */}
+            <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel}>Discount %</label>
+              <div className={`${styles.discountRow} ${discountColor}`}>
+                <input
+                  type="number"
+                  className={styles.discountInput}
+                  value={discountPercent}
+                  onChange={(e) => {
+                    const val = Math.min(Math.max(0, parseFloat(e.target.value) || 0), cap);
+                    this.setState({ discountPercent: val });
+                  }}
+                  step="0.5"
+                  min="0"
+                  max={cap}
+                />
+                <span className={styles.discountCap}>max {cap}%</span>
+              </div>
+              {discountPercent > 0 && (
+                <p className={styles.discountSaved}>
+                  Saves ${discountAmount.toFixed(2)}
+                </p>
+              )}
             </div>
 
             <div className={styles.totalsRow}>

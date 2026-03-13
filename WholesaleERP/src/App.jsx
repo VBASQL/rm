@@ -39,6 +39,7 @@ import OrderDetail from './pages/OrderDetail';
 import OrderHistory from './pages/OrderHistory';
 import Payment from './pages/Payment';
 import Reports from './pages/Reports';
+import InvoiceDetail from './pages/InvoiceDetail';
 import Settings from './pages/Settings';
 
 // WHY: Toast state lives at App level so any page can trigger a notification.
@@ -137,6 +138,14 @@ function AppShell() {
           element={
             <ProtectedRoute>
               <OrderHistory showToast={showToast} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invoices/:id"
+          element={
+            <ProtectedRoute>
+              <InvoiceDetail showToast={showToast} />
             </ProtectedRoute>
           }
         />

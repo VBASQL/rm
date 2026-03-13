@@ -2,7 +2,7 @@
 // FILE: Reports.jsx
 // PURPOSE: Collection-focused reports — Aging, Open Invoices,
 //          Customer Balances. No sales metrics per BUILD_PLAN §5.11.
-// DEPENDS ON: PageHeader, AppContext
+// DEPENDS ON: PageHeader, AppContext, SendMessageModal
 // DEPENDED ON BY: App.jsx (route: /reports)
 //
 // WHY THIS EXISTS:
@@ -11,14 +11,17 @@
 //   Collection-focused only. No sales or revenue numbers.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Added date/customer filters, export CSV,
+//     print, and send (email) for all report tabs.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, FileText, Users } from 'lucide-react';
+import { Clock, FileText, Users, Download, Printer, Mail, Filter } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import PageHeader from '../components/PageHeader';
 import StatusBadge from '../components/StatusBadge';
+import SendMessageModal from '../components/SendMessageModal';
 import styles from '../styles/Reports.module.css';
 
 const REPORT_TABS = [
@@ -34,6 +37,12 @@ class Reports extends React.Component {
       activeTab: 'aging',
       invoices: [],
       customers: [],
+      // [MOD #001] Filters
+      filterCustomerId: '',
+      filterDateFrom: '',
+      filterDateTo: '',
+      showFilters: false,
+      showEmailModal: false,
     };
   }
 
@@ -60,10 +69,22 @@ class Reports extends React.Component {
     return diff;
   }
 
+  // [MOD #001] Apply customer & date filters to invoices
+  _getFilteredInvoices() {
+    const { invoices, filterCustomerId, filterDateFrom, filterDateTo } = this.state;
+    return invoices.filter(inv => {
+      if (filterCustomerId && inv.customerId !== Number(filterCustomerId)) return false;
+      if (filterDateFrom && inv.dueDate < filterDateFrom) return false;
+      if (filterDateTo && inv.dueDate > filterDateTo) return false;
+      return true;
+    });
+  }
+
   // WHY: Aging buckets are standard AR aging: Current, 1-30, 31-60, 61-90, 90+
   _getAgingData() {
-    const { invoices, customers } = this.state;
-    const openInvoices = invoices.filter(inv => inv.status !== 'Paid');
+    const filteredInvoices = this._getFilteredInvoices();
+    const { customers } = this.state;
+    const openInvoices = filteredInvoices.filter(inv => inv.status !== 'Paid');
     const custMap = {};
     customers.forEach(c => { custMap[c.id] = c; });
 
@@ -110,7 +131,14 @@ class Reports extends React.Component {
             {bucket.invoices.length > 0 && (
               <div className={styles.bucketList}>
                 {bucket.invoices.map(inv => (
-                  <div key={inv.id} className={styles.bucketRow}>
+                  <div
+                    key={inv.id}
+                    className={styles.bucketRow}
+                    onClick={() => this.props.navigate(`/invoices/${inv.id}`)}
+                    role="button"
+                    tabIndex={0}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div>
                       <span className={styles.bucketInvNum}>{inv.invoiceNumber}</span>
                       <span className={styles.bucketCust}>{inv.customerName}</span>
@@ -127,10 +155,11 @@ class Reports extends React.Component {
   }
 
   _renderOpenInvoices() {
-    const { invoices, customers } = this.state;
+    const { customers, filterCustomerId } = this.state;
     const custMap = {};
     customers.forEach(c => { custMap[c.id] = c; });
-    const open = invoices
+    const filteredInvoices = this._getFilteredInvoices();
+    const open = filteredInvoices
       .filter(inv => inv.status !== 'Paid')
       .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
@@ -139,7 +168,14 @@ class Reports extends React.Component {
         {open.map(inv => {
           const balance = inv.grandTotal - inv.amountPaid;
           return (
-            <div key={inv.id} className={styles.invoiceRow}>
+            <div
+              key={inv.id}
+              className={styles.invoiceRow}
+              onClick={() => this.props.navigate(`/invoices/${inv.id}`)}
+              role="button"
+              tabIndex={0}
+              style={{ cursor: 'pointer' }}
+            >
               <div className={styles.invoiceRowTop}>
                 <span className={styles.invoiceNum}>{inv.invoiceNumber}</span>
                 <StatusBadge status={inv.status} small />
@@ -163,10 +199,12 @@ class Reports extends React.Component {
   }
 
   _renderBalances() {
-    const { customers } = this.state;
-    const sorted = [...customers]
-      .filter(c => c.balance > 0)
-      .sort((a, b) => b.balance - a.balance);
+    const { customers, filterCustomerId } = this.state;
+    let filtered = [...customers].filter(c => c.balance > 0);
+    if (filterCustomerId) {
+      filtered = filtered.filter(c => c.id === Number(filterCustomerId));
+    }
+    const sorted = filtered.sort((a, b) => b.balance - a.balance);
     const totalBalance = sorted.reduce((sum, c) => sum + c.balance, 0);
 
     return (
@@ -200,8 +238,58 @@ class Reports extends React.Component {
     );
   }
 
+  // [MOD #001] Export current report tab as CSV
+  _handleExport = () => {
+    const { activeTab, customers } = this.state;
+    const { showToast } = this.props;
+    let csv = '';
+    const custMap = {};
+    customers.forEach(c => { custMap[c.id] = c; });
+
+    if (activeTab === 'aging') {
+      const buckets = this._getAgingData();
+      csv = 'Bucket,Invoice,Customer,Balance\n';
+      Object.entries(buckets).forEach(([, bucket]) => {
+        bucket.invoices.forEach(inv => {
+          csv += `"${bucket.label}","${inv.invoiceNumber}","${inv.customerName}",${inv.balance.toFixed(2)}\n`;
+        });
+      });
+    } else if (activeTab === 'invoices') {
+      const open = this._getFilteredInvoices().filter(inv => inv.status !== 'Paid');
+      csv = 'Invoice,Customer,Status,Due Date,Total,Balance\n';
+      open.forEach(inv => {
+        const balance = inv.grandTotal - inv.amountPaid;
+        csv += `"${inv.invoiceNumber}","${custMap[inv.customerId]?.name || ''}","${inv.status}","${inv.dueDate}",${inv.grandTotal.toFixed(2)},${balance.toFixed(2)}\n`;
+      });
+    } else {
+      csv = 'Customer,Balance\n';
+      customers.filter(c => c.balance > 0).forEach(c => {
+        csv += `"${c.name}",${c.balance.toFixed(2)}\n`;
+      });
+    }
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${activeTab}-report.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Report exported');
+  };
+
+  // [MOD #001] Print
+  _handlePrint = () => {
+    window.print();
+  };
+
+  // [MOD #001] Send via email
+  _handleSend = () => {
+    this.setState({ showEmailModal: true });
+  };
+
   render() {
-    const { activeTab } = this.state;
+    const { activeTab, customers, showFilters, filterCustomerId, filterDateFrom, filterDateTo, showEmailModal } = this.state;
 
     return (
       <div className="page">
@@ -224,10 +312,84 @@ class Reports extends React.Component {
             })}
           </div>
 
+          {/* [MOD #001] Action bar: filter toggle, export, print, send */}
+          <div className={styles.actionBar}>
+            <button className={styles.actionBtn} onClick={() => this.setState(p => ({ showFilters: !p.showFilters }))}>
+              <Filter size={16} /> Filter
+            </button>
+            <button className={styles.actionBtn} onClick={this._handleExport}>
+              <Download size={16} /> Export
+            </button>
+            <button className={styles.actionBtn} onClick={this._handlePrint}>
+              <Printer size={16} /> Print
+            </button>
+            <button className={styles.actionBtn} onClick={this._handleSend}>
+              <Mail size={16} /> Send
+            </button>
+          </div>
+
+          {/* [MOD #001] Filter panel */}
+          {showFilters && (
+            <div className={styles.filterPanel}>
+              <div className={styles.filterField}>
+                <label>Customer</label>
+                <select
+                  value={filterCustomerId}
+                  onChange={e => this.setState({ filterCustomerId: e.target.value })}
+                  className="form-input"
+                >
+                  <option value="">All Customers</option>
+                  {customers.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className={styles.filterField}>
+                <label>From</label>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={filterDateFrom}
+                  onChange={e => this.setState({ filterDateFrom: e.target.value })}
+                />
+              </div>
+              <div className={styles.filterField}>
+                <label>To</label>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={filterDateTo}
+                  onChange={e => this.setState({ filterDateTo: e.target.value })}
+                />
+              </div>
+              <button
+                className="btn btn-secondary"
+                onClick={() => this.setState({ filterCustomerId: '', filterDateFrom: '', filterDateTo: '' })}
+              >
+                Clear
+              </button>
+            </div>
+          )}
+
           {activeTab === 'aging' && this._renderAging()}
           {activeTab === 'invoices' && this._renderOpenInvoices()}
           {activeTab === 'balances' && this._renderBalances()}
         </div>
+
+        {/* [MOD #001] Email modal for sending reports */}
+        {showEmailModal && (
+          <SendMessageModal
+            title={`Send ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Report`}
+            recipientEmail=""
+            subject={`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Report`}
+            body={`Please find the ${activeTab} report attached.`}
+            onSend={() => {
+              this.setState({ showEmailModal: false });
+              this.props.showToast('Report sent');
+            }}
+            onClose={() => this.setState({ showEmailModal: false })}
+          />
+        )}
       </div>
     );
   }

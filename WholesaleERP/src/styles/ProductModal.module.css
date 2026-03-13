@@ -221,3 +221,41 @@
 .addBtn {
   margin-top: var(--space-sm);
 }
+
+/* [MOD #001] Per-item discount field with cap color coding */
+.discountRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+}
+.discountInput {
+  width: 80px;
+  padding: var(--space-sm);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  text-align: center;
+}
+.discountCap {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.discountSaved {
+  font-size: 0.8rem;
+  color: var(--color-success);
+  margin-top: var(--space-xs);
+}
+.discountGreen .discountInput {
+  border-color: var(--color-success);
+  background: #f0fdf4;
+}
+.discountOrange .discountInput {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+.discountRed .discountInput {
+  border-color: var(--color-danger);
+  background: #fef2f2;
+}

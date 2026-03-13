@@ -10,11 +10,12 @@
 //   sign-out button, sync status indicator, app version.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Added Discount Caps section — 4-level editable fields.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, LogOut, RefreshCw, Info, MessageSquare, Database, Trash2 } from 'lucide-react';
+import { User, LogOut, RefreshCw, Info, MessageSquare, Database, Trash2, Percent } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import { useApp } from '../context/AppContext';
 import PageHeader from '../components/PageHeader';
@@ -24,8 +25,11 @@ import styles from '../styles/Settings.module.css';
 class Settings extends React.Component {
   constructor(props) {
     super(props);
+    // [MOD #001] Load discount settings from storage on init
+    const discountSettings = props.storage.getDiscountSettings();
     this.state = {
       showResetConfirm: false,
+      discountSettings,
     };
   }
 
@@ -36,13 +40,25 @@ class Settings extends React.Component {
 
   _handleResetData = () => {
     this.props.storage.resetToSeedData();
-    this.setState({ showResetConfirm: false });
+    // [MOD #001] Reload discount settings after reset
+    const discountSettings = this.props.storage.getDiscountSettings();
+    this.setState({ showResetConfirm: false, discountSettings });
     this.props.showToast('Data reset to defaults');
+  };
+
+  // [MOD #001] Update a single discount cap field and persist to storage.
+  // WHY: 4-level caps (per-item fixed/%, per-order fixed/%) editable by salesperson.
+  // In production, accounting will control these from admin panel.
+  _handleDiscountChange = (field, value) => {
+    const numValue = Math.max(0, Number(value) || 0);
+    const updated = { ...this.state.discountSettings, [field]: numValue };
+    this.setState({ discountSettings: updated });
+    this.props.storage.updateDiscountSettings(updated);
   };
 
   render() {
     const { user } = this.props;
-    const { showResetConfirm } = this.state;
+    const { showResetConfirm, discountSettings } = this.state;
 
     return (
       <div className="page">
@@ -91,6 +107,59 @@ class Settings extends React.Component {
                 <span className={styles.rowSub}>Restore all data to original seed values</span>
               </div>
               <Trash2 size={16} color="var(--color-danger)" />
+            </div>
+          </div>
+
+          {/* [MOD #001] Discount Caps — 4-level editable fields */}
+          {/* WHY: Salesperson sets caps now; accounting controls later via admin. */}
+          <div className={styles.section}>
+            <h4 className={styles.sectionTitle}>
+              <Percent size={14} style={{ marginRight: 4, verticalAlign: 'text-bottom' }} />
+              Discount Caps
+            </h4>
+            <div className={styles.discountGrid}>
+              <div className={styles.discountField}>
+                <label>Per-Item Max ($)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.50"
+                  value={discountSettings.perItemFixed}
+                  onChange={e => this._handleDiscountChange('perItemFixed', e.target.value)}
+                />
+              </div>
+              <div className={styles.discountField}>
+                <label>Per-Item Max (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={discountSettings.perItemPercent}
+                  onChange={e => this._handleDiscountChange('perItemPercent', e.target.value)}
+                />
+              </div>
+              <div className={styles.discountField}>
+                <label>Per-Order Max ($)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={discountSettings.perOrderFixed}
+                  onChange={e => this._handleDiscountChange('perOrderFixed', e.target.value)}
+                />
+              </div>
+              <div className={styles.discountField}>
+                <label>Per-Order Max (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={discountSettings.perOrderPercent}
+                  onChange={e => this._handleDiscountChange('perOrderPercent', e.target.value)}
+                />
+              </div>
             </div>
           </div>
 

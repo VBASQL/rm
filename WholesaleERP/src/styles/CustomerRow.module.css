@@ -1,7 +1,8 @@
 /* ============================================================
    FILE: CustomerRow.module.css
-   PURPOSE: Customer list item styles.
+   PURPOSE: Customer list item styles — credit bar, type badge, unapplied credit.
    MODIFICATION HISTORY:
+     [2026-03-13] #001 Added creditBarTrack/Fill, typeBadge, unappliedCredit, creditLimit.
      [2026-03-12] Initial creation.
    ============================================================ */
 
@@ -31,8 +32,9 @@
 .topLine {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   margin-bottom: 4px;
+  flex-wrap: wrap;
 }
 
 .name {
@@ -44,27 +46,71 @@
   text-overflow: ellipsis;
 }
 
+/* [MOD #001] Payment type badge */
+.typeBadge {
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.typePrepaid {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.typeCredit {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
 .details {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.lastOrder {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-}
-
 .balance {
   font-size: 0.8125rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* [MOD #001] Credit limit shown after balance */
+.creditLimit {
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
 .overdueBadge {
   color: var(--color-danger);
   font-weight: 600;
   font-size: 0.75rem;
+}
+
+/* [MOD #001] Unapplied credit indicator */
+.unappliedCredit {
+  font-size: 0.75rem;
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+/* [MOD #001] Credit usage bar — 4px track with colored fill */
+.creditBarTrack {
+  margin-top: 4px;
+  width: 100%;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.creditBarFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
 }
 
 .newOrderBtn {
@@ -78,6 +124,7 @@
   cursor: pointer;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
 }
 
 .newOrderBtn:active {

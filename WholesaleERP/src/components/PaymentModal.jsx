@@ -8,13 +8,14 @@
 // WHY THIS EXISTS:
 //   BUILD_PLAN.md §5.9: Payment Modal with invoice selection,
 //   editable amount, payment method (Cash, Check, Credit Card,
-//   ACH/Wire), reference number, APPLY PAYMENT button.
+//   ACH/Wire, Account Credit), reference number, APPLY PAYMENT button.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Added Account Credit as 5th payment method.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
-import { X, Banknote, CreditCard, FileText, Building2 } from 'lucide-react';
+import { X, Banknote, CreditCard, FileText, Building2, Wallet } from 'lucide-react';
 import styles from '../styles/PaymentModal.module.css';
 
 const METHODS = [
@@ -22,6 +23,8 @@ const METHODS = [
   { key: 'check', label: 'Check', icon: FileText },
   { key: 'credit_card', label: 'Card', icon: CreditCard },
   { key: 'ach', label: 'ACH/Wire', icon: Building2 },
+  // [MOD #001] Account Credit method for on-account payments
+  { key: 'account_credit', label: 'On Account', icon: Wallet },
 ];
 
 class PaymentModal extends React.Component {
@@ -52,7 +55,7 @@ class PaymentModal extends React.Component {
   }
 
   render() {
-    const { customer, selectedInvoices, onClose } = this.props;
+    const { customer, selectedInvoices, onClose, creditMode } = this.props;
     const { amount, method, reference } = this.state;
     const numAmount = parseFloat(amount) || 0;
 
@@ -60,7 +63,7 @@ class PaymentModal extends React.Component {
       <div className={styles.overlay} onClick={onClose}>
         <div className={styles.modal} onClick={e => e.stopPropagation()}>
           <div className={styles.header}>
-            <h3>Apply Payment</h3>
+            <h3>{creditMode ? 'Collect Payment' : 'Apply Payment'}</h3>
             <button className={styles.closeBtn} onClick={onClose}>
               <X size={22} />
             </button>
@@ -69,8 +72,11 @@ class PaymentModal extends React.Component {
           <div className={styles.body}>
             <div className={styles.custInfo}>
               <span className={styles.custName}>{customer.name}</span>
+              {/* [MOD #001] Show credit mode label or invoice count */}
               <span className={styles.invCount}>
-                {selectedInvoices.length} invoice{selectedInvoices.length > 1 ? 's' : ''} selected
+                {creditMode
+                  ? 'Payment will be stored as account credit'
+                  : `${selectedInvoices.length} invoice${selectedInvoices.length > 1 ? 's' : ''} selected`}
               </span>
             </div>
 

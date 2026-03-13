@@ -212,3 +212,50 @@
   color: var(--text-muted);
   padding: var(--space-xl);
 }
+
+/* [MOD #001] Action bar for filter/export/print/send */
+.actionBar {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+.actionBtn:active {
+  background: var(--bg-secondary);
+}
+
+/* [MOD #001] Filter panel */
+.filterPanel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+}
+.filterField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.filterField label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.filterField:first-child {
+  grid-column: 1 / -1;
+}

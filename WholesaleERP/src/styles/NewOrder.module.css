@@ -347,3 +347,228 @@
   flex-direction: column;
   gap: var(--space-sm);
 }
+
+/* [MOD #001] Clickable invoice line items */
+.invoiceLineClickable {
+  cursor: pointer;
+}
+.invoiceLineClickable:active {
+  background: var(--bg-secondary);
+}
+
+/* [MOD #001] Prepaid warning banner */
+.prepaidWarning {
+  background: #fff3cd;
+  color: #856404;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-md);
+}
+
+/* [MOD #001] Order-wide discount section */
+.orderDiscountSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  margin-bottom: var(--space-sm);
+}
+.orderDiscountLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.orderDiscountInput {
+  width: 70px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: 0.85rem;
+}
+.orderDiscountCap {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ===== Editable Review Items (Step 3) ===== */
+.reviewItems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.reviewItem {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-sm) var(--space-md);
+}
+
+.reviewItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.reviewItemInfo {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: baseline;
+  min-width: 0;
+}
+
+.reviewItemCode {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.reviewItemName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reviewRemoveBtn {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  padding: 4px;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  flex-shrink: 0;
+}
+.reviewRemoveBtn:active {
+  background: #fce8e6;
+}
+
+.reviewItemFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: var(--space-sm);
+  align-items: end;
+}
+
+.reviewField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reviewFieldLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.priceOverride {
+  font-size: 0.5625rem;
+  color: var(--color-warning, #e67e22);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.reviewQtyRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.reviewQtyBtn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+.reviewQtyBtn:active {
+  background: var(--color-primary);
+  color: var(--text-inverse);
+}
+
+.reviewQtyInput {
+  width: 40px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 4px 2px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.reviewPriceWrap {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.dollarSign {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.reviewPriceInput {
+  width: 65px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.reviewDiscInput {
+  width: 55px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.reviewDiscWarn {
+  border-color: var(--color-warning, #e67e22);
+  background: #fef3e2;
+  color: var(--color-warning, #e67e22);
+}
+
+.discWarnIcon {
+  color: var(--color-warning, #e67e22);
+}
+
+.reviewLineTotal {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 4px 0;
+}
+
+.reviewDepositLine {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--border-color);
+}

@@ -12,6 +12,8 @@
 //   See BUILD_PLAN.md §5.6.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Added LOAD_CART (duplicate), REORDER_ITEMS (move up/down),
+//     APPLY_ORDER_DISCOUNT (order-wide discount). Added orderDiscount to state.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React, { createContext, useContext, useReducer } from 'react';
@@ -27,6 +29,10 @@ const CART_ACTIONS = {
   SET_DELIVERY_DATE: 'SET_DELIVERY_DATE',
   SET_DELIVER_NOW: 'SET_DELIVER_NOW',
   SET_NOTES: 'SET_NOTES',
+  // [MOD #001] New actions for duplicate orders, reordering, and order-wide discount
+  LOAD_CART: 'LOAD_CART',
+  REORDER_ITEMS: 'REORDER_ITEMS',
+  APPLY_ORDER_DISCOUNT: 'APPLY_ORDER_DISCOUNT',
 };
 
 const initialCartState = {
@@ -36,6 +42,8 @@ const initialCartState = {
   deliveryDate: null,
   deliverNow: false,
   notes: '',
+  // [MOD #001] Order-wide discount (fixed $ or %)
+  orderDiscount: { type: 'percent', value: 0 },
 };
 
 function cartReducer(state, action) {
@@ -100,6 +108,31 @@ function cartReducer(state, action) {
     case CART_ACTIONS.SET_NOTES:
       return { ...state, notes: action.payload };
 
+    // [MOD #001] Load full cart from an existing order (for duplicate).
+    // WHY: Deep-copies items into a new draft so no mutation of original.
+    case CART_ACTIONS.LOAD_CART:
+      return {
+        ...initialCartState,
+        ...action.payload,
+      };
+
+    // [MOD #001] Reorder line items — move item at fromIndex to toIndex.
+    // WHY: Salesperson can reorder lines to match delivery priority.
+    case CART_ACTIONS.REORDER_ITEMS: {
+      const items = [...state.lineItems];
+      const { fromIndex, toIndex } = action.payload;
+      if (fromIndex < 0 || fromIndex >= items.length || toIndex < 0 || toIndex >= items.length) {
+        return state;
+      }
+      const [moved] = items.splice(fromIndex, 1);
+      items.splice(toIndex, 0, moved);
+      return { ...state, lineItems: items };
+    }
+
+    // [MOD #001] Apply order-wide discount (type: 'fixed' or 'percent', value: number).
+    case CART_ACTIONS.APPLY_ORDER_DISCOUNT:
+      return { ...state, orderDiscount: action.payload };
+
     default:
       return state;
   }
@@ -121,20 +154,35 @@ function CartProviderInner({ children }) {
   const [cart, dispatch] = useReducer(cartReducer, initialCartState);
 
   // WHY: Pre-calculate totals so components don't each compute them.
+  // [MOD #001] Added orderDiscount calculation.
   const totals = React.useMemo(() => {
     const subtotal = cart.lineItems.reduce((sum, li) => sum + li.lineTotal, 0);
     const depositTotal = cart.lineItems.reduce((sum, li) => sum + li.depositTotal, 0);
-    const discountTotal = cart.lineItems.reduce(
+    const itemDiscountTotal = cart.lineItems.reduce(
       (sum, li) => sum + (li.discount || 0) * li.quantity,
       0
     );
     const totalCases = cart.lineItems.reduce((sum, li) => sum + li.quantity, 0);
+
+    // [MOD #001] Order-wide discount on top of per-item discounts.
+    let orderDiscountAmount = 0;
+    const od = cart.orderDiscount;
+    if (od && od.value > 0) {
+      const preDiscountTotal = subtotal + depositTotal - itemDiscountTotal;
+      if (od.type === 'fixed') {
+        orderDiscountAmount = Math.min(od.value, preDiscountTotal);
+      } else {
+        orderDiscountAmount = Math.round(preDiscountTotal * od.value) / 100;
+      }
+    }
+
+    const discountTotal = itemDiscountTotal + orderDiscountAmount;
     // WHY: Round AFTER summing all lines. Per-line rounding causes penny
     // discrepancies. See DEVELOPMENT_RULES.md §2 inline WHY example.
     const grandTotal = Math.round((subtotal + depositTotal - discountTotal) * 100) / 100;
 
-    return { subtotal, depositTotal, discountTotal, grandTotal, totalCases };
-  }, [cart.lineItems]);
+    return { subtotal, depositTotal, discountTotal, itemDiscountTotal, orderDiscountAmount, grandTotal, totalCases };
+  }, [cart.lineItems, cart.orderDiscount]);
 
   const value = {
     cart,

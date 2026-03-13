@@ -208,3 +208,82 @@
   color: var(--text-primary);
   line-height: 1.5;
 }
+
+/* [MOD #001] Status advance button */
+.advanceBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  background: var(--color-primary);
+  color: var(--text-inverse);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.advanceBtn:active {
+  opacity: 0.9;
+}
+
+/* [MOD #001] Edit mode */
+.editRow {
+  display: grid;
+  grid-template-columns: 50px 1fr 90px 60px 30px;
+  gap: 4px;
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+}
+
+.editQty {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editQty button {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  color: var(--color-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editQty span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.removeBtn {
+  border: none;
+  background: none;
+  color: var(--color-danger);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 2px;
+}
+
+.editActions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.editActions .btn {
+  flex: 1;
+}

@@ -1,7 +1,8 @@
 /* ============================================================
    FILE: Dashboard.module.css
-   PURPOSE: Dashboard page layout — KPI grid, quick actions, activity feed.
+   PURPOSE: Dashboard page layout — KPI grid, quick actions, activity feed, alerts.
    MODIFICATION HISTORY:
+     [2026-03-13] #001 Added alertsList, alertItem, clickable activity styles.
      [2026-03-12] Initial creation.
    ============================================================ */
 
@@ -122,4 +123,72 @@
 
 .settingsBtn:active {
   background: var(--bg-primary);
+}
+
+/* [MOD #001] Alerts list — expandable section below KPI cards */
+.alertsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.alertItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.alertItem:active {
+  background: var(--bg-primary);
+}
+
+.alertHigh {
+  border-left-color: var(--color-danger);
+}
+
+.alertHigh svg:first-child {
+  color: var(--color-danger);
+}
+
+.alertMedium {
+  border-left-color: var(--color-warning);
+}
+
+.alertMedium svg:first-child {
+  color: var(--color-warning);
+}
+
+.alertText {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.alertItem svg:last-child {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* [MOD #001] Clickable activity items */
+.activityClickable {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.activityClickable:active {
+  background: var(--bg-primary);
+  border-radius: var(--border-radius);
+}
+
+.activityArrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 4px;
 }

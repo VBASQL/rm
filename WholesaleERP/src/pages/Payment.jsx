@@ -2,6 +2,7 @@
 // FILE: Payment.jsx
 // PURPOSE: Collect payments from customers — select customer,
 //          pick open invoices, apply payment via modal.
+//          Also supports "Just Collect Payment" mode (account credit).
 // DEPENDS ON: PageHeader, SearchBar, StatusBadge, EmptyState, PaymentModal, AppContext
 // DEPENDED ON BY: App.jsx (route: /payments)
 //
@@ -9,8 +10,11 @@
 //   BUILD_PLAN.md §5.9: Payment collection page. Search/select
 //   customer, show open invoices, checkbox multi-select,
 //   Payment Modal for amount/method/reference, apply oldest-first.
+//   Also supports collecting payment without selecting invoices.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Added "Just Collect Payment" mode — payment
+//     stored as account credit without invoice selection.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
@@ -33,6 +37,8 @@ class Payment extends React.Component {
       selectedCustomer: null,
       selectedInvoiceIds: [],
       showPaymentModal: false,
+      // [MOD #001] Credit mode: collect payment without invoice selection
+      creditMode: false,
     };
   }
 
@@ -92,7 +98,23 @@ class Payment extends React.Component {
 
   _handlePayment = (paymentData) => {
     const { storage, showToast } = this.props;
-    const { selectedCustomer, selectedInvoiceIds, invoices } = this.state;
+    const { selectedCustomer, selectedInvoiceIds, invoices, creditMode } = this.state;
+
+    // [MOD #001] Credit mode — store as account credit, no invoices
+    if (creditMode) {
+      storage.createPayment({
+        customerId: selectedCustomer.id,
+        amount: paymentData.amount,
+        method: paymentData.method,
+        reference: paymentData.reference,
+        appliedTo: [], // WHY: empty = stored as account credit
+        date: new Date().toISOString(),
+      });
+      this._selectCustomer(selectedCustomer);
+      this.setState({ showPaymentModal: false, creditMode: false });
+      showToast(`$${paymentData.amount.toFixed(2)} collected as account credit`);
+      return;
+    }
 
     // WHY: Apply payment to selected invoices, oldest first
     const selectedInvoices = invoices
@@ -141,7 +163,7 @@ class Payment extends React.Component {
 
   render() {
     const { navigate } = this.props;
-    const { selectedCustomer, invoices, selectedInvoiceIds, customerSearch, showPaymentModal } = this.state;
+    const { selectedCustomer, invoices, selectedInvoiceIds, customerSearch, showPaymentModal, creditMode } = this.state;
 
     return (
       <div className="page">
@@ -196,11 +218,19 @@ class Payment extends React.Component {
                 </button>
               </div>
 
+              {/* Always show Collect Payment — regardless of open invoices */}
+              <button
+                className={`btn btn-secondary ${styles.collectBtn}`}
+                onClick={() => this.setState({ showPaymentModal: true, creditMode: true })}
+              >
+                Just Collect Payment (Account Credit)
+              </button>
+
               {invoices.length === 0 ? (
                 <EmptyState
                   icon={<DollarSign size={40} />}
                   title="No open invoices"
-                  message="This customer has no outstanding invoices"
+                  message="This customer has no outstanding invoices. You can still collect a payment above."
                 />
               ) : (
                 <>
@@ -271,10 +301,11 @@ class Payment extends React.Component {
         {showPaymentModal && (
           <PaymentModal
             customer={selectedCustomer}
-            selectedInvoices={invoices.filter(inv => selectedInvoiceIds.includes(inv.id))}
-            suggestedAmount={this._getSelectedTotal()}
+            selectedInvoices={creditMode ? [] : invoices.filter(inv => selectedInvoiceIds.includes(inv.id))}
+            suggestedAmount={creditMode ? 0 : this._getSelectedTotal()}
             onApply={this._handlePayment}
-            onClose={() => this.setState({ showPaymentModal: false })}
+            onClose={() => this.setState({ showPaymentModal: false, creditMode: false })}
+            creditMode={creditMode}
           />
         )}
       </div>

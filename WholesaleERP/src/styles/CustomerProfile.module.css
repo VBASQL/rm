@@ -171,20 +171,30 @@
   border-radius: var(--border-radius-pill);
 }
 
-/* Balance card */
+/* [MOD #001] Balance cards grid — overview redesign */
+.balanceCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
 .balanceCard {
   background: var(--bg-card);
   border-radius: var(--border-radius-lg);
   padding: var(--space-md);
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.balanceRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-xs) 0;
-  font-size: 0.9375rem;
+.balanceLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .balanceAmount {
@@ -193,9 +203,86 @@
   color: var(--text-primary);
 }
 
+.creditCard {
+  border-left: 3px solid var(--color-success);
+}
+
 .creditAmount {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.25rem;
   color: var(--color-success);
+}
+
+/* [MOD #001] Credit bar in overview */
+.creditBarSection {
+  margin-bottom: var(--space-md);
+}
+
+.creditBarTrack {
+  height: 8px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.creditBarFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.creditBarLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* [MOD #001] Reduce credit limit controls */
+.creditReduceSection {
+  margin-bottom: var(--space-md);
+}
+
+.reduceBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.reduceForm {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.reduceLabel {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.reduceInput {
+  padding: var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+}
+
+.reduceActions {
+  display: flex;
+  gap: var(--space-sm);
 }
 
 /* Notes */
@@ -231,4 +318,48 @@
   color: var(--text-muted);
   font-size: 0.875rem;
   padding: var(--space-lg);
+}
+
+/* [MOD #001] Inline actions on list rows */
+.listRowActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.emailBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.emailBtn:active {
+  background: var(--bg-primary);
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  background: none;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+}
+
+.actionBtn:active {
+  background: var(--bg-primary);
 }

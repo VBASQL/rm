@@ -11,6 +11,7 @@
 //   status, total cases.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Removed 'Shipped' filter chip.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
@@ -23,11 +24,11 @@ import StatusBadge from '../components/StatusBadge';
 import EmptyState from '../components/EmptyState';
 import styles from '../styles/OrderHistory.module.css';
 
+// [MOD #001] Removed 'Shipped' — flow is now Picking → Delivered.
 const FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'Submitted', label: 'Submitted' },
   { value: 'Picking', label: 'Picking' },
-  { value: 'Shipped', label: 'Shipped' },
   { value: 'Delivered', label: 'Delivered' },
   { value: 'Cancelled', label: 'Cancelled' },
 ];

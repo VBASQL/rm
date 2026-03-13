@@ -9,6 +9,7 @@
 //   See BUILD_PLAN.md §8: "Colored pill: Active/Hold/Overdue/Paid/Partial/etc."
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Removed 'Shipped' from STATUS_COLORS — status no longer exists.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
@@ -16,6 +17,7 @@ import styles from '../styles/StatusBadge.module.css';
 
 // WHY: Map statuses to color classes. Statuses come from data models
 // (Customer.status, Order.status, Invoice.status). Each needs a distinct color.
+// [MOD #001] Removed 'Shipped' — flow is now Picking → Delivered.
 const STATUS_COLORS = {
   // Customer statuses
   'Active': 'green',
@@ -25,7 +27,6 @@ const STATUS_COLORS = {
   'Draft': 'gray',
   'Submitted': 'blue',
   'Picking': 'yellow',
-  'Shipped': 'blue',
   'Delivered': 'green',
   'Cancelled': 'red',
   // Invoice statuses

@@ -212,3 +212,11 @@
   font-weight: 700;
   color: var(--text-primary);
 }
+
+/* [MOD #001] Just Collect Payment button */
+.collectBtn {
+  width: 100%;
+  margin-bottom: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.875rem;
+}

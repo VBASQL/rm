@@ -12,12 +12,15 @@
 //   "Deliver Now" toggle. Prepaid customers prompted for payment.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Added "Most Ordered" tab, editable review items,
+//     "Add More Items" button, order-wide discount, prepaid enforcement.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Search, Star, Grid3X3, ChevronRight, Calendar, Truck, Check,
+  Search, Star, Grid3X3, ChevronRight, Calendar, Truck, Check, TrendingUp, Plus,
+  Minus, Trash2, AlertTriangle,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useCart, CART_ACTIONS } from '../context/CartContext';
@@ -43,10 +46,12 @@ class NewOrder extends React.Component {
       categories: [],
       products: [],
       selectedCategory: null,
-      catalogMode: 'catalog', // 'catalog' | 'favorites'
+      catalogMode: 'catalog', // 'catalog' | 'favorites' | 'mostOrdered'
       modalProduct: null,
       favorites: [],
       productSearch: '',
+      // [MOD #001] Most ordered products cache
+      mostOrdered: [],
     };
   }
 
@@ -70,6 +75,10 @@ class NewOrder extends React.Component {
         this.setState({ favorites: favorites.map(f => f.id) });
       }
     }
+
+    // [MOD #001] Load most ordered products
+    const mostOrdered = storage.getMostOrderedProducts(20);
+    this.setState({ mostOrdered });
   }
 
   // ───── Step 1: Customer Selection ─────
@@ -148,7 +157,7 @@ class NewOrder extends React.Component {
     storage.setFavorites(cartState.customerId, newFavs);
   };
 
-  // ───── Step 3: Review ─────
+  // ───── Step 3: Review (fully editable) ─────
 
   handleSetDeliveryDate = (e) => {
     this.props.cartDispatch({ type: CART_ACTIONS.SET_DELIVERY_DATE, payload: e.target.value });
@@ -159,12 +168,94 @@ class NewOrder extends React.Component {
     cartDispatch({ type: CART_ACTIONS.SET_DELIVER_NOW, payload: !cartState.deliverNow });
   };
 
+  // [MOD #002] Inline quantity change on review page
+  handleReviewQtyChange = (item, delta) => {
+    const { cartDispatch } = this.props;
+    const newQty = Math.max(1, item.quantity + delta);
+    this._updateReviewItem(item, { quantity: newQty });
+  };
+
+  handleReviewQtyInput = (item, val) => {
+    const newQty = parseInt(val, 10);
+    if (isNaN(newQty) || newQty < 1) return;
+    this._updateReviewItem(item, { quantity: newQty });
+  };
+
+  // [MOD #002] Inline price edit on review page — enforces discount cap
+  handleReviewPriceChange = (item, val) => {
+    const price = parseFloat(val);
+    if (isNaN(price) || price < 0) return;
+    const { storage, showToast } = this.props;
+    const caps = storage.getDiscountSettings();
+    const maxPct = caps ? caps.perItemPercent : 15;
+
+    // Calculate implied discount %
+    const originalPrice = item.originalCasePrice || item.casePrice;
+    const impliedDiscount = originalPrice > 0 ? ((originalPrice - price) / originalPrice) * 100 : 0;
+
+    if (impliedDiscount >= maxPct) {
+      showToast(`Price implies ${impliedDiscount.toFixed(1)}% discount — exceeds ${maxPct}% cap`);
+      return;
+    }
+    if (impliedDiscount > maxPct * 0.7) {
+      showToast(`Warning: ${impliedDiscount.toFixed(1)}% discount — approaching ${maxPct}% cap`);
+    }
+
+    this._updateReviewItem(item, { casePrice: price });
+  };
+
+  // [MOD #002] Inline discount % edit on review page
+  handleReviewDiscountChange = (item, val) => {
+    const disc = parseFloat(val) || 0;
+    const { storage, showToast } = this.props;
+    const caps = storage.getDiscountSettings();
+    const maxPct = caps ? caps.perItemPercent : 15;
+
+    if (disc >= maxPct) {
+      showToast(`${disc}% discount exceeds ${maxPct}% cap — blocked`);
+      return;
+    }
+    if (disc > maxPct * 0.7) {
+      showToast(`Warning: ${disc}% discount — approaching ${maxPct}% cap`);
+    }
+
+    this._updateReviewItem(item, { discount: disc });
+  };
+
+  // [MOD #002] Remove line from review
+  handleReviewRemoveItem = (productId) => {
+    const { cartDispatch } = this.props;
+    cartDispatch({ type: CART_ACTIONS.REMOVE_ITEM, payload: productId });
+  };
+
+  // [MOD #002] Shared helper to recalculate line total and dispatch update
+  _updateReviewItem(item, changes) {
+    const { cartDispatch } = this.props;
+    const merged = { ...item, ...changes };
+    // Preserve original price for discount cap calculation
+    if (!merged.originalCasePrice) {
+      merged.originalCasePrice = item.originalCasePrice || item.casePrice;
+    }
+    const rawLineTotal = merged.casePrice * merged.quantity;
+    const discountAmount = rawLineTotal * ((merged.discount || 0) / 100);
+    merged.lineTotal = rawLineTotal - discountAmount;
+    merged.depositTotal = merged.depositPerCase * merged.quantity;
+    cartDispatch({ type: CART_ACTIONS.UPDATE_ITEM, payload: merged });
+  }
+
   handleSetNotes = (e) => {
     this.props.cartDispatch({ type: CART_ACTIONS.SET_NOTES, payload: e.target.value });
   };
 
   handleSubmitOrder = () => {
     const { storage, cartState, cartTotals, cartDispatch, navigate, showToast } = this.props;
+
+    // [MOD #001] Prepaid enforcement: block submit if prepaid customer has balance
+    const customer = storage.getCustomer(cartState.customerId);
+    if (customer && customer.paymentType === 'prepaid' && customer.balance > 0) {
+      showToast('Prepaid customer has outstanding balance — collect payment first');
+      return;
+    }
 
     const order = storage.createOrder({
       customerId: cartState.customerId,
@@ -236,13 +327,16 @@ class NewOrder extends React.Component {
 
   _renderStep2() {
     const { cartState } = this.props;
-    const { categories, products, selectedCategory, catalogMode, favorites, productSearch, modalProduct } = this.state;
+    const { categories, products, selectedCategory, catalogMode, favorites, productSearch, modalProduct, mostOrdered } = this.state;
 
-    // Get favorites products
+    // Get display products based on mode
     const { storage } = this.props;
     let displayProducts = products;
     if (catalogMode === 'favorites') {
       displayProducts = storage.getProducts().filter(p => favorites.includes(p.id));
+    } else if (catalogMode === 'mostOrdered') {
+      // [MOD #001] Most Ordered tab — products already sorted by frequency
+      displayProducts = mostOrdered;
     }
 
     // Find existing item in cart for modal
@@ -257,7 +351,7 @@ class NewOrder extends React.Component {
           <span>{cartState.customerName}</span>
         </div>
 
-        {/* Catalog / Favorites toggle */}
+        {/* [MOD #001] Catalog / Favorites / Most Ordered toggle */}
         <div className={styles.modeToggle}>
           <button
             className={`${styles.modeBtn} ${catalogMode === 'catalog' ? styles.modeBtnActive : ''}`}
@@ -270,6 +364,12 @@ class NewOrder extends React.Component {
             onClick={() => this.setState({ catalogMode: 'favorites' })}
           >
             <Star size={16} /> Favorites
+          </button>
+          <button
+            className={`${styles.modeBtn} ${catalogMode === 'mostOrdered' ? styles.modeBtnActive : ''}`}
+            onClick={() => this.setState({ catalogMode: 'mostOrdered' })}
+          >
+            <TrendingUp size={16} /> Top
           </button>
         </div>
 
@@ -308,7 +408,9 @@ class NewOrder extends React.Component {
             <p className={styles.emptyProducts}>
               {catalogMode === 'favorites'
                 ? 'No favorites saved yet. Browse the catalog and star products.'
-                : 'Select a category or search for products'}
+                : catalogMode === 'mostOrdered'
+                  ? 'No order history yet.'
+                  : 'Select a category or search for products'}
             </p>
           ) : (
             displayProducts.map(product => (
@@ -342,6 +444,7 @@ class NewOrder extends React.Component {
             onAdd={this.handleAddToCart}
             onClose={this.handleCloseModal}
             onToggleFavorite={this.handleToggleFavorite}
+            discountCaps={storage.getDiscountSettings()}
           />
         )}
 
@@ -356,7 +459,9 @@ class NewOrder extends React.Component {
   }
 
   _renderStep3() {
-    const { cartState, cartTotals } = this.props;
+    const { cartState, cartTotals, cartDispatch, storage, showToast } = this.props;
+    const caps = storage.getDiscountSettings();
+    const maxItemDisc = caps ? caps.perItemPercent : 15;
 
     // WHY: Default delivery date = next working day (Mon-Fri)
     const getNextWorkday = () => {
@@ -370,38 +475,143 @@ class NewOrder extends React.Component {
 
     const deliveryDate = cartState.deliveryDate || getNextWorkday();
 
+    // [MOD #001] Prepaid warning
+    const customer = storage.getCustomer(cartState.customerId);
+    const isPrepaidWithBalance = customer && customer.paymentType === 'prepaid' && customer.balance > 0;
+
     return (
       <div className={styles.stepContent}>
         <h3 className={styles.reviewTitle}>Order Review</h3>
         <p className={styles.reviewCustomer}>{cartState.customerName}</p>
 
-        {/* Invoice preview — line items */}
-        <div className={styles.invoiceTable}>
-          <div className={styles.invoiceHeader}>
-            <span>Code</span>
-            <span>Product</span>
-            <span>Cs</span>
-            <span>Cs Price</span>
-            <span>Total</span>
+        {/* [MOD #001] Prepaid warning */}
+        {isPrepaidWithBalance && (
+          <div className={styles.prepaidWarning}>
+            ⚠️ Prepaid customer has ${customer.balance.toFixed(2)} outstanding — collect payment before submitting
           </div>
-          {cartState.lineItems.map(item => (
-            <React.Fragment key={item.productId}>
-              <div className={styles.invoiceLine}>
-                <span>{item.productCode}</span>
-                <span className={styles.invoiceProductName}>{item.productName}</span>
-                <span>{item.quantity}</span>
-                <span>${item.casePrice.toFixed(2)}</span>
-                <span>${item.lineTotal.toFixed(2)}</span>
+        )}
+
+        {/* [MOD #002] Fully editable line items — qty, price, discount %, remove */}
+        <div className={styles.reviewItems}>
+          {cartState.lineItems.map(item => {
+            const discWarn = (item.discount || 0) > maxItemDisc * 0.7;
+            const originalPrice = item.originalCasePrice || item.casePrice;
+            const priceChanged = item.casePrice !== originalPrice;
+
+            return (
+              <div key={item.productId} className={styles.reviewItem}>
+                <div className={styles.reviewItemHeader}>
+                  <div className={styles.reviewItemInfo}>
+                    <span className={styles.reviewItemCode}>{item.productCode}</span>
+                    <span className={styles.reviewItemName}>{item.productName}</span>
+                  </div>
+                  <button
+                    className={styles.reviewRemoveBtn}
+                    onClick={() => this.handleReviewRemoveItem(item.productId)}
+                    title="Remove item"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+
+                <div className={styles.reviewItemFields}>
+                  {/* Qty controls */}
+                  <div className={styles.reviewField}>
+                    <label className={styles.reviewFieldLabel}>Qty (cs)</label>
+                    <div className={styles.reviewQtyRow}>
+                      <button className={styles.reviewQtyBtn} onClick={() => this.handleReviewQtyChange(item, -1)}>
+                        <Minus size={14} />
+                      </button>
+                      <input
+                        type="number"
+                        className={styles.reviewQtyInput}
+                        value={item.quantity}
+                        min="1"
+                        onChange={(e) => this.handleReviewQtyInput(item, e.target.value)}
+                      />
+                      <button className={styles.reviewQtyBtn} onClick={() => this.handleReviewQtyChange(item, 1)}>
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Case price — editable */}
+                  <div className={styles.reviewField}>
+                    <label className={styles.reviewFieldLabel}>
+                      Cs Price {priceChanged && <span className={styles.priceOverride}>edited</span>}
+                    </label>
+                    <div className={styles.reviewPriceWrap}>
+                      <span className={styles.dollarSign}>$</span>
+                      <input
+                        type="number"
+                        className={styles.reviewPriceInput}
+                        value={item.casePrice}
+                        min="0"
+                        step="0.01"
+                        onChange={(e) => this.handleReviewPriceChange(item, e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Discount % — with cap warning */}
+                  <div className={styles.reviewField}>
+                    <label className={styles.reviewFieldLabel}>
+                      Disc% {discWarn && <AlertTriangle size={12} className={styles.discWarnIcon} />}
+                    </label>
+                    <input
+                      type="number"
+                      className={`${styles.reviewDiscInput} ${discWarn ? styles.reviewDiscWarn : ''}`}
+                      value={item.discount || 0}
+                      min="0"
+                      max={maxItemDisc}
+                      step="0.5"
+                      onChange={(e) => this.handleReviewDiscountChange(item, e.target.value)}
+                    />
+                  </div>
+
+                  {/* Line total (read-only) */}
+                  <div className={styles.reviewField}>
+                    <label className={styles.reviewFieldLabel}>Total</label>
+                    <span className={styles.reviewLineTotal}>${item.lineTotal.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                {/* Deposit line */}
+                <div className={styles.reviewDepositLine}>
+                  ↳ Deposit: {item.quantity} × ${item.depositPerCase.toFixed(2)} = ${item.depositTotal.toFixed(2)}
+                </div>
               </div>
-              <div className={styles.depositLine}>
-                <span></span>
-                <span>↳ Deposit ({item.quantity} × ${item.depositPerCase.toFixed(2)})</span>
-                <span></span>
-                <span></span>
-                <span>${item.depositTotal.toFixed(2)}</span>
-              </div>
-            </React.Fragment>
-          ))}
+            );
+          })}
+        </div>
+
+        {cartState.lineItems.length === 0 && (
+          <div className={styles.emptyProducts}>No items in cart. Go back to add products.</div>
+        )}
+
+        {/* [MOD #001] Order-wide discount field */}
+        <div className={styles.orderDiscountSection}>
+          <label className={styles.orderDiscountLabel}>Order Discount %</label>
+          <input
+            type="number"
+            className={styles.orderDiscountInput}
+            min="0"
+            max={(() => {
+              const caps = storage.getDiscountSettings();
+              return caps ? caps.perOrderPercent : 10;
+            })()}
+            step="0.5"
+            value={typeof cartState.orderDiscount === 'object' ? cartState.orderDiscount.value : (cartState.orderDiscount || 0)}
+            onChange={(e) => {
+              const caps = storage.getDiscountSettings();
+              const max = caps ? caps.perOrderPercent : 10;
+              const val = Math.min(Math.max(0, parseFloat(e.target.value) || 0), max);
+              cartDispatch({ type: CART_ACTIONS.APPLY_ORDER_DISCOUNT, payload: { type: 'percent', value: val } });
+            }}
+          />
+          <span className={styles.orderDiscountCap}>
+            max {(() => { const caps = storage.getDiscountSettings(); return caps ? caps.perOrderPercent : 10; })()}%
+          </span>
         </div>
 
         {/* Totals */}
@@ -471,7 +681,15 @@ class NewOrder extends React.Component {
           <button className="btn btn-secondary" onClick={() => this.goToStep(2)}>
             ← Back
           </button>
-          <button className="btn btn-primary" onClick={this.handleSubmitOrder}>
+          {/* [MOD #001] Add More Items button */}
+          <button className="btn btn-secondary" onClick={() => this.goToStep(2)}>
+            <Plus size={14} /> Add More
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={this.handleSubmitOrder}
+            disabled={cartState.lineItems.length === 0}
+          >
             Submit Order
           </button>
         </div>

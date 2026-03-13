@@ -202,8 +202,29 @@ Customer ──── 1:N ──── CustomerLocation
 
 ---
 
-*No entries yet — development has not started.*
+#### #001 — [2026-03-13] Salesperson frontend feature build — Phase 1
+
+- **PROBLEM:** Initial React SPA had basic page scaffolding but lacked real business logic — no discount caps, no payment credit mode, no editable orders, no status transitions, no filters, no email integration, no prepaid enforcement.
+
+- **FIX:** Implemented ~20 features across 15+ files:
+  - **Storage layer:** Added 9 new methods to StorageService/MockStorageService (reduceCustomerCredit, updateOrderStatus with auto-invoice on Delivered, getMostOrderedProducts, duplicateOrder, createInvoice, updateInvoice, getAlerts, getDiscountSettings, updateDiscountSettings). Removed "Shipped" status — orders go Draft→Submitted→Picking→Delivered.
+  - **Settings:** 4-level discount caps UI (per-item fixed/$, per-item %, per-order fixed/$, per-order %).
+  - **CartContext:** LOAD_CART, REORDER_ITEMS, APPLY_ORDER_DISCOUNT actions; orderDiscount state; updated totals calc.
+  - **Dashboard:** Clickable alerts from getAlerts(), clickable activity with navigation.
+  - **CustomerList:** Credit bar (green/orange/red), type badge, unapplied credit indicator.
+  - **CustomerProfile:** 6 tabs (Overview, Orders, Invoices, Payments, Account, Notes). Overview redesigned with credit bar, balance cards, reduce credit limit. Invoices tab has email button per row. Payments tab (NEW). Account tab rewritten with details + Send Statement. SendMessageModal wired.
+  - **OrderDetail:** Full rewrite — edit mode (Draft/Submitted only), status advance button (Move to Picking etc.), duplicate order via storage, print, email via SendMessageModal. Locks editing at Picking+.
+  - **OrderHistory:** Removed Shipped filter.
+  - **NewOrder:** "Most Ordered" 3rd catalog tab, tappable review items to edit via ProductModal, "Add More Items" button, order-wide discount field with cap enforcement, prepaid customer enforcement (blocks submit if balance > 0).
+  - **ProductModal:** Per-item discount % field with cap from getDiscountSettings(), color-coded (green/orange/red).
+  - **Payment:** "Just Collect Payment" mode — stores as account credit without invoice selection.
+  - **PaymentModal:** "Account Credit" / "On Account" as 5th payment method (Wallet icon).
+  - **Reports:** Date range + customer filters, Export CSV, Print, Send via SendMessageModal for all 3 tabs.
+
+- **FILES:** StorageService.js, MockStorageService.js, mockData.js, CartContext.jsx, Dashboard.jsx, Dashboard.module.css, CustomerRow.jsx, CustomerRow.module.css, CustomerList.jsx, CustomerList.module.css, CustomerProfile.jsx, CustomerProfile.module.css, OrderDetail.jsx, OrderDetail.module.css, OrderHistory.jsx, StatusBadge.jsx, Settings.jsx, Settings.module.css, NewOrder.jsx, NewOrder.module.css, ProductModal.jsx, ProductModal.module.css, Payment.jsx, Payment.module.css, PaymentModal.jsx, PaymentModal.module.css, Reports.jsx, Reports.module.css, SendMessageModal.jsx, SendMessageModal.module.css
+
+- **REVERT RISK:** HIGH — touches nearly every page and the storage layer. Reverting individual files will break imports and data flow. Revert entire commit or nothing.
 
 ---
 
-**Last updated:** March 11, 2026
+**Last updated:** March 13, 2026

@@ -16,6 +16,9 @@
 //   Deposit rates are estimated (§12, item #6).
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #001 Removed 'Shipped' status from order seed data (now Picking).
+//     Added DEFAULT_DISCOUNT_SETTINGS for 4-level discount caps.
+//     Added [MOD] tags to RECENT_ACTIVITY linkTo.
 //   [2026-03-12] Initial creation — placeholder catalog.
 // ============================================================
 
@@ -186,7 +189,8 @@ export const ORDERS = [
   },
   {
     id: 2, orderNumber: 'ORD-20260311-001', customerId: 2, salespersonId: 1,
-    status: 'Shipped',
+    // [MOD #001] Was 'Shipped' — removed Shipped status from flow.
+    status: 'Picking',
     lineItems: [
       { productId: 1, productCode: '10001', productName: 'Cola Classic 12oz 24pk', quantity: 4, unitsPerCase: 24, casePrice: 12.99, depositPerCase: 1.20, discount: 0, lineTotal: 51.96, depositTotal: 4.80 },
       { productId: 9, productCode: '10020', productName: 'Root Beer Classic 12oz 24pk', quantity: 2, unitsPerCase: 24, casePrice: 12.99, depositPerCase: 1.20, discount: 0, lineTotal: 25.98, depositTotal: 2.40 },
@@ -334,12 +338,27 @@ export const FAVORITES = {
 // ── RECENT ACTIVITY ──────────────────────────────────────────
 // WHY: Dashboard recent activity feed. In production this would be
 // auto-generated from events. For mock, it's a static list.
+// [MOD #001] linkTo paths are real routes — clicking navigates to the actual record.
 export const RECENT_ACTIVITY = [
   { id: 1, type: 'order', text: 'Order #ORD-20260312-001 placed — The Grand Hotel', date: '2026-03-12T09:15:00Z', linkTo: '/orders/3' },
   { id: 2, type: 'payment', text: 'Payment $150.00 collected — Harbor Grill', date: '2026-03-10T14:30:00Z', linkTo: '/customers/2' },
   { id: 3, type: 'delivery', text: 'Delivery confirmed — Bella Cucina Restaurant', date: '2026-03-10T11:00:00Z', linkTo: '/orders/1' },
-  { id: 4, type: 'order', text: 'Order #ORD-20260311-001 shipped — Harbor Grill', date: '2026-03-11T08:00:00Z', linkTo: '/orders/2' },
+  { id: 4, type: 'order', text: 'Order #ORD-20260311-001 picking — Harbor Grill', date: '2026-03-11T08:00:00Z', linkTo: '/orders/2' },
   { id: 5, type: 'payment', text: 'Payment $111.90 collected — The Grand Hotel', date: '2026-03-05T16:45:00Z', linkTo: '/customers/4' },
   { id: 6, type: 'order', text: 'Order #ORD-20260305-001 delivered — Fresh Bites Cafe', date: '2026-03-05T10:00:00Z', linkTo: '/orders/4' },
   { id: 7, type: 'payment', text: 'Payment $60.00 collected — Harbor Grill', date: '2026-02-28T13:20:00Z', linkTo: '/customers/2' },
 ];
+
+// ── DEFAULT DISCOUNT SETTINGS ────────────────────────────────
+// WHY: 4-level discount caps editable from Settings for demo purposes.
+// In production, accounting will control these via admin panel.
+// perItemFixed = max $ discount per single line item
+// perItemPercent = max % discount per single line item
+// perOrderFixed = max $ discount across entire order
+// perOrderPercent = max % discount across entire order
+export const DEFAULT_DISCOUNT_SETTINGS = {
+  perItemFixed: 5.00,
+  perItemPercent: 15,
+  perOrderFixed: 50.00,
+  perOrderPercent: 10,
+};

@@ -1,7 +1,8 @@
 /* ============================================================
    FILE: Settings.module.css
-   PURPOSE: Settings page styles — user card, rows, sign out.
+   PURPOSE: Settings page styles — user card, rows, sign out, discount caps.
    MODIFICATION HISTORY:
+     [2026-03-13] #001 Added discountGrid, discountField for 4-level caps.
      [2026-03-12] Initial creation.
    ============================================================ */
 
@@ -139,4 +140,46 @@
 
 .signOutBtn:active {
   background: rgba(234, 67, 53, 0.05);
+}
+
+/* [MOD #001] Discount caps grid — 2×2 layout for 4 editable fields */
+.discountGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.discountField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.discountField label {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.discountField input {
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  text-align: center;
+}
+
+.discountField input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--bg-primary);
 }
