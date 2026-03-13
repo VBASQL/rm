@@ -86,11 +86,11 @@ class CartSummary extends React.Component {
 }
 
 function CartSummaryWrapper(props) {
-  const { state, totals, dispatch } = useCart();
+  const { cart, totals, dispatch } = useCart();
   return (
     <CartSummary
       {...props}
-      lineItems={state.lineItems}
+      lineItems={cart.lineItems}
       totals={totals}
     />
   );

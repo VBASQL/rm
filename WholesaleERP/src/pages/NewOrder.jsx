@@ -548,7 +548,7 @@ function NewOrderWrapper(props) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { storage } = useApp();
-  const { state: cartState, totals: cartTotals, dispatch: cartDispatch } = useCart();
+  const { cart: cartState, totals: cartTotals, dispatch: cartDispatch } = useCart();
 
   return (
     <NewOrder
