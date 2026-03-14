@@ -847,9 +847,10 @@ class MockStorageService extends StorageService {
     return returns[index];
   }
 
-  // Process a return: apply credit to customer account.
-  // WHY: Processing marks the return as complete and reduces customer balance.
-  // This is the return equivalent of "Delivered" for orders.
+  // Process a return: adjust invoice or credit customer account.
+  // WHY: If the original order's invoice is unpaid/partial, reduce the invoice amount.
+  //   If the invoice is fully paid, credit the customer balance instead.
+  //   Invoice gets marked with returnApplied + returnId for audit trail.
   processReturn(id) {
     const ret = this.getReturn(id);
     if (!ret) return null;
@@ -857,31 +858,74 @@ class MockStorageService extends StorageService {
       throw new Error('Return already processed');
     }
 
-    // WHY: Apply credit to the parent account (same as order billing).
     const customer = this.getCustomer(ret.customerId);
     const accountId = customer?.parentId || ret.customerId;
     const accountCustomer = this.getCustomer(accountId);
 
-    if (accountCustomer) {
-      // WHY: Subtract return total from balance (credit the customer).
-      const newBalance = Math.max(0, (accountCustomer.balance || 0) - ret.grandTotal);
-      this.updateCustomer(accountId, { balance: newBalance });
+    // Find the invoice linked to the original order (if any)
+    let invoice = null;
+    let appliedToInvoice = false;
+    if (ret.originalOrderId) {
+      const invoices = this.getInvoices();
+      invoice = invoices.find(i => i.orderId === ret.originalOrderId) || null;
+    }
+
+    if (invoice && invoice.status !== 'Paid') {
+      // Invoice is unpaid or partial — reduce the invoice amount
+      const newAmountDue = Math.max(0, (invoice.amountDue || invoice.grandTotal) - ret.grandTotal);
+      const newGrandTotal = Math.max(0, invoice.grandTotal - ret.grandTotal);
+      const isPaid = newAmountDue <= (invoice.amountPaid || 0);
+      this.updateInvoice(invoice.id, {
+        amountDue: newAmountDue,
+        grandTotal: newGrandTotal,
+        returnApplied: true,
+        returnId: ret.id,
+        returnAmount: ret.grandTotal,
+        ...(isPaid ? { status: 'Paid', paidDate: new Date().toISOString().split('T')[0] } : {}),
+      });
+      appliedToInvoice = true;
+
+      // Also reduce customer balance by the return amount
+      if (accountCustomer) {
+        const newBalance = Math.max(0, (accountCustomer.balance || 0) - ret.grandTotal);
+        this.updateCustomer(accountId, { balance: newBalance });
+      }
+    } else {
+      // Invoice is fully paid or no invoice — credit the customer balance
+      if (accountCustomer) {
+        const newBalance = Math.max(0, (accountCustomer.balance || 0) - ret.grandTotal);
+        this.updateCustomer(accountId, { balance: newBalance });
+      }
+
+      // Mark invoice with return info even if paid
+      if (invoice) {
+        this.updateInvoice(invoice.id, {
+          returnApplied: true,
+          returnId: ret.id,
+          returnAmount: ret.grandTotal,
+        });
+      }
     }
 
     // Mark return as processed
     const updated = this.updateReturn(id, {
       status: 'Processed',
       processedDate: new Date().toISOString().split('T')[0],
-      creditApplied: true,
+      creditApplied: !appliedToInvoice,
+      invoiceAdjusted: appliedToInvoice,
+      invoiceId: invoice?.id || null,
     });
 
     // Activity
     const displayName = customer?.isBranch
       ? `${accountCustomer?.name || ''} (${customer.name})`
       : (customer?.name || 'Unknown');
+    const actionText = appliedToInvoice
+      ? `invoice ${invoice.invoiceNumber} adjusted`
+      : `$${ret.grandTotal.toFixed(2)} credit`;
     this._addActivity({
       type: 'return',
-      text: `Return #${ret.returnNumber} processed — ${displayName} ($${ret.grandTotal.toFixed(2)} credit)`,
+      text: `Return #${ret.returnNumber} processed — ${displayName} (${actionText})`,
       linkTo: `/returns/${id}`,
     });
 

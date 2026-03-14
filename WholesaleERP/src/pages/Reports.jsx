@@ -686,12 +686,6 @@ class BalanceReport extends React.Component {
           >
             Sales
           </button>
-          <button
-            className={`${styles.tab} ${activeTab === 'returns' ? styles.tabActive : ''}`}
-            onClick={() => onTabChange('returns')}
-          >
-            Returns
-          </button>
         </div>
 
         <div className={styles.content}>
@@ -1339,12 +1333,6 @@ class SalesReport extends React.Component {
           >
             Sales
           </button>
-          <button
-            className={`${styles.tab} ${activeTab === 'returns' ? styles.tabActive : ''}`}
-            onClick={() => onTabChange('returns')}
-          >
-            Returns
-          </button>
         </div>
         <div className={styles.content}>
           {reportBuilt ? this._renderReport() : this._renderSelectionPanel()}
@@ -1499,7 +1487,7 @@ class ReturnsReport extends React.Component {
           `"${customer?.name || '?'}"`,
           `"${ret.createdDate}"`,
           `"${ret.status}"`,
-          `"${ret.reason}"`,
+          `"${ret.returnReason || ''}"`,
           ret.grandTotal.toFixed(2),
           damaged,
         ].join(',') + '\n';
@@ -1671,7 +1659,7 @@ class ReturnsReport extends React.Component {
                   >
                     <div className={styles.invLeft}>
                       <span className={styles.invNum}>{ret.returnNumber}</span>
-                      <span className={styles.invDue}>{this._fmtDate(ret.createdDate)} · {ret.reason}</span>
+                      <span className={styles.invDue}>{this._fmtDate(ret.createdDate)} · {ret.returnReason || ''}</span>
                     </div>
                     <div className={styles.invRight}>
                       <span className={ret.status === 'Pending' ? styles.invOver : styles.invBal}>
@@ -1761,15 +1749,6 @@ function ReportsWrapper(props) {
       </div>
       <div style={{ display: activeTab === 'sales' ? 'block' : 'none' }}>
         <SalesReport
-          {...props}
-          navigate={navigate}
-          storage={storage}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-      </div>
-      <div style={{ display: activeTab === 'returns' ? 'block' : 'none' }}>
-        <ReturnsReport
           {...props}
           navigate={navigate}
           storage={storage}

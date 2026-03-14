@@ -26,12 +26,14 @@ import { formatDate } from '../utils/format';
 import styles from '../styles/OrderHistory.module.css';
 
 // [MOD #001] Removed 'Shipped' — flow is now Picking → Delivered.
+// [MOD #returns-list] Added Return filter so returns appear alongside orders.
 const FILTERS = [
-  { value: 'all', label: 'All' },
+  { value: 'all',       label: 'All' },
   { value: 'Submitted', label: 'Submitted' },
-  { value: 'Picking', label: 'Picking' },
+  { value: 'Picking',   label: 'Picking' },
   { value: 'Delivered', label: 'Delivered' },
   { value: 'Cancelled', label: 'Cancelled' },
+  { value: 'Return',    label: 'Returns' },
 ];
 
 class OrderHistory extends React.Component {
@@ -56,15 +58,36 @@ class OrderHistory extends React.Component {
     const customerList = storage.getCustomers();
     const customers = {};
     customerList.forEach(c => { customers[c.id] = c; });
-    this.setState({ orders, customers });
+
+    // [MOD #returns-list] Merge returns into the order list as _isReturn items.
+    // WHY: Accounting needs to see returns alongside orders. Returns show with
+    // their return number, Return status badge, and navigate to /returns/:id.
+    const returns = storage.getReturns();
+    const returnRows = returns.map(r => ({
+      id: r.id,
+      orderNumber: r.returnNumber,
+      customerId: r.customerId,
+      createdDate: r.createdDate,
+      // WHY: Map return statuses to display values that the filter can match.
+      status: r.status === 'Processed' ? 'Return Processed' : 'Return Pending',
+      grandTotal: r.grandTotal,
+      totalCases: r.totalCases,
+      _isReturn: true,
+    }));
+
+    this.setState({ orders: [...orders, ...returnRows], customers });
   }
 
   _getFiltered() {
     const { orders, customers, search, filter } = this.state;
     let filtered = [...orders];
 
-    if (filter !== 'all') {
-      filtered = filtered.filter(o => o.status === filter);
+    if (filter === 'Return') {
+      // [MOD #returns-list] Show only return rows when "Returns" filter is active.
+      filtered = filtered.filter(o => o._isReturn);
+    } else if (filter !== 'all') {
+      // Normal order status filter — exclude return rows from non-Return filters.
+      filtered = filtered.filter(o => !o._isReturn && o.status === filter);
     }
 
     if (search.trim()) {
@@ -124,16 +147,24 @@ class OrderHistory extends React.Component {
             <div className={styles.list}>
               {filtered.map(order => {
                 const cust = this.state.customers[order.customerId];
+                // [MOD #returns-list] Returns navigate to /returns/:id and use
+                // a return-specific status badge label.
+                const handleClick = order._isReturn
+                  ? () => navigate(`/returns/${order.id}`)
+                  : () => navigate(`/orders/${order.id}`);
                 return (
                   <div
-                    key={order.id}
-                    className={styles.row}
-                    onClick={() => navigate(`/orders/${order.id}`)}
+                    key={`${order._isReturn ? 'ret' : 'ord'}-${order.id}`}
+                    className={`${styles.row} ${order._isReturn ? styles.returnRow : ''}`}
+                    onClick={handleClick}
                     role="button"
                     tabIndex={0}
                   >
                     <div className={styles.rowMain}>
-                      <span className={styles.orderNum}>{order.orderNumber}</span>
+                      <span className={styles.orderNum}>
+                        {order._isReturn && <RotateCcw size={13} style={{ marginRight: 4, verticalAlign: 'middle', color: '#d32f2f' }} />}
+                        {order.orderNumber}
+                      </span>
                       <StatusBadge status={order.status} small />
                     </div>
                     <div className={styles.rowSub}>
@@ -142,7 +173,9 @@ class OrderHistory extends React.Component {
                     </div>
                     <div className={styles.rowMeta}>
                       <span>{order.totalCases} cases</span>
-                      <span className={styles.total}>${order.grandTotal.toFixed(2)}</span>
+                      <span className={`${styles.total} ${order._isReturn ? styles.returnTotal : ''}`}>
+                        {order._isReturn ? '-' : ''}${order.grandTotal.toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 );

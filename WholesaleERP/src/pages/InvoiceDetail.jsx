@@ -19,7 +19,7 @@
 // ============================================================
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Mail, ShoppingBag, User, Printer, Edit2, Check, X } from 'lucide-react';
+import { Mail, ShoppingBag, User, Printer, Edit2, Check, X, RotateCcw } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import PageHeader from '../components/PageHeader';
 import StatusBadge from '../components/StatusBadge';
@@ -116,9 +116,10 @@ class InvoiceDetail extends React.Component {
   _buildEmailBody() {
     const { invoice, customer } = this.state;
     if (!invoice) return '';
-    const lines = (invoice.lineItems || []).map(li =>
-      `${li.productName}  Qty: ${li.quantity}  @${formatCurrency(li.unitPrice)}  = ${formatCurrency(li.lineTotal)}`
-    );
+    const lines = (invoice.lineItems || []).map(li => {
+      const price = li.casePrice != null ? li.casePrice : li.unitPrice;
+      return `${li.productName}  Qty: ${li.quantity}  @${formatCurrency(price)}  = ${formatCurrency(li.lineTotal)}`;
+    });
     return [
       `Invoice: ${invoice.invoiceNumber}`,
       `Date: ${formatDate(invoice.createdDate)}`,
@@ -144,19 +145,19 @@ class InvoiceDetail extends React.Component {
 
     if (!invoice) {
       return (
-        <>
+        <div className="page">
           <PageHeader title="Invoice Not Found" onBack={() => navigate(-1)} />
           <div className={styles.content}>
             <p>This invoice could not be found.</p>
           </div>
-        </>
+        </div>
       );
     }
 
     const lineItems = invoice.lineItems || [];
 
     return (
-      <>
+      <div className="page">
         <PageHeader
           title={invoice.invoiceNumber}
           onBack={() => navigate(-1)}
@@ -241,7 +242,25 @@ class InvoiceDetail extends React.Component {
             </div>
           )}
 
+          {/* Return applied banner */}
+          {invoice.returnApplied && (
+            <div
+              className={styles.returnBanner}
+              onClick={() => invoice.returnId && navigate(`/returns/${invoice.returnId}`)}
+              role="button"
+              tabIndex={0}
+            >
+              <RotateCcw size={14} />
+              <span>
+                Return applied{invoice.returnAmount ? ` — ${formatCurrency(invoice.returnAmount)} reduced` : ''}
+              </span>
+            </div>
+          )}
+
           {/* Line items table */}
+          {/* [MOD #unitPrice] Fixed field names to match order lineItem shape:
+              sku→productCode, unitPrice→casePrice, deposit→depositPerCase.
+              Added unit price sub-line beneath case price. */}
           <div className={styles.invoiceTable}>
             <div className={styles.invoiceHeader}>
               <span>SKU</span>
@@ -250,26 +269,42 @@ class InvoiceDetail extends React.Component {
               <span>Price</span>
               <span>Total</span>
             </div>
-            {lineItems.map((item, idx) => (
-              <React.Fragment key={idx}>
-                <div className={styles.invoiceLine}>
-                  <span>{item.sku}</span>
-                  <span className={styles.invoiceProductName}>{item.productName}</span>
-                  <span>{item.quantity}</span>
-                  <span>{formatCurrency(item.unitPrice)}</span>
-                  <span>{formatCurrency(item.lineTotal)}</span>
-                </div>
-                {item.deposit > 0 && (
-                  <div className={styles.depositLine}>
-                    <span></span>
-                    <span>Deposit: {formatCurrency(item.deposit)} × {item.quantity}</span>
-                    <span></span>
-                    <span></span>
-                    <span>-{formatCurrency(item.deposit * item.quantity)}</span>
+            {lineItems.map((item, idx) => {
+              // WHY: Support both old seed format (sku/unitPrice/deposit) and
+              // current order format (productCode/casePrice/depositPerCase).
+              const code = item.productCode || item.sku || '';
+              const casePrice = item.casePrice != null ? item.casePrice : item.unitPrice;
+              const deposit = item.depositPerCase != null ? item.depositPerCase : (item.deposit || 0);
+              const perUnit = (item.unitsPerCase > 0 && casePrice != null)
+                ? casePrice / item.unitsPerCase : null;
+              return (
+                <React.Fragment key={idx}>
+                  <div className={styles.invoiceLine}>
+                    <span>{code}</span>
+                    <span className={styles.invoiceProductName}>{item.productName}</span>
+                    <span>{item.quantity}</span>
+                    <span>
+                      {formatCurrency(casePrice)}
+                      {perUnit != null && (
+                        <span className={styles.invoiceUnitPrice}>
+                          {formatCurrency(perUnit)}/ea
+                        </span>
+                      )}
+                    </span>
+                    <span>{formatCurrency(item.lineTotal)}</span>
                   </div>
-                )}
-              </React.Fragment>
-            ))}
+                  {deposit > 0 && (
+                    <div className={styles.depositLine}>
+                      <span></span>
+                      <span>Deposit: {formatCurrency(deposit)} × {item.quantity}</span>
+                      <span></span>
+                      <span></span>
+                      <span>-{formatCurrency(deposit * item.quantity)}</span>
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </div>
 
           {/* Totals */}
@@ -342,7 +377,7 @@ class InvoiceDetail extends React.Component {
             onClose={() => this.setState({ showEmailModal: false })}
           />
         )}
-      </>
+      </div>
     );
   }
 }

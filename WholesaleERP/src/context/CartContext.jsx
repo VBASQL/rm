@@ -202,15 +202,40 @@ function cartReducer(state, action) {
       return { ...state, returnReason: action.payload };
 
     // [MOD #returns] Toggle isDamaged flag on a line item.
-    // WHY: Damaged items may receive different credit treatment in reports.
+    // WHY: Damaged items must appear with a distinct product code/name for accounting.
+    //   Code gets 'D' suffix, name gets '-damaged' suffix so the GL sees a separate SKU.
+    //   Original code/name are preserved in _origCode/_origName for restore on un-toggle.
     case CART_ACTIONS.TOGGLE_ITEM_DAMAGE:
       return {
         ...state,
-        lineItems: state.lineItems.map(li =>
-          li.productId === action.payload
-            ? { ...li, isDamaged: !li.isDamaged, damageType: li.isDamaged ? null : li.damageType }
-            : li
-        ),
+        lineItems: state.lineItems.map(li => {
+          if (li.productId !== action.payload) return li;
+          if (!li.isDamaged) {
+            // Toggling ON — rename to damaged SKU for accounting
+            const origCode = li._origCode || li.productCode;
+            const origName = li._origName || li.productName;
+            return {
+              ...li,
+              isDamaged: true,
+              damageType: li.damageType || null,
+              _origCode: origCode,
+              _origName: origName,
+              productCode: origCode + 'D',
+              productName: origName + '-damaged',
+            };
+          } else {
+            // Toggling OFF — restore original SKU
+            return {
+              ...li,
+              isDamaged: false,
+              damageType: null,
+              productCode: li._origCode || li.productCode.replace(/D$/, ''),
+              productName: li._origName || li.productName.replace(/-damaged$/, ''),
+              _origCode: undefined,
+              _origName: undefined,
+            };
+          }
+        }),
       };
 
     // [MOD #returns] Set damage type for a damaged item.
@@ -248,7 +273,12 @@ function cartReducer(state, action) {
           const splitLine = {
             ...li,
             productId: `${li.productId}_damaged`,
-            productName: li.productName + ' (DAMAGED)',
+            // WHY: Damaged portion gets its own accounting SKU (code+'D', name+'-damaged')
+            //   so the GL can track damaged returns separately from clean returns.
+            productCode: (li._origCode || li.productCode) + 'D',
+            productName: (li._origName || li.productName) + '-damaged',
+            _origCode: li._origCode || li.productCode,
+            _origName: li._origName || li.productName,
             quantity: splitQty,
             lineTotal: splitQty * li.casePrice,
             depositTotal: splitQty * li.depositPerCase,
@@ -267,14 +297,24 @@ function cartReducer(state, action) {
     // WHY: When entire return is due to a single incident (e.g., truck accident),
     // salesperson can mark all items damaged in one click.
     // payload: damageType (string)
+    // WHY: Each item also gets the accounting code rename (same as TOGGLE_ITEM_DAMAGE ON).
     case CART_ACTIONS.MARK_ALL_DAMAGED:
       return {
         ...state,
-        lineItems: state.lineItems.map(li => ({
-          ...li,
-          isDamaged: true,
-          damageType: action.payload,
-        })),
+        lineItems: state.lineItems.map(li => {
+          if (li.isDamaged) return { ...li, damageType: action.payload }; // already damaged, just update type
+          const origCode = li._origCode || li.productCode;
+          const origName = li._origName || li.productName;
+          return {
+            ...li,
+            isDamaged: true,
+            damageType: action.payload,
+            _origCode: origCode,
+            _origName: origName,
+            productCode: origCode + 'D',
+            productName: origName + '-damaged',
+          };
+        }),
       };
 
     default:

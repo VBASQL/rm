@@ -1,0 +1,25 @@
+Category,Code,Item,Price (USD),Timeline,Notes
+Basic Pricing,BASE,Software (application build),7500,4 weeks,Includes 5 training hours
+Basic Pricing,MIGRATION,Data Migration (required),500-3000,Varies,Exact cost depends on data complexity
+Basic Pricing,SERVER-A,Server Setup Option A (Full On-Premises),2500,Setup phase,Monthly hardware/power/maintenance by client
+Basic Pricing,SERVER-B,Server Setup Option B (Hybrid cloud web + local DB),Varies,Setup phase,Depends on cloud provider/specs/region
+Basic Pricing,SERVER-C,Server Setup Option C (Fully Cloud),Included in 10000 package,Setup phase,Monthly cloud hosting typically 50-150
+Basic Pricing,CLOUD-PKG,All-Inclusive Cloud Package (flat),10000,Includes setup + basic migration,Includes base features + cloud setup + basic migration
+Basic Pricing,SUPPORT,Post-launch support (after first month),85/hour,As needed,First month support included
+Optional Add-On,OPT-1,Digital Pick on Handheld,1200,+2-3 days,
+Optional Add-On,OPT-2,AI Pick Sheet OCR,1500,+3-4 days,Requires OpenAI API key
+Optional Add-On,OPT-3,Voice Ordering,1500,+3-4 days,Requires OpenAI API key
+Optional Add-On,OPT-4,SMS Notifications (Twilio),800,+1-2 days,Requires Twilio account
+Optional Add-On,OPT-5,WhatsApp Notifications,1000,+2-3 days,Requires WhatsApp Business API account
+Optional Add-On,OPT-6a,Customer Credit Scoring,800,+2-3 days,
+Optional Add-On,OPT-6b,Salesperson Performance Scoring,400,+1-2 days,
+Optional Add-On,OPT-7,Customer Self-Service Portal,2500,+3-5 days,
+Optional Add-On,OPT-8,Customer-Facing Ordering Website,TBD,TBD,Requires OPT-7 as foundation
+Optional Add-On,OPT-9,Full Private Network Lockdown (VPN),1500,+2-3 days,Hybrid deployment can reduce cost (~800-1000)
+Optional Add-On,OPT-10,SSO + Multi-Factor Authentication,400,+2-3 days,Requires Microsoft 365 or Google Workspace
+Optional Add-On,OPT-12,Truck-Specific Navigation,600,+1-2 days,License cost typically 100-150/year per device
+Optional Add-On,OPT-13,Multi-Company / Multi-Tenant,1800,+3-4 days,
+Optional Add-On,OPT-14,Additional Training Hours,85/hour,As needed,
+Optional Add-On,OPT-15,Temp Cloud Backup,800,+1-2 days,Hybrid deployment can reduce cost (~300-500)
+Optional Add-On,OPT-16,AI-Powered Reports,2000,+4-5 days,Requires OpenAI API key
+Optional Add-On,OPT-17,Backup / Failover Server,1000-2000,+2-3 days,Cloud deployment often lower (~800-1200)

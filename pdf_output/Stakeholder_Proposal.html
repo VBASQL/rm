@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stakeholder Proposal</title>
+  <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    padding: 28mm 22mm 28mm 22mm;
+    max-width: 100%;
+  }
+  h1 { font-size: 20pt; margin: 0 0 6px 0; color: #0d1b2a; border-bottom: 2px solid #0d1b2a; padding-bottom: 6px; }
+  h2 { font-size: 15pt; margin: 28px 0 10px 0; color: #0d1b2a; border-bottom: 1px solid #c0c8d0; padding-bottom: 4px; }
+  h3 { font-size: 12pt; margin: 18px 0 6px 0; color: #1a3a5c; }
+  h4 { font-size: 11pt; margin: 14px 0 4px 0; color: #1a3a5c; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0 8px 22px; }
+  li { margin: 3px 0; }
+  a { color: #1a6bb5; text-decoration: underline; }
+  a:hover { color: #0e4780; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 10pt; }
+  th { background: #0d1b2a; color: #fff; padding: 7px 10px; text-align: left; }
+  td { padding: 6px 10px; border-bottom: 1px solid #dde3ea; }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  code { background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-family: Consolas, monospace; font-size: 9.5pt; }
+  pre { background: #f7f7f7; border: 1px solid #ddd; border-radius: 5px; padding: 12px 16px; margin: 12px 0; overflow-x: auto; }
+  pre code { background: none; padding: 0; font-size: 9pt; }
+  blockquote { border-left: 4px solid #1a6bb5; margin: 12px 0; padding: 6px 14px; background: #f0f5fb; color: #2a4a6a; border-radius: 0 4px 4px 0; }
+  hr { border: none; border-top: 1px solid #c0c8d0; margin: 20px 0; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  @media print {
+    body { padding: 0; }
+    a { color: #1a6bb5; }
+    h2 { page-break-before: auto; }
+    tr { page-break-inside: avoid; }
+    pre { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<h1>WHOLESALE ERP — STAKEHOLDER PROPOSAL v2</h1>
+<h3>Custom Order-to-Cash Platform for Wholesale Food Distribution</h3>
+<p><strong>Prepared: February 26, 2026 | Updated after Stakeholder Meeting (Feb 25)</strong></p>
+<hr>
+<h2>TABLE OF CONTENTS</h2>
+<ol>
+<li><a href="#1-system-overview">System Overview</a></li>
+<li><a href="#2-whats-included">What's Included — Base Package</a></li>
+<li><a href="#3-data-migration">Data Migration (Required)</a></li>
+<li><a href="#4-server-setup">Server Setup & Deployment (Required)</a></li>
+<li><a href="#5-optional-add-ons">Optional Add-Ons</a> <em>(separate document)</em></li>
+<li><a href="#6-technical-details">Technical Details</a></li>
+<li><a href="#7-pricing--timeline">Pricing & Timeline</a></li>
+<li><a href="#8-terms--conditions">Terms & Conditions</a></li>
+</ol>
+<hr>
+<p><a name="1-system-overview"></a></p>
+<h2>1. SYSTEM OVERVIEW</h2>
+<p>You already have a comprehensive workflow for wholesale distribution — ordering, warehouse, delivery, invoicing, collections. <strong>I&#39;m rebuilding the engine, not redesigning the car.</strong> The new system mirrors your existing process but runs on modern, maintainable technology.</p>
+<p><strong>What you get:</strong></p>
+<ul>
+<li>Same workflow your team already knows — modern foundation underneath</li>
+<li>Runs on your own server — your data stays in your building</li>
+<li>Works in any web browser — phones, tablets, desktops, no app store needed</li>
+<li>Full accounting built in — proper double-entry ledger, aging reports, statements</li>
+<li>Comprehensive reporting — report builder, standard reports, saved/scheduled exports, graphs</li>
+<li>Every action logged — who did what, when, and why</li>
+<li>Future-proof — adding features, integrations, or moving to cloud later is a natural extension</li>
+</ul>
+<p><strong>The flow stays the same:</strong></p>
+<pre><code>SALESPERSON          WAREHOUSE           DELIVERY            ACCOUNTING
+places order    →    picks product   →   delivers to      →  invoices &amp;
+(phone/in field)     off the shelf       customer&#39;s door      collects payment
+</code></pre>
+<hr>
+<p><a name="2-whats-included"></a></p>
+<h2>2. WHAT&#39;S INCLUDED — BASE PACKAGE ($7,500)</h2>
+<p>Everything below is included in the base price. Each section describes a screen group your team will use.</p>
+<hr>
+<h3>2.1 Login &amp; Security</h3>
+<ul>
+<li>Every user has an account with a role — system redirects to the right dashboard on login</li>
+<li>Roles: Salesperson, Warehouse Worker, Warehouse Manager, Driver, Route Planner, Accounting, Admin/Owner</li>
+<li>Permissions are granular — admin controls exactly what each person can see and do</li>
+<li>Company-owned Android handhelds: device registration required, PIN/biometric unlock after first login</li>
+<li>Desktop access: IP allowlist (office network only by default)</li>
+<li>All traffic encrypted (HTTPS), even on local network</li>
+<li>Failed login lockout, session timeout, tamper-proof audit log</li>
+</ul>
+<hr>
+<h3>2.2 Salesperson Screens</h3>
+<p><strong>Dashboard (hub/launchpad):</strong></p>
+<ul>
+<li>Quick-action buttons: New Order, Customer List, My Orders Today, Alerts</li>
+<li>Summary tiles: orders today, outstanding balance total, deliveries in progress</li>
+<li>Recent activity feed, link to full Reports page</li>
+</ul>
+<p><strong>Customer List:</strong></p>
+<ul>
+<li>Search/filter by name, status, area, tier</li>
+<li>At-a-glance per row: name, last order, balance, overdue flag, credit status</li>
+<li>&quot;New Order&quot; button on each row — skip into order wizard directly</li>
+</ul>
+<p><strong>Customer Profile (4 tabs):</strong></p>
+<ul>
+<li>Overview — contact info, addresses, credit status, tier, assigned salesperson</li>
+<li>Orders — order history, duplicate any past order, filter by date/status</li>
+<li>Account — invoices, payments, aging, balance, statements</li>
+<li>Notes/Activity — internal notes, notification log, activity feed</li>
+</ul>
+<p><strong>New Order Wizard (4 steps):</strong></p>
+<ol>
+<li><strong>Select Customer</strong> — quick search, recents, favorites, pick delivery location</li>
+<li><strong>Build Order</strong> — browse catalog (Category → Subcategory → Product → Flavor → Size), search, duplicate past order, favorites/quick lists. Running total visible. Each item shows 5-digit code, name, qty, price, line total</li>
+<li><strong>Review</strong> — editable invoice preview. Adjust quantities, apply discounts (within policy caps), set delivery date, add notes</li>
+<li><strong>Submit</strong> — order enters system. Credit customers → straight to warehouse. Pay-first customers → held until payment clears</li>
+</ol>
+<p><strong>Payment collection in the field:</strong></p>
+<ul>
+<li>Salespeople can collect payments from customers during visits</li>
+<li>Process through Authorize.NET (card, ACH) or record cash/check</li>
+</ul>
+<hr>
+<h3>2.3 Warehouse Screens</h3>
+<p><strong>Order Queue:</strong></p>
+<ul>
+<li>Orders grouped by route/delivery area</li>
+<li>Manager assigns orders to specific pickers</li>
+<li>Status tracking: New → Assigned → Picked → Approved</li>
+</ul>
+<p><strong>Pick Flow (Base — Paper Pick + Manual Entry):</strong></p>
+<ul>
+<li>Manager prints pick list for the order</li>
+<li>Worker picks using pen and physical clipboard — standard paper process</li>
+<li>Worker returns completed clipboard to manager</li>
+<li>Manager manually enters results in system: edits quantities or removes lines, rest is confirmed</li>
+<li>Confirmed pick → moves to approved status</li>
+</ul>
+<p><strong>Pick Approval:</strong></p>
+<ul>
+<li>Manager reviews every picked order before release</li>
+<li>Can override quantities, flag issues, reject back to picker</li>
+<li>Approved orders → ready for route assignment and truck loading</li>
+</ul>
+<blockquote>
+<p>Digital pick on handheld and AI pick sheet scanning are available as optional add-ons.</p>
+</blockquote>
+<hr>
+<h3>2.4 Route Planning Screens</h3>
+<blockquote>
+<p>Route planning happens BEFORE the truck is loaded — the route determines loading order (last stop loaded first).</p>
+</blockquote>
+<p><strong>Route Builder:</strong></p>
+<ul>
+<li>All approved/picked orders displayed, grouped by area</li>
+<li>Planner drags orders into route groups — each route = one truck + one driver</li>
+<li>Arranges stop order within each route (planner knows the streets)</li>
+<li>Shows total cases per route, number of stops</li>
+<li>Assigns driver and truck</li>
+<li>Finalized route → locked and sent to warehouse for truck loading</li>
+</ul>
+<p><strong>Route Assignment View:</strong></p>
+<ul>
+<li>Summary of all routes for the day</li>
+<li>Can reassign driver/truck, reorder stops until loading begins</li>
+</ul>
+<hr>
+<h3>2.5 Driver Screens</h3>
+<p><strong>My Route:</strong></p>
+<ul>
+<li>List of stops in delivery order with progress bar</li>
+<li>Each stop: customer name, address, # cases, delivery window</li>
+</ul>
+<p><strong>Stop Detail:</strong></p>
+<ul>
+<li>Order summary showing each product&#39;s 5-digit product code, name, and quantity</li>
+<li><strong>Driver can edit the order before confirming</strong> — e.g. customer spots a problem at the door. Edits are flagged for accounting and salesperson is notified automatically</li>
+<li><strong>Print Invoice</strong> — handheld portable Bluetooth thermal printer (driver carries it)<ul>
+<li>Location check: if GPS shows driver isn&#39;t near the address → warning (logged, not hard-blocked)</li>
+</ul>
+</li>
+<li><strong>Digital Signature option</strong> — customer signs on device screen instead of receiving printout</li>
+<li><strong>Launch Navigation</strong> — opens Google Maps / Waze with destination</li>
+<li><strong>Delivery status:</strong> Confirmed (tap to confirm) or Rejected (select reason + optional note)</li>
+</ul>
+<p>*<em>Auto-Confirmation &amp; Invoice Generation Rule <em>(confirmed business rule)</em>:</em>*</p>
+<ul>
+<li>When the driver taps <strong>Confirm Delivery</strong>, the system <strong>automatically generates the invoice</strong> from the actual delivered quantities (which may differ from the original order if the driver made on-site edits or removed lines)</li>
+<li>The invoice is immediately posted to the system and visible to accounting in real time</li>
+<li>The driver then <strong>prints it</strong> (Bluetooth thermal printer) <strong>or collects a digital signature</strong> on the device — one or the other, not both required</li>
+<li>Printing the invoice OR capturing a digital signature serves as the handoff proof</li>
+<li>Delivery is marked Confirmed at this point — no additional tap required</li>
+<li>If the driver edited any quantities or removed lines, accounting and the salesperson are automatically notified with a change summary</li>
+</ul>
+<p><strong>End of Route:</strong> Summary of completed/rejected stops, driver confirms route complete.</p>
+<hr>
+<h3>2.6 Accounting Screens</h3>
+<blockquote>
+<p>Simpler than QuickBooks on the surface — but proper double-entry accounting runs automatically underneath every action.</p>
+</blockquote>
+<p><strong>Dashboard:</strong></p>
+<ul>
+<li>KPI tiles: total receivables, overdue amount, payments received today/week, cash flow summary</li>
+<li>Action queue: invoices pending review, unapplied payments, credit reviews due, flagged orders</li>
+<li>Quick access: customer lookup, send statement, process payment, issue credit memo</li>
+</ul>
+<p><strong>Invoice Detail:</strong></p>
+<ul>
+<li>Full invoice view (same layout as printed)</li>
+<li>Payment status and history, actions (apply payment, credit memo, send, print, adjust)</li>
+<li>PDF preview and download</li>
+<li>Linked journal entries visible for audit</li>
+</ul>
+<p><strong>Payment Processing:</strong></p>
+<ul>
+<li><strong>Receive payment without selecting an invoice</strong> — record a payment against a customer. It sits in &quot;unapplied payments&quot; until the accountant matches it to specific invoices later</li>
+<li><strong>Apply payment to specific invoice(s)</strong> — select one or more open invoices and apply the payment directly</li>
+<li><strong>Both flows always available</strong> — receive first / apply later, or receive and apply in one step</li>
+<li>Batch payment view — process multiple payments in one session</li>
+<li>Methods: card (Authorize.NET), ACH, check (manual entry), cash (manual entry)</li>
+<li>Unapplied payments dashboard — see all unmatched payments, match to invoices when ready</li>
+</ul>
+<p><strong>Statements:</strong></p>
+<ul>
+<li>Per customer: outstanding invoices, payments, credits, running balance</li>
+<li>Send via email per customer preference</li>
+<li>Batch statement run — all customers at once or filtered group</li>
+<li>Configurable schedule (monthly, weekly, custom per customer)</li>
+<li>Auto-send on schedule + manual send anytime</li>
+</ul>
+<p><strong>Invoice Review &amp; Finalization:</strong></p>
+<ul>
+<li>End-of-week (configurable) review before invoices are &quot;posted&quot; to the ledger</li>
+<li><strong>Rules-based flagging</strong> — system flags potential issues: pricing anomalies, unusual quantities vs. customer history, missing deposits, duplicates, discount policy violations</li>
+<li>Accountant reviews flags, corrects as needed, then finalizes → posted to ledger</li>
+</ul>
+<p><strong>Monthly Statement Lock:</strong></p>
+<ul>
+<li>Manual monthly process (same pattern as weekly invoice review)</li>
+<li>Accounting reviews and locks monthly statements</li>
+</ul>
+<p><strong>Pricing Management:</strong></p>
+<ul>
+<li>Create unlimited price levels (e.g. &quot;Standard,&quot; &quot;Preferred,&quot; &quot;Chain Discount,&quot; &quot;Zone A&quot;)</li>
+<li>Assign prices to products per level (e.g. Product X = $10.00 in Standard, $9.00 in Preferred)</li>
+<li>Assign customers to a price level — determines which prices they see and are charged</li>
+<li>Levels can be based on: customer type, area, zip code, custom groups, or individual customer override</li>
+<li>Admin can also access pricing for overrides</li>
+</ul>
+<hr>
+<h3>2.7 Accounting Engine (Under the Hood)</h3>
+<p>Everything below runs automatically — users never create journal entries manually.</p>
+<p><strong>Double-Entry Ledger:</strong></p>
+<ul>
+<li>Every financial action creates proper journal entries automatically</li>
+<li>Invoice created → Debit: Accounts Receivable, Credit: Sales Revenue + Deposits + Tax</li>
+<li>Payment received → Debit: Cash/Bank, Credit: Accounts Receivable</li>
+<li>Discount applied → Debit: Discounts Given, Credit: Accounts Receivable</li>
+<li>Accountant CAN view the full ledger and drill into any entry</li>
+</ul>
+<p><strong>Chart of Accounts:</strong> Pre-configured (Accounts Receivable, Sales Revenue, Deposit Revenue, Discounts Given, Cash/Bank, Unapplied Payments, Credit Memos, Tax Payable). Admin can add/rename accounts.</p>
+<p><strong>Standard Financial Reports:</strong> AR Aging, Customer Statements, Transaction Journal, Revenue by period/product/customer/salesperson, Cash Receipts, Tax Report, Trial Balance.</p>
+<hr>
+<h3>2.8 Reports</h3>
+<blockquote>
+<p>Reports are a first-class feature. Every user gets answers from system data without asking IT or exporting to Excel.</p>
+</blockquote>
+<p><strong>Report Builder:</strong></p>
+<ul>
+<li>User-friendly — no SQL knowledge needed</li>
+<li>3-step process: (1) Pick data source(s) — Orders, Invoices, Payments, Customers, Products, Deliveries, etc. (2) Select columns — drag/drop or checkbox. System auto-handles joins across data sources. (3) Filter &amp; sort — date range, status, customer, salesperson, area, product, any field. AND/OR combinable.</li>
+<li><strong>Live preview</strong> — results update as filters change</li>
+<li><strong>Auto-generated graphs</strong> — bar, line, pie charts when report includes numeric columns. Interactive (hover, click to drill down)</li>
+<li><strong>Export:</strong> PDF, Excel (.xlsx), CSV</li>
+<li><strong>Grouping &amp; aggregation</strong> — group by any dimension, auto-sum/average/count per group</li>
+</ul>
+<p><strong>Standard Pre-Built Reports (ready out of the box):</strong></p>
+<ul>
+<li><strong>Sales:</strong> by period, by salesperson (with leaderboard), by customer, by product/category, by area/zip, order volume trends</li>
+<li><strong>Accounting:</strong> AR Aging, statements, revenue, cash receipts, tax, trial balance, transaction journal, unapplied payments, credit memos</li>
+<li><strong>Operations:</strong> delivery performance (on-time, rejections), route efficiency, pick accuracy, driver performance, inventory movement</li>
+<li><strong>Customer:</strong> activity over time, new acquisition, retention/churn, credit utilization</li>
+</ul>
+<p><strong>Saved Reports &amp; Scheduled Exports:</strong></p>
+<ul>
+<li>Save any report with a name — preserves filters, columns, sort, chart settings</li>
+<li>Recurring exports — schedule saved reports to auto-run and email (e.g. &quot;Sales by Salesperson — Weekly&quot; every Monday)</li>
+<li>Report library per user + admin-published company-wide shared reports</li>
+<li>Pin favorites to dashboard for one-click access</li>
+</ul>
+<p><strong>Role-Based Access:</strong></p>
+<ul>
+<li>Salespeople see only their customers&#39; data</li>
+<li>Accounting sees all financial data</li>
+<li>Managers see everything</li>
+<li>Admin controls report access via the same permission engine</li>
+</ul>
+<hr>
+<h3>2.9 Admin / Back-End Control Panel</h3>
+<blockquote>
+<p>Separate area from field UI. Power-user settings — not visible to field workers.</p>
+</blockquote>
+<p><strong>Sections:</strong></p>
+<ol>
+<li><strong>Users &amp; Roles</strong> — create/edit users, assign roles, set granular permissions, manage teams</li>
+<li><strong>Product Catalog</strong> — categories, subcategories, products, 5-digit codes, pricing, deposits, display units (sales vs. warehouse view), visibility rules</li>
+<li><strong>Pricing</strong> — admin overrides and global settings (day-to-day pricing managed by accounting — see Section 2.6)</li>
+<li><strong>Policies</strong> — discount caps, adjustment rules (pre-pick open → post-pick strict), invoice lock period, order modification rules, credit tier definitions, approval workflows</li>
+<li><strong>Notifications</strong> — triggers, channels, timing, templates per event type</li>
+<li><strong>System Settings</strong> — company info, delivery date defaults, payment gateway config, printer settings, statement schedules</li>
+</ol>
+<p>Each section has: list view with search/filter, detail/edit form, audit log.</p>
+<hr>
+<h3>2.10 Manager / Owner Dashboard</h3>
+<ul>
+<li><strong>All features included</strong> — owner sees everything, can customize visible sections</li>
+<li><strong>Multiple saved views</strong> — &quot;Daily Overview,&quot; &quot;Sales Focus,&quot; &quot;Collections Focus,&quot; etc.</li>
+</ul>
+<p><strong>Default view:</strong></p>
+<ul>
+<li><strong>Live Route Tracker</strong> — all drivers on a map in real time, per-driver stop progress</li>
+<li><strong>KPI Tiles:</strong> revenue today/week/month vs. prior period, deliveries, rejection rate, collection rate, outstanding receivables</li>
+<li><strong>Salesperson Performance</strong> — individual + comparison/leaderboard, revenue, orders, collection rate</li>
+<li><strong>Alerts &amp; Flags</strong> — rejected deliveries, over-limit customers, overdue accounts, pending approvals</li>
+<li><strong>Reports quick access</strong> — links to full Report Builder and saved reports</li>
+</ul>
+<p><strong>Customization:</strong> drag-and-drop tiles, show/hide sections, save multiple named views.</p>
+<hr>
+<h3>2.11 Notifications (Base — Email Only)</h3>
+<ul>
+<li>Built-in notification engine — email channel included in base</li>
+<li><strong>Triggers:</strong> invoice sent, payment due, payment received, delivery confirmed, credit limit approaching, statement ready, review date reached, custom triggers</li>
+<li><strong>Timing:</strong> configurable — e.g. reminder 3 days before due, again on due date, again 7 days after</li>
+<li><strong>Templates:</strong> customizable per event type</li>
+<li><strong>Logging:</strong> every notification logged — who, what, when, delivery status</li>
+</ul>
+<blockquote>
+<p>SMS (Twilio) and WhatsApp channels are available as optional add-ons.</p>
+</blockquote>
+<hr>
+<h3>2.12 Offline Mode (Basic — Included)</h3>
+<ul>
+<li>Orders and delivery confirmations saved on device when connection drops</li>
+<li>Product catalog and customer data cached locally</li>
+<li>Sync engine queues offline actions → pushes to server on reconnect</li>
+<li>Conflict resolution: server timestamp wins, user notified of any overrides</li>
+<li><strong>Scope:</strong> offline ordering + offline delivery. Accounting/admin always requires connection</li>
+</ul>
+<hr>
+<h3>2.13 Order Lifecycle &amp; Policies</h3>
+<blockquote>
+<p><strong>Core design principle:</strong> Almost every rule in the system is configurable through admin/accounting control panels — not hardcoded. Order rules, discount caps, credit tiers, invoice locks, modification limits, notification triggers, catalog visibility — all adjustable per user, per group, per role, or system-wide. Sensible defaults ship out of the box; you customize from there.</p>
+</blockquote>
+<p><strong>Order vs Invoice:</strong></p>
+<ul>
+<li>Separate records — order tracks what was requested; invoice is <strong>auto-generated at delivery confirmation</strong> from the actual delivered quantities</li>
+<li>If the driver adjusted quantities or removed lines on-site, the invoice reflects those changes — not the original order</li>
+<li>Invoice is created and posted to the system the moment the driver confirms delivery</li>
+</ul>
+<p><strong>Order Modification Rules (fully configurable):</strong></p>
+<ul>
+<li>Before picking: salespeople/accounting can freely edit (add/remove items, adjust quantities, discounts, delivery date, cancel)</li>
+<li>After picking begins: modifications become very strict — limited adjustments only</li>
+<li><strong>Policy engine controls everything post-pick:</strong> what adjustments are possible, who can make them, what caps/limits apply — all configurable per role, per user, per group</li>
+<li>Cancellation rules, post-pick adjustments, return credits — all policy-controlled the same way</li>
+<li>Every change at every stage logged with who, what, when, documented reason</li>
+</ul>
+<p><strong>Discount &amp; Adjustment Caps (fully configurable):</strong></p>
+<ul>
+<li>Admin sets per-role/per-user/per-group limits on discounts salespeople can give</li>
+<li>System enforces caps automatically — salesperson can&#39;t exceed their limit</li>
+<li>Deposit discounts/waivers also controlled by policy</li>
+<li>Post-pick adjustments follow the same cap system</li>
+</ul>
+<p><strong>Customer Credit Tiers (fully configurable):</strong></p>
+<ul>
+<li>Admin can create any number of tiers with custom names and rules</li>
+<li><strong>Credit customers:</strong> order → warehouse immediately, pay later per terms (net-15, net-30, etc.)</li>
+<li><strong>Pay-first customers:</strong> order held until payment clears, payment link sent automatically</li>
+<li>New customers default to $0 credit limit / pay-on-order</li>
+<li>Rules per tier: payment timing, credit limits, block vs. warn behavior, notification triggers, discount caps — all configurable</li>
+<li>Credit limit review: manual scheduled feature — accountant sets a reminder date, system notifies on that date</li>
+<li>All credit decisions and tier changes logged with full audit trail</li>
+</ul>
+<p><strong>Invoice Lock &amp; Finalization (manual process):</strong></p>
+<ul>
+<li>Accounting manually reviews and locks invoices (weekly review cycle, configurable)</li>
+<li>Once locked, adjustments require documented reason and elevated permission</li>
+<li>Credit memos can be issued against locked invoices</li>
+<li>Monthly statement lock follows the same manual review-and-lock pattern</li>
+</ul>
+<p><strong>Product Codes:</strong></p>
+<ul>
+<li>5-digit numeric auto-generated codes with structured hierarchy</li>
+<li>Universal identifier across all screens and printouts</li>
+</ul>
+<p><strong>Pricing:</strong></p>
+<ul>
+<li><strong>Price levels</strong> — admin creates unlimited named price levels (e.g. &quot;Standard,&quot; &quot;Preferred,&quot; &quot;Chain Discount,&quot; &quot;Zone A&quot;)</li>
+<li><strong>Products are assigned to price levels</strong> — each product/variant gets a price in each level (e.g. Product X = $10.00 in Standard, $9.00 in Preferred, $8.50 in Chain)</li>
+<li><strong>Customers are assigned to a price level</strong> — the customer&#39;s assigned level determines which prices they see and are charged</li>
+<li>Price levels can be based on: customer type, area, zip code, custom groups, or individual customer override</li>
+<li>When a salesperson opens an order for a customer, the system automatically shows that customer&#39;s price level prices</li>
+<li>CRV deposits: per case, shown separately on invoice, tracked separately in accounting, not taxed</li>
+<li>No sales tax (wholesale only)</li>
+</ul>
+<p><strong>Permissions &amp; Visibility (fully configurable):</strong></p>
+<ul>
+<li>Who sees what is NOT hardcoded by role — admin sets policies per user, per group, or per role</li>
+<li>Salespeople see only their assigned customers; drivers see only their route; accounting sees all financial data; managers see everything</li>
+<li>Admin can override any default (e.g. senior salesperson sees another&#39;s accounts)</li>
+<li>Same policy engine controls data visibility, discount caps, adjustment limits, and order rules</li>
+</ul>
+<hr>
+<h3>2.14 Security (Included)</h3>
+<ul>
+<li>Device registration for mobile handhelds — unregistered devices blocked</li>
+<li>PIN/biometric unlock after initial login</li>
+<li>IP allowlist for desktop access</li>
+<li>HTTPS everywhere (even on LAN)</li>
+<li>Failed login lockout</li>
+<li>Tamper-proof audit log (append-only, even admins can&#39;t delete)</li>
+<li>Payment data (PCI compliant) — card numbers never touch the app, only Authorize.NET tokens</li>
+<li>Reason codes required for sensitive actions</li>
+<li>Admin can revoke devices and force-logout users remotely</li>
+</ul>
+<hr>
+<p><a name="3-data-migration"></a></p>
+<h2>3. DATA MIGRATION (Required — Billed Separately)</h2>
+<p>This is a company with records going back to 2000 — starting from scratch is not an option. All existing data must be migrated into the new system.</p>
+<p><strong>What&#39;s included:</strong></p>
+<ul>
+<li>Import existing customers, products, pricing, and historical invoices/transactions from your current system</li>
+<li>Data cleaning, format conversion, deduplication, and verification</li>
+<li>Mapping old data structures to the new system&#39;s schema</li>
+<li>Validation reports — you review and confirm the imported data is correct before go-live</li>
+</ul>
+<p><strong>Pricing: $500 – $3,000</strong> — exact cost depends on:</p>
+<ul>
+<li><strong>What data needs to be migrated</strong> — basic records (customers, products, invoices, transactions) are on the lower end. Adding saved pricing rules, discount structures, customer-specific prices, policies, credit terms, salesperson assignments, and other configuration data increases complexity and cost.</li>
+<li>What data formats are available from the previous system (database export, spreadsheets, API, etc.)</li>
+<li>Volume and complexity of historical records</li>
+<li>How clean the existing data is (duplicates, inconsistencies, missing fields)</li>
+<li>Whether I receive the data before development starts (preferred — allows me to build the import alongside the system)</li>
+</ul>
+<p><strong>Process:</strong> I need access to your existing data as early as possible. I&#39;ll review it, assess the scope, and agree on a final migration price before work begins. Migration runs in parallel with the build — no impact on the 4-week timeline.</p>
+<hr>
+<p><a name="4-server-setup"></a></p>
+<h2>4. SERVER SETUP &amp; DEPLOYMENT (Required — Choose One)</h2>
+<p>The software price ($7,500) covers building the application. Getting it running requires server setup, which is a separate cost.</p>
+<p><strong>Choose where your system runs.</strong> Options A and B below cover on-premises and hybrid deployment. A fully cloud-hosted option is also available — see the <a href="#cloud-package">All-Inclusive Cloud Package</a> in Section 7.</p>
+<h3>Option A: Full On-Premises — $2,500 setup</h3>
+<p>Both the web server and database run on your existing server in your office. I install and configure everything on your current machine — no new hardware, no OS installation, nothing for your team to set up:</p>
+<ul>
+<li>PostgreSQL database installation, tuning, and backup scheduling</li>
+<li>.NET 8+ runtime, web server (IIS/Kestrel), reverse proxy setup</li>
+<li>SSL certificates (purchase and configuration)</li>
+<li>Network configuration — firewall rules, port forwarding, DNS, static IP</li>
+<li>Security hardening (IP restrictions, device registration, encryption at rest)</li>
+<li>Initial performance testing and optimization</li>
+</ul>
+<p><strong>Why it costs more:</strong> Everything is manual. I install and configure every package on your existing server, set up networking from your router/firewall, troubleshoot compatibility with your current environment, and test the full stack on your specific hardware. If something doesn&#39;t work with your network setup, I diagnose and fix it.</p>
+<p><strong>Pros:</strong> Data physically stays in your building, full hardware control, no cloud dependency, one machine to manage
+<strong>Cons:</strong> Ongoing maintenance costs (hardware upkeep, power, internet, OS updates, physical security). If the server hardware fails, you&#39;re down until it&#39;s fixed or replaced. You are responsible for keeping the server running.</p>
+<h3>Option B: Hybrid — Cloud Web Server + On-Premises Database — setup &amp; monthly costs vary</h3>
+<p>The <strong>web server</strong> (application processing) runs on a cloud VPS (Azure, AWS, DigitalOcean, Hetzner, etc.). The <strong>database</strong> stays on your on-premises server — your data never leaves your building. The cloud web server connects securely to your local database through an encrypted tunnel.</p>
+<p><strong>The pitch: Your data is yours. Processing is in the cloud.</strong></p>
+<p><strong>Why setup is cheaper:</strong> Cloud servers already come pre-configured with a compatible operating system (Ubuntu Server or Windows Server — ready to go out of the box). Installing .NET and all application dependencies is a one-command process through built-in package managers. There&#39;s no physical networking to configure for the web layer — firewalls, security groups, DNS, and SSL certificates are all built into the cloud dashboard and can be automated. No additional hardware to spec, purchase, ship, rack, cable, or test for the application server. You still need a local machine for PostgreSQL, but a database-only server is simpler and cheaper to set up than a full application stack.</p>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Data stays in your building (database is local)</li>
+<li>No additional hardware to buy for the web server</li>
+<li>Automatic power and internet redundancy for the application layer (cloud data centers have generators, redundant connections)</li>
+<li>Built-in backup for the application server (snapshots)</li>
+<li>Easy to scale up processing power (need more? click a button, pick a bigger instance)</li>
+<li>OS patches and security updates for the web server are simpler to apply</li>
+<li>If you already have a machine for the database, total hardware cost is much lower</li>
+</ul>
+<p><strong>Cons:</strong> Monthly recurring cost (depends on provider and server specs), requires a secure tunnel between cloud and local database, you still maintain the local database server</p>
+<p><strong>Monthly cost context:</strong> Cloud hosting monthly costs are often comparable to or less than the electricity, internet bandwidth, and IT time you&#39;d spend maintaining a full on-premises application server — plus you don&#39;t need to buy a second machine for the web layer.</p>
+<hr>
+<p><a name="5-optional-add-ons"></a></p>
+<h2>5. OPTIONAL ADD-ONS</h2>
+<p>Optional add-ons are available to extend the system&#39;s capabilities. See the separate <strong><a href="Optional_AddOns.pdf">Optional Add-Ons document</a></strong> for the full list with descriptions, pricing, and timelines.</p>
+<hr>
+<p><a name="6-technical-details"></a></p>
+<h2>6. TECHNICAL DETAILS</h2>
+<h3>Where It Runs</h3>
+<ul>
+<li><strong>Database:</strong> PostgreSQL — on your local server (on-premises/hybrid) or cloud-hosted (cloud package). Daily backups ensure you always have your data</li>
+<li><strong>Web server:</strong> Your choice — on-premises (same machine as database), cloud VPS with local database (hybrid), or fully cloud-hosted (see <a href="#4-server-setup">Section 4</a> and <a href="#cloud-package">Cloud Package</a>)</li>
+<li><strong>Application:</strong> ASP.NET Core (.NET 8+) — Microsoft&#39;s modern enterprise platform. Native on Windows and Linux</li>
+<li><strong>Database engine:</strong> PostgreSQL — powerful, free (zero licensing fees forever), includes geographic capabilities for driver tracking</li>
+<li><strong>Web-based:</strong> works in any browser (Chrome, Edge, Safari). No app store, no installations, no device updates</li>
+</ul>
+<h3>How It Feels</h3>
+<ul>
+<li>Modern web application — not clunky desktop software</li>
+<li>Desktop: full-screen dashboards, tables, charts</li>
+<li>Mobile: same app, auto-formatted for small screens, large buttons, minimal typing</li>
+<li>Fast: server does the heavy lifting, sends ready-made pages — phones don&#39;t need to be powerful</li>
+<li>Interactive sections (order builder, route planner, live map) use lightweight targeted JavaScript (~15-30KB)</li>
+</ul>
+<h3>Architecture</h3>
+<ul>
+<li><strong>Clean Architecture:</strong> Web → Application → Core ← Infrastructure</li>
+<li>Server-rendered pages (Razor) + HTMX for partial updates + Alpine.js for micro-interactions</li>
+<li>SignalR for real-time features (driver tracking, live order status)</li>
+<li>Authorize.NET SDK for payment processing (PCI compliant, tokenized vault)</li>
+<li>SMTP for email notifications (base)</li>
+<li>Google Maps JS API for tracking display + deep-link to nav apps for drivers</li>
+</ul>
+<h3>Security Summary</h3>
+<ul>
+<li>Private network — database never exposed externally</li>
+<li>All traffic encrypted (HTTPS)</li>
+<li>Device registration + PIN/biometric for mobile</li>
+<li>IP allowlist for desktop</li>
+<li>Role-based granular permissions</li>
+<li>Append-only audit log</li>
+<li>PCI-compliant payment handling (card data never touches your system)</li>
+</ul>
+<hr>
+<p><a name="7-pricing--timeline"></a></p>
+<h2>7. PRICING &amp; TIMELINE</h2>
+<h3>Software Development</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Software (application build)</strong></td>
+<td><strong>$7,500</strong></td>
+</tr>
+<tr>
+<td><strong>Payment schedule</strong></td>
+<td>No upfront payment — see milestones below</td>
+</tr>
+<tr>
+<td><strong>Development period</strong></td>
+<td>4 weeks</td>
+</tr>
+<tr>
+<td><strong>Training</strong></td>
+<td>5 hours included</td>
+</tr>
+<tr>
+<td><strong>Post-launch support</strong></td>
+<td>First month free, then $85/hour</td>
+</tr>
+</tbody></table>
+<h3>Payment Milestones — You Pay Only After I Deliver</h3>
+<table>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>What I Deliver</th>
+<th>Payment</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1. Development complete</strong></td>
+<td>Full working demo — every feature running, you test it yourself</td>
+<td>40% ($3,000)</td>
+</tr>
+<tr>
+<td><strong>2. Server deployment</strong></td>
+<td>System installed on your server, running, accessible, configured</td>
+<td>30% ($2,250)</td>
+</tr>
+<tr>
+<td><strong>3. Go-live</strong></td>
+<td>Data migrated &amp; verified, 5 hours of staff training, system live with real operations</td>
+<td>30% ($2,250)</td>
+</tr>
+</tbody></table>
+<p><em>No money changes hands until you see results. Each payment is triggered by a tangible deliverable you can verify.</em></p>
+<h3>Server Setup (billed separately — see <a href="#4-server-setup">Section 4</a>)</h3>
+<table>
+<thead>
+<tr>
+<th>Deployment Option</th>
+<th>Setup Cost</th>
+<th>Monthly Cost</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Option A: Full On-Premises</strong></td>
+<td><strong>$2,500</strong></td>
+<td>Ongoing maintenance (hardware, power, updates — your responsibility)</td>
+</tr>
+<tr>
+<td><strong>Option B: Hybrid (cloud web + local DB)</strong></td>
+<td><strong>Varies</strong></td>
+<td>Varies (depends on cloud provider, server specs, region)</td>
+</tr>
+<tr>
+<td><strong>Option C: Fully Cloud</strong></td>
+<td><strong>Included in <a href="#cloud-package">$10K Cloud Package</a></strong></td>
+<td>Cloud hosting fees (~$50–$150/month)</td>
+</tr>
+</tbody></table>
+<h3>What&#39;s in the Base ($7,500)</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Included</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Salesperson app (mobile + desktop)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Product catalog management (5-digit codes, dynamic pricing)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Order placement (browse, search, duplicate, favorites)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Customer management (profiles, tiers, multi-location)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Warehouse flow (paper pick + manual entry, manager approval)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Route planning &amp; stop ordering</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Driver app (route, nav, print, edit orders, digital signature)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Bluetooth invoice printing</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Full invoicing &amp; accounting (double-entry ledger)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Rules-based invoice review &amp; flagging</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Payment processing (Authorize.NET — card, ACH)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Salesperson field payment collection</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Statements (auto-send + manual, configurable schedule)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Notification engine (email channel)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Report Builder (sort/filter/join, graphs, export)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Standard pre-built reports (sales, accounting, operations, customer)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Saved reports &amp; scheduled exports</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Admin control panel (users, roles, permissions, policies, pricing)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Manager dashboard (live tracking, KPIs, performance)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Live driver tracking (real-time map)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Discount &amp; adjustment policy engine</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Basic offline mode (device storage, sync on reconnect)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Full audit trail</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Security (device registration, IP allowlist, encryption)</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<ul>
+<li>Deployment setup (on-prem or cloud — see Section 4) | ✅ |
+| 5 hours staff training | ✅ |
+| 1 month post-launch support (issues within reason) | ✅ |
+| After first month: $85/hour support rate | ✅ |</li>
+</ul>
+<p><a name="cloud-package"></a></p>
+<h3>All-Inclusive Cloud Package — $10,000 Flat</h3>
+<p>Everything in the base package + fully cloud-hosted deployment (web server AND database) + basic data migration — one price, no surprises.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Included</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Software (all base features)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Cloud server setup (web + database)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Basic data migration (customers, products, invoices, transactions)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Daily automatic data download to your local machine</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>5 hours staff training</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>1 month post-launch support</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>$10,000</strong></td>
+</tr>
+<tr>
+<td><strong>Monthly</strong></td>
+<td>Cloud hosting fees (varies by provider, typically $50–$150/month)</td>
+</tr>
+</tbody></table>
+<p><strong>How it works:</strong></p>
+<ul>
+<li>The entire system — web server and database — runs on a cloud server (Azure, AWS, DigitalOcean, Hetzner, etc.)</li>
+<li>Pre-configured server images may be available on cloud marketplaces for faster deployment</li>
+<li><strong>Daily automatic data download (optional):</strong> a full copy of your database can be exported and sent to a local machine in your office every night — so you always have your data on-site if you want it</li>
+<li><strong>You own your data</strong> — even though it&#39;s hosted in the cloud, the data is 100% yours. The cloud provider only provides and maintains the infrastructure; they have no ownership or rights over your data</li>
+<li>No hardware to buy, maintain, or replace</li>
+</ul>
+<p><strong>Topics to discuss before choosing this option:</strong></p>
+<ul>
+<li><strong>Data security in the cloud</strong> — encryption at rest, encryption in transit, access controls, provider compliance certifications. We&#39;ll review exactly what protections are in place and what&#39;s configurable</li>
+<li><strong>Cloud provider selection</strong> — what&#39;s available, pricing tiers, data residency options, SLAs</li>
+<li><strong>Your comfort level</strong> — some operators prefer physical control of their data. The daily download ensures you always have a local copy regardless</li>
+<li><strong>Ongoing costs</strong> — monthly hosting fees vs. on-premises hardware/maintenance costs</li>
+</ul>
+<hr>
+<p><a name="8-terms--conditions"></a></p>
+<h2>8. TERMS &amp; CONDITIONS</h2>
+<h3>Payment Terms</h3>
+<ul>
+<li><strong>No upfront payment</strong> — you pay only after I deliver</li>
+<li><strong>Milestone 1 — Development complete</strong> (40% / $3,000): Full working demo, you test every feature</li>
+<li><strong>Milestone 2 — Server deployment</strong> (30% / $2,250): Installed and running on your server</li>
+<li><strong>Milestone 3 — Go-live</strong> (30% / $2,250): Data migrated, staff trained (5 hours), system live</li>
+<li>Server setup: billed separately at deployment (see <a href="#4-server-setup">Section 4</a>)</li>
+<li>Optional add-ons: payment split proportionally across same milestones</li>
+</ul>
+<h3>Scope &amp; Changes</h3>
+<ul>
+<li>Covers all features listed in Base Package (Section 2) and selected optional add-ons</li>
+<li>Minor adjustments (cosmetic, layout, wording) included at no extra cost</li>
+<li>Major scope additions quoted separately before work begins</li>
+<li>All changes documented and agreed in writing</li>
+</ul>
+<h3>Intellectual Property</h3>
+<ul>
+<li>Upon final payment, you own the complete source code, database, and all project assets</li>
+<li>You may modify, extend, or host the system however you choose</li>
+<li>I retain the right to use general techniques and non-proprietary patterns in future work</li>
+</ul>
+<h3>Support</h3>
+<ul>
+<li><strong>First month after go-live: free support</strong> — bug fixes, issues, and reasonable adjustments at no cost</li>
+<li><strong>After first month: $85/hour</strong> — billed in 15-minute increments, quoted before work begins</li>
+<li><strong>Availability:</strong> Monday–Friday, 9 AM – 6 PM (Eastern). No weekends or holidays unless pre-arranged.</li>
+<li><strong>Response times:</strong><ul>
+<li>Critical issues (system down, data loss): response within 4 business hours</li>
+<li>Non-critical issues (bug, UI problem, minor feature not working): response within 1–2 business days</li>
+</ul>
+</li>
+<li><strong>What counts as &quot;reasonable&quot; during the free month:</strong><ul>
+<li>Bug fixes — something doesn&#39;t work as designed</li>
+<li>Minor adjustments — small layout, wording, or behavior tweaks</li>
+<li>Configuration help — adjusting settings, policies, or rules within the admin panel</li>
+<li>Quick questions — &quot;how do I do X?&quot; via email or message</li>
+</ul>
+</li>
+<li><strong>What is NOT included (even during the free month):</strong><ul>
+<li>New features or functionality not in the original scope</li>
+<li>Redesigning screens or workflows after sign-off</li>
+<li>Ongoing training beyond the included 5 hours</li>
+<li>IT/infrastructure issues (see section below)</li>
+</ul>
+</li>
+<li>Feature requests beyond agreed scope are quoted separately</li>
+</ul>
+<h3>IT vs. Application Responsibility (On-Premises Deployment)</h3>
+<p>Once the system is installed, running, and handed off at Milestone 3, there is a clear line between <strong>application issues</strong> (my responsibility) and <strong>IT/infrastructure issues</strong> (your responsibility):</p>
+<p><strong>My responsibility (application issues):</strong></p>
+<ul>
+<li>Software bugs — the application doesn&#39;t work as designed</li>
+<li>Application errors, crashes, or unexpected behavior in the code</li>
+<li>Database schema issues caused by the application</li>
+<li>Issues introduced by any updates or patches I apply</li>
+</ul>
+<p><strong>Your responsibility (IT/infrastructure issues):</strong></p>
+<ul>
+<li>Server hardware failures (disk, RAM, power supply, etc.)</li>
+<li>Operating system updates, patches, and reboots</li>
+<li>Network connectivity — internet outages, firewall changes, DNS, router/switch issues</li>
+<li>Power outages and UPS/backup power</li>
+<li>Server antivirus/security software conflicts</li>
+<li>User account management on the Windows Server itself</li>
+<li>Physical security of the server hardware</li>
+<li>ISP issues, static IP changes, domain/SSL certificate renewals</li>
+<li>Backup of the server and database files (I set up the schedule — you ensure it keeps running)</li>
+<li>Any third-party software installed on the server that interferes with the application</li>
+</ul>
+<p><strong>Gray area — billed at $85/hour:</strong></p>
+<ul>
+<li>&quot;The app stopped working&quot; caused by a Windows update, antivirus quarantine, or network change — I can diagnose and fix, but this is an infrastructure-caused issue</li>
+<li>Server ran out of disk space, database can&#39;t write — infrastructure, but I can help clean up</li>
+<li>You changed firewall rules and broke connectivity — I can help reconfigure</li>
+</ul>
+<p><em>In short: if the application code is the problem, it&#39;s on me. If the server, network, hardware, or OS is the problem, it&#39;s on you. If you need me to help with infrastructure issues, I&#39;m available at $85/hour.</em></p>
+<h3>Confidentiality</h3>
+<ul>
+<li>All business information and customer data treated as confidential</li>
+<li>No data shared with third parties except agreed integrations (Authorize.NET, SMTP provider)</li>
+<li>Optional AI services (if selected): only specific data sent (audio, photo, metadata) — not your entire database. AI providers process and do not store data permanently</li>
+</ul>
+<h3>Cancellation</h3>
+<ul>
+<li>Before development: no cost (no payment has been made)</li>
+<li>During development: completed milestone payments non-refundable; work to date delivered to you</li>
+<li>Project may pause if milestone payment is more than 7 days overdue</li>
+</ul>
+<hr>
+<h2>NEXT STEP</h2>
+<p>Review this proposal and the <strong><a href="Optional_AddOns.pdf">Optional Add-Ons document</a></strong>. Select any add-ons you want and confirm your deployment preference. Once confirmed, development begins immediately.</p>
+<blockquote>
+<p><strong>Open items:</strong> IT meeting needed for server specs and remote access requirements (Q35, Q36). These don&#39;t block project start — they can be resolved during Week 1.</p>
+</blockquote>
+<hr>
+<p><em>This proposal is valid for 30 days from the date above.</em></p>
+
+</body>
+</html>

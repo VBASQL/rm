@@ -67,6 +67,12 @@ class ProductModal extends React.Component {
     const rawLineTotal = casePrice * quantity;
     const discountAmount = rawLineTotal * (discountPercent / 100);
 
+    // [MOD #unitPrice] Compute per-unit price so every downstream display
+    // (cart, receipt, invoice) can show it without recalculating.
+    const unitPrice = product.unitsPerCase > 0
+      ? casePrice / product.unitsPerCase
+      : casePrice;
+
     const lineItem = {
       productId: product.id,
       productCode: product.code,
@@ -74,6 +80,7 @@ class ProductModal extends React.Component {
       quantity,
       unitsPerCase: product.unitsPerCase,
       casePrice,
+      unitPrice,
       depositPerCase: product.depositPerCase,
       discount: discountPercent,
       lineTotal: rawLineTotal - discountAmount,
@@ -92,6 +99,9 @@ class ProductModal extends React.Component {
     const discountAmount = rawLineTotal * (discountPercent / 100);
     const lineTotal = rawLineTotal - discountAmount;
     const depositTotal = product.depositPerCase * quantity;
+    // [MOD #unitPrice] Per-bottle price shown in modal
+    const unitPriceDisplay = product.unitsPerCase > 0
+      ? (casePrice / product.unitsPerCase) : casePrice;
 
     // [MOD #001] Determine cap and color coding
     const cap = discountCaps ? discountCaps.perItemPercent : 15;
@@ -113,6 +123,9 @@ class ProductModal extends React.Component {
             </h2>
             <p className={styles.productDetail}>
               {product.size} · {product.packSize}
+            </p>
+            <p className={styles.productDetail}>
+              ${unitPriceDisplay.toFixed(2)}/ea
             </p>
             <p className={styles.productCode}>Code: {product.code}</p>
 

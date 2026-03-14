@@ -547,6 +547,10 @@ class NewOrder extends React.Component {
                   <span className={styles.productMeta}>
                     {product.size} · {product.packSize} · ${product.casePrice.toFixed(2)}/cs
                   </span>
+                  {/* [MOD #unitPrice] Per-bottle price for quick reference */}
+                  <span className={styles.productUnitPrice}>
+                    ${(product.casePrice / product.unitsPerCase).toFixed(2)}/ea
+                  </span>
                 </div>
                 {product.stock <= 0 && (
                   <span className={styles.stockWarning}>Low Stock</span>

@@ -248,6 +248,12 @@ class OrderReceipt extends React.Component {
                     onChange={(e) => this._handlePriceChange(item, e.target.value)}
                   />
                 </div>
+                {/* [MOD #unitPrice] Per-bottle price under case price */}
+                {item.unitsPerCase > 0 && (
+                  <span className={styles.riUnitPrice}>
+                    ${(item.casePrice / item.unitsPerCase).toFixed(2)}/ea
+                  </span>
+                )}
               </div>
 
               {/* Discount — editable */}
@@ -312,7 +318,15 @@ class OrderReceipt extends React.Component {
               <span className={styles.riColCode}>{item.productCode}</span>
               <span className={styles.riColName}>{item.productName}</span>
               <span className={styles.riColQtyStatic}>{item.quantity}</span>
-              <span className={styles.riColPriceStatic}>${item.casePrice.toFixed(2)}</span>
+              <span className={styles.riColPriceStatic}>
+                ${item.casePrice.toFixed(2)}
+                {/* [MOD #unitPrice] Per-bottle price in read-only mode */}
+                {item.unitsPerCase > 0 && (
+                  <span className={styles.riUnitPrice}>
+                    ${(item.casePrice / item.unitsPerCase).toFixed(2)}/ea
+                  </span>
+                )}
+              </span>
               <span className={styles.riColDiscStatic}>{item.discount ? `${item.discount}%` : '—'}</span>
               <span className={styles.riColTotal}>${item.lineTotal.toFixed(2)}</span>
             </div>
@@ -328,7 +342,7 @@ class OrderReceipt extends React.Component {
   }
 
   _renderTotals() {
-    const { totals, amountPaid, paymentStatus } = this.props;
+    const { totals, amountPaid, paymentStatus, hidePayment, returnMode } = this.props;
     if (!totals) return null;
 
     const fmt = (amt) => '$' + Number(amt).toLocaleString('en-US', { minimumFractionDigits: 2 });
@@ -344,26 +358,30 @@ class OrderReceipt extends React.Component {
           <div className={styles.totalRow}><span>Discount</span><span>-{fmt(totals.discountTotal)}</span></div>
         )}
         <div className={`${styles.totalRow} ${styles.grandTotal}`}>
-          <span>TOTAL</span><span>{fmt(totals.grandTotal)}</span>
+          {/* WHY: returnMode shows CREDIT label with negative sign so it's clear this is a credit, not a charge */}
+          <span>{returnMode ? 'CREDIT' : 'TOTAL'}</span>
+          <span>{returnMode ? '-' : ''}{fmt(totals.grandTotal)}</span>
         </div>
         <div className={styles.totalRow}><span>Total Cases</span><span>{totals.totalCases}</span></div>
 
-        {/* [MOD #002] Payment status section */}
-        <div className={styles.paymentSection}>
-          <div className={styles.totalRow}>
-            <span>Amount Paid</span>
-            <span className={paid > 0 ? styles.paidAmount : ''}>{fmt(paid)}</span>
+        {/* [MOD #002] Payment status section — hidden for returns (hidePayment) */}
+        {!hidePayment && (
+          <div className={styles.paymentSection}>
+            <div className={styles.totalRow}>
+              <span>Amount Paid</span>
+              <span className={paid > 0 ? styles.paidAmount : ''}>{fmt(paid)}</span>
+            </div>
+            <div className={`${styles.totalRow} ${styles.balanceRow}`}>
+              <span>Balance Due</span>
+              <span className={balance > 0 ? styles.balanceDue : styles.balancePaid}>{fmt(balance)}</span>
+            </div>
+            <div className={styles.paymentStatusRow}>
+              <span className={`${styles.paymentBadge} ${styles['paymentBadge' + status]}`}>
+                {status}
+              </span>
+            </div>
           </div>
-          <div className={`${styles.totalRow} ${styles.balanceRow}`}>
-            <span>Balance Due</span>
-            <span className={balance > 0 ? styles.balanceDue : styles.balancePaid}>{fmt(balance)}</span>
-          </div>
-          <div className={styles.paymentStatusRow}>
-            <span className={`${styles.paymentBadge} ${styles['paymentBadge' + status]}`}>
-              {status}
-            </span>
-          </div>
-        </div>
+        )}
       </div>
     );
   }

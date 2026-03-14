@@ -45,6 +45,15 @@
 }
 
 /* Expanded cart */
+/* [MOD #cartBlock] Capped height + backdrop so expanded cart doesn't block
+   the category row and product list behind it. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: calc(var(--z-bottom-nav) - 1);
+}
+
 .expanded {
   max-height: 40vh;
   overflow-y: auto;

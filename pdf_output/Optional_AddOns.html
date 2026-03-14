@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optional AddOns</title>
+  <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    padding: 28mm 22mm 28mm 22mm;
+    max-width: 100%;
+  }
+  h1 { font-size: 20pt; margin: 0 0 6px 0; color: #0d1b2a; border-bottom: 2px solid #0d1b2a; padding-bottom: 6px; }
+  h2 { font-size: 15pt; margin: 28px 0 10px 0; color: #0d1b2a; border-bottom: 1px solid #c0c8d0; padding-bottom: 4px; }
+  h3 { font-size: 12pt; margin: 18px 0 6px 0; color: #1a3a5c; }
+  h4 { font-size: 11pt; margin: 14px 0 4px 0; color: #1a3a5c; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0 8px 22px; }
+  li { margin: 3px 0; }
+  a { color: #1a6bb5; text-decoration: underline; }
+  a:hover { color: #0e4780; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 10pt; }
+  th { background: #0d1b2a; color: #fff; padding: 7px 10px; text-align: left; }
+  td { padding: 6px 10px; border-bottom: 1px solid #dde3ea; }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  code { background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-family: Consolas, monospace; font-size: 9.5pt; }
+  pre { background: #f7f7f7; border: 1px solid #ddd; border-radius: 5px; padding: 12px 16px; margin: 12px 0; overflow-x: auto; }
+  pre code { background: none; padding: 0; font-size: 9pt; }
+  blockquote { border-left: 4px solid #1a6bb5; margin: 12px 0; padding: 6px 14px; background: #f0f5fb; color: #2a4a6a; border-radius: 0 4px 4px 0; }
+  hr { border: none; border-top: 1px solid #c0c8d0; margin: 20px 0; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  @media print {
+    body { padding: 0; }
+    a { color: #1a6bb5; }
+    h2 { page-break-before: auto; }
+    tr { page-break-inside: avoid; }
+    pre { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<h1>WHOLESALE ERP — OPTIONAL ADD-ONS</h1>
+<h3>Companion Document to Stakeholder Proposal v2</h3>
+<p><strong>Prepared: February 26, 2026</strong></p>
+<hr>
+<p>Each add-on can be included now or added later. Building during the initial build is cheaper and faster than retrofitting.</p>
+<blockquote>
+<p>See the main <strong><a href="Stakeholder_Proposal.pdf">Stakeholder Proposal</a></strong> for base package details, pricing, and terms.</p>
+</blockquote>
+<hr>
+<h3>OPT-1: Digital Pick on Handheld — +$1,200 / +2-3 days</h3>
+<p>Picker opens assigned order on tablet/handheld, sees line items with 5-digit codes and requested quantities, enters picked quantities per item. Submits to manager for approval. Replaces paper pick flow with a digital workflow.</p>
+<h3>OPT-2: AI Pick Sheet OCR — +$1,500 / +3-4 days</h3>
+<p>Worker picks using paper and pen (current process). Manager photographs the completed pick sheet. AI reads handwritten quantities and maps them to line items using 5-digit product codes. Manager reviews AI readings on screen, confirms or corrects, and approves. Requires: OpenAI API key (ongoing usage cost ~$0.01-0.05 per photo).</p>
+<h3>OPT-3: Voice Ordering — +$1,500 / +3-4 days</h3>
+<p>Salesperson speaks naturally (&quot;three cases black cherry, eight cases lemon lime&quot;). AI matches spoken words to actual products in your catalog — not just dictation. Plays back matches for confirmation. Three input methods: speak live in the app, paste a voice note (e.g. from WhatsApp or iMessage), or upload an audio file. Requires: OpenAI API key.</p>
+<h3>OPT-4: SMS Notifications (Twilio) — +$800 / +1-2 days</h3>
+<p>Adds SMS as a notification channel. Same triggers and timing as email. Requires: Twilio account (SMS costs are yours, typically $0.01-0.02 per message). <em>Note: SMS messaging may require regulatory compliance registration (e.g. A2P 10DLC or toll-free verification) which involves a carrier approval process and may incur minor additional fees.</em></p>
+<h3>OPT-5: WhatsApp Notifications — +$1,000 / +2-3 days</h3>
+<p>Adds WhatsApp as a notification channel. Customers can reply (replies logged). Requires: WhatsApp Business API account (Meta approval process, messaging costs ~$0.01-0.05 per message). <em>Note: WhatsApp Business API requires Meta&#39;s business verification and approval process, which may involve regulatory compliance steps and minor additional fees.</em></p>
+<h3>OPT-6a: Customer Credit Scoring — +$800 / +2-3 days</h3>
+<p>Automatic credit rating based on customer behavior — order frequency, payment history, average days to pay, returned orders. System auto-flags, warns, or blocks based on configurable thresholds. <strong>Scoring policies set and managed by accounting.</strong> Scoring rules, weights, and thresholds are all configurable.</p>
+<h3>OPT-6b: Salesperson Performance Scoring — +$400 / +1-2 days</h3>
+<p>Similar scoring system applied to salespeople — tracks order volume, revenue generated, collection rate, new customer acquisition, and other configurable metrics. Used for <strong>reporting and performance visibility</strong> (dashboards, leaderboards, trends). Scoring rules and weights configurable by management.</p>
+<h3>OPT-7: Customer Self-Service Portal — +$2,500 / +3-5 days</h3>
+<p>Customers log in to view their account balance, invoices, statements, payment history, and make payments. Optionally enable customer-placed orders (per customer). Reduces phone calls to your office.</p>
+<h3>OPT-8: Customer-Facing Ordering Website — Pricing TBD</h3>
+<p>A full branded website where smaller customers can browse your catalog, place orders, and manage their account. This is a larger standalone project — essentially a customer-facing e-commerce layer on top of the ERP. Login-required, feeds into the same order system. Requires OPT-7 (Customer Portal) as a foundation. Pricing and timeline will be scoped separately based on requirements.</p>
+<h3>OPT-9: Full Private Network Lockdown (VPN) — +$1,500 / +2-3 days</h3>
+<p>App becomes completely invisible to the public internet. All mobile devices connect through VPN tunnel. Internal DNS only. Zero attack surface. Your IT manages the VPN server (I set it up). <em>Note: base package already includes device registration + IP allowlist + encryption, which is sufficient for most operations. VPN tunneling may have ongoing costs from your VPN provider depending on the solution chosen.</em></p>
+<p><em>☁️ Hybrid deployment: Reduced cost (~$800–$1,000) — the cloud-to-database tunnel is already secured. Cloud providers include private networking, security groups, and built-in firewall rules. Less manual VPN infrastructure to set up.</em></p>
+<h3>OPT-10: SSO + Multi-Factor Authentication — +$400 / +2-3 days</h3>
+<p>Users sign in with company accounts (Microsoft 365 / Azure AD / Google Workspace). MFA adds authenticator app or SMS verification. Enables secure remote access without VPN. Requires active Microsoft 365 or Google Workspace subscription.</p>
+<h3>OPT-12: Truck-Specific Navigation — +$600 / +1-2 days</h3>
+<p>Integrates truck-specific nav (Sygic Truck or CoPilot) that accounts for low bridges, weight limits, no-truck zones. Important for dense urban delivery areas. Ongoing cost: ~$100-150/year per device for Sygic license.</p>
+<h3>OPT-13: Multi-Company / Multi-Tenant — +$1,800 / +3-4 days</h3>
+<p>Run separate companies or divisions within one system — each with their own customers, products, invoicing, and accounting. Managed from one login. Significantly cheaper to build in from the start.</p>
+<h3>OPT-14: Additional Training Hours — +$85/hour</h3>
+<p>Need more than the included 5 hours? Additional training sessions for new staff, advanced features, or refresher courses billed at $85/hour. Can be scheduled anytime.</p>
+<h3>OPT-15: Temp Cloud Backup — +$800 / +1-2 days</h3>
+<p>Cloud fallback during server downtime. If your on-premises database server goes down, a cloud-hosted replica can serve cached/replicated data until the local server is restored. Ongoing cost: cloud hosting fees (~$30-60/month).</p>
+<p><em>☁️ Hybrid deployment: Reduced cost (~$300–$500) — web server is already in the cloud, so only the database replication layer needs to be added. Snapshot backups of the web server are already included.</em></p>
+<h3>OPT-16: AI-Powered Reports — +$2,000 / +4-5 days</h3>
+<p>Ask questions in plain English: <em>&quot;Show me total revenue by salesperson for the last 3 months compared to the previous 3 months.&quot;</em> AI writes a query and the system runs it.</p>
+<p><strong>Critical privacy guarantee — AI never sees your data:</strong></p>
+<ul>
+<li>AI receives ONLY metadata: table names, column headers, column types, relationships</li>
+<li>AI writes a read-only SQL query (SELECT only — no writes possible)</li>
+<li>Query runs on your server, results display on your screen — results are NEVER sent back to the AI</li>
+<li>Advanced mode: AI writes Python scripts for complex analysis (statistical, forecasting) — executed in a sandboxed environment on your server (isolated, no network, no filesystem access, memory/time limited)</li>
+<li>Every AI-generated query is logged with user, timestamp, and query text</li>
+</ul>
+<p>Requires: OpenAI API key (usage cost ~$0.01-0.10 per query).</p>
+<h3>OPT-17: Backup / Failover Server — +$1,000–$2,000 / +2-3 days</h3>
+<p>A standby server configured to take over automatically if the main server shuts down (hardware failure, power outage, maintenance). Includes:</p>
+<ul>
+<li>Second server with identical configuration (database replica + application mirror)</li>
+<li>PostgreSQL streaming replication — data syncs continuously from primary to standby</li>
+<li>Automated health monitoring — detects when the primary is down</li>
+<li>Automatic or manual failover — standby promotes itself to primary within minutes</li>
+<li>After the main server is restored, data syncs back and roles return to normal</li>
+</ul>
+<p><strong>On-premises:</strong> Requires a second physical server machine. Price toward the higher end ($1,500–$2,000) due to manual hardware setup and network configuration.
+<strong>Cloud deployment:</strong> Significantly cheaper ($800–$1,200) — spinning up a standby instance is built-in functionality. Cloud providers offer managed replication and automatic failover out of the box.</p>
+<hr>
+<h3>Optional Add-On Summary</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Add-On</th>
+<th>Price</th>
+<th>Timeline</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OPT-1</td>
+<td>Digital Pick on Handheld</td>
+<td>+$1,200</td>
+<td>+2-3 days</td>
+</tr>
+<tr>
+<td>OPT-2</td>
+<td>AI Pick Sheet OCR</td>
+<td>+$1,500</td>
+<td>+3-4 days</td>
+</tr>
+<tr>
+<td>OPT-3</td>
+<td>Voice Ordering</td>
+<td>+$1,500</td>
+<td>+3-4 days</td>
+</tr>
+<tr>
+<td>OPT-4</td>
+<td>SMS Notifications</td>
+<td>+$800</td>
+<td>+1-2 days</td>
+</tr>
+<tr>
+<td>OPT-5</td>
+<td>WhatsApp Notifications</td>
+<td>+$1,000</td>
+<td>+2-3 days</td>
+</tr>
+<tr>
+<td>OPT-6a</td>
+<td>Customer Credit Scoring</td>
+<td>+$800</td>
+<td>+2-3 days</td>
+</tr>
+<tr>
+<td>OPT-6b</td>
+<td>Salesperson Performance Scoring</td>
+<td>+$400</td>
+<td>+1-2 days</td>
+</tr>
+<tr>
+<td>OPT-7</td>
+<td>Customer Portal</td>
+<td>+$2,500</td>
+<td>+3-5 days</td>
+</tr>
+<tr>
+<td>OPT-8</td>
+<td>Customer Ordering Website</td>
+<td>TBD</td>
+<td>TBD</td>
+</tr>
+<tr>
+<td>OPT-9</td>
+<td>Full VPN Lockdown</td>
+<td>+$1,500</td>
+<td>+2-3 days</td>
+</tr>
+<tr>
+<td>OPT-10</td>
+<td>SSO + MFA</td>
+<td>+$400</td>
+<td>+2-3 days</td>
+</tr>
+<tr>
+<td>OPT-12</td>
+<td>Truck Navigation</td>
+<td>+$600</td>
+<td>+1-2 days</td>
+</tr>
+<tr>
+<td>OPT-13</td>
+<td>Multi-Company</td>
+<td>+$1,800</td>
+<td>+3-4 days</td>
+</tr>
+<tr>
+<td>OPT-14</td>
+<td>Additional Training Hours</td>
+<td>+$85/hour</td>
+<td>As needed</td>
+</tr>
+<tr>
+<td>OPT-15</td>
+<td>Temp Cloud Backup</td>
+<td>+$800</td>
+<td>+1-2 days</td>
+</tr>
+<tr>
+<td>OPT-16</td>
+<td>AI-Powered Reports</td>
+<td>+$2,000</td>
+<td>+4-5 days</td>
+</tr>
+<tr>
+<td>OPT-17</td>
+<td>Backup / Failover Server</td>
+<td>+$1,000–$2,000</td>
+<td>+2-3 days</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>Hybrid Deployment Impact on Add-On Pricing</h3>
+<p>If you choose the hybrid deployment option (cloud web server + on-premises database), the following add-ons cost less:</p>
+<ul>
+<li><strong>VPN Lockdown (OPT-9):</strong> Cost reduced — the cloud-to-database tunnel is already secured. Cloud providers include private networking, security groups, and firewall rules as built-in features.</li>
+<li><strong>Cloud Backup (OPT-15):</strong> Cost reduced or unnecessary for the web layer — cloud VPS includes snapshot backups. Database backups are handled locally.</li>
+<li><strong>Failover Server (OPT-17):</strong> Cloud web server failover is significantly cheaper — spinning up a standby instance is built-in functionality. Database failover still requires a second local machine or replication setup.</li>
+</ul>
+
+</body>
+</html>

@@ -243,14 +243,17 @@ class OrderDetail extends React.Component {
     const canCancel = ['Draft', 'Submitted'].includes(order.status);
     // [MOD #001] Can only edit before Picking
     const canEdit = ['Draft', 'Submitted'].includes(order.status);
-    // [MOD #returns] Can create return only after Delivered
-    const canReturn = order.status === 'Delivered';
     // WHY: Once Picking starts, the warehouse is pulling product — no more changes.
     const isLocked = !['Draft', 'Submitted'].includes(order.status) && order.status !== 'Cancelled';
     const nextStatus = NEXT_STATUS[order.status];
 
     // [MOD #002] Discount caps for editable receipt
     const { storage, showToast } = this.props;
+
+    // [MOD #returns] Can create return only after Delivered — and only once
+    const existingReturns = storage.getReturnsForOrder(order.id);
+    const canReturn = order.status === 'Delivered' && existingReturns.length === 0;
+
     const caps = storage.getDiscountSettings();
     const maxItemDisc = caps ? caps.perItemPercent : 15;
 

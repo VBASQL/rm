@@ -273,6 +273,47 @@ ${appliedSection}
 </body></html>`;
     }
 
+    if (type === 'return' && data.returnOrder) {
+      const ret = data.returnOrder;
+      const cust = data.customer || {};
+      const lines = (ret.lineItems || []).map(li =>
+        `<tr><td>${li.productCode || ''}</td><td>${li.productName || ''}</td>` +
+        `<td style="text-align:right">${li.quantity || 0}</td>` +
+        `<td style="text-align:right">$${(li.casePrice || 0).toFixed(2)}</td>` +
+        `<td style="text-align:right">$${(li.lineTotal || 0).toFixed(2)}</td>` +
+        `<td>${li.isDamaged ? (li.damageType || 'Yes') : ''}</td></tr>`
+      ).join('');
+
+      const statusText = ret.status === 'Processed'
+        ? (ret.invoiceAdjusted ? 'Processed — Invoice Adjusted' : 'Processed — Credit Applied')
+        : ret.status;
+
+      return `<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>Return ${ret.returnNumber || ''}</title>
+<style>body{font-family:Arial,sans-serif;margin:40px;color:#333}
+table{width:100%;border-collapse:collapse;margin:20px 0}
+th,td{border:1px solid #ddd;padding:8px;text-align:left}
+th{background:#f5f5f5;font-weight:bold}
+.total{font-weight:bold;font-size:1.1em}
+.credit{color:#d32f2f;font-weight:bold;font-size:1.3em}
+h1{color:#1a73e8}</style></head><body>
+<h1>${companyName}</h1>
+<h2>Credit Return: ${ret.returnNumber || ''}</h2>
+<p><strong>Customer:</strong> ${cust.name || ''}<br>
+<strong>Date:</strong> ${ret.createdDate ? formatDate(new Date(ret.createdDate)) : now}<br>
+<strong>Status:</strong> ${statusText}<br>
+${ret.returnReason ? `<strong>Reason:</strong> ${ret.returnReason}<br>` : ''}
+${ret.originalOrderId ? `<strong>Original Order:</strong> #${ret.originalOrderId}<br>` : ''}</p>
+<table><thead><tr><th>Code</th><th>Product</th><th>Qty</th><th>Price</th><th>Total</th><th>Damaged</th></tr></thead>
+<tbody>${lines}</tbody></table>
+<p class="total">Subtotal: $${(ret.subtotal || 0).toFixed(2)}</p>
+${ret.depositTotal ? `<p>Deposits: $${ret.depositTotal.toFixed(2)}</p>` : ''}
+${ret.discountTotal ? `<p>Discount: -$${ret.discountTotal.toFixed(2)}</p>` : ''}
+<p class="credit">CREDIT TOTAL: -$${(ret.grandTotal || 0).toFixed(2)}</p>
+${ret.notes ? `<p><strong>Notes:</strong> ${ret.notes}</p>` : ''}
+</body></html>`;
+    }
+
     // Fallback: generic content
     return null;
   }
@@ -292,6 +333,9 @@ ${appliedSection}
     if (type === 'payment' && data.payment) {
       const dateStr = data.payment.date ? data.payment.date.split('T')[0] : new Date().toISOString().split('T')[0];
       return `PaymentReceipt_${dateStr}_${(data.customer?.name || 'customer').replace(/\s+/g, '_')}.html`;
+    }
+    if (type === 'return' && data.returnOrder) {
+      return `Return_${data.returnOrder.returnNumber || 'draft'}.html`;
     }
     return `Document_${new Date().toISOString().split('T')[0]}.html`;
   }

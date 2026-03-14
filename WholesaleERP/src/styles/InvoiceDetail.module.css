@@ -129,6 +129,22 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.returnBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  margin: var(--space-sm) 0;
+  background: #fff3e0;
+  border-left: 3px solid #e65100;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #e65100;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Invoice table — same 5-column grid as OrderDetail */
 .invoiceTable {
   margin-top: var(--space-md);
@@ -160,6 +176,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* [MOD #unitPrice] Per-bottle price shown beneath case price */
+.invoiceUnitPrice {
+  display: block;
+  font-size: 0.5625rem;
+  color: var(--text-muted);
 }
 
 .depositLine {

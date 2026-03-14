@@ -28,6 +28,7 @@ const ATTACHMENT_TYPES = [
   { key: 'order', label: 'Order Confirmation' },
   { key: 'statement', label: 'Account Statement' },
   { key: 'payment', label: 'Payment Receipt' },
+  { key: 'return', label: 'Credit Return' },
 ];
 
 // Detect once at module level

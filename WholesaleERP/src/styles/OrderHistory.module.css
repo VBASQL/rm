@@ -79,3 +79,12 @@
 .returnBtn:active {
   opacity: 0.85;
 }
+
+/* [MOD #returns-list] Return rows get a subtle left border to distinguish them */
+.returnRow {
+  border-left: 3px solid #d32f2f;
+}
+
+.returnTotal {
+  color: #d32f2f;
+}

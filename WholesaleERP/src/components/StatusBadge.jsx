@@ -37,6 +37,12 @@ const STATUS_COLORS = {
   // Payment types
   'credit': 'blue',
   'prepaid': 'green',
+  // [MOD #returns-list] Return order statuses
+  'Return Pending': 'yellow',
+  'Return Processed': 'green',
+  // [MOD #returns] Native return statuses (used in ReturnOrder view)
+  'Pending': 'yellow',
+  'Processed': 'green',
 };
 
 class StatusBadge extends React.Component {

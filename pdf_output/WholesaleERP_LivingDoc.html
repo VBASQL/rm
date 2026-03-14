@@ -1,0 +1,3054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WholesaleERP LivingDoc</title>
+  <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    padding: 28mm 22mm 28mm 22mm;
+    max-width: 100%;
+  }
+  h1 { font-size: 20pt; margin: 0 0 6px 0; color: #0d1b2a; border-bottom: 2px solid #0d1b2a; padding-bottom: 6px; }
+  h2 { font-size: 15pt; margin: 28px 0 10px 0; color: #0d1b2a; border-bottom: 1px solid #c0c8d0; padding-bottom: 4px; }
+  h3 { font-size: 12pt; margin: 18px 0 6px 0; color: #1a3a5c; }
+  h4 { font-size: 11pt; margin: 14px 0 4px 0; color: #1a3a5c; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0 8px 22px; }
+  li { margin: 3px 0; }
+  a { color: #1a6bb5; text-decoration: underline; }
+  a:hover { color: #0e4780; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 10pt; }
+  th { background: #0d1b2a; color: #fff; padding: 7px 10px; text-align: left; }
+  td { padding: 6px 10px; border-bottom: 1px solid #dde3ea; }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  code { background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-family: Consolas, monospace; font-size: 9.5pt; }
+  pre { background: #f7f7f7; border: 1px solid #ddd; border-radius: 5px; padding: 12px 16px; margin: 12px 0; overflow-x: auto; }
+  pre code { background: none; padding: 0; font-size: 9pt; }
+  blockquote { border-left: 4px solid #1a6bb5; margin: 12px 0; padding: 6px 14px; background: #f0f5fb; color: #2a4a6a; border-radius: 0 4px 4px 0; }
+  hr { border: none; border-top: 1px solid #c0c8d0; margin: 20px 0; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  @media print {
+    body { padding: 0; }
+    a { color: #1a6bb5; }
+    h2 { page-break-before: auto; }
+    tr { page-break-inside: avoid; }
+    pre { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<h1>WHOLESALE ERP / ORDER-TO-CASH PLATFORM</h1>
+<h3>Living Design &amp; Planning Document</h3>
+<p><strong>Session 3 — February 26, 2026 | Status: Stakeholder Meeting Complete → Proposal Rebuild</strong></p>
+<hr>
+<h2>🤖 CLAUDE&#39;S BRIEFING — READ THIS FIRST</h2>
+<blockquote>
+<p><strong>What we are doing:</strong> Designing a full wholesale food distribution ERP app from scratch, through a structured Q&amp;A session. Claude asks questions, pulls everything out of the user, and documents it here in real time. This document is the single source of truth.</p>
+<p><strong>Session structure:</strong></p>
+<ol>
+<li>🔵 <strong>User Flow</strong> ← WE ARE HERE — discovering all users, roles, needs, end-to-end flows</li>
+<li>🟡 App Design — screens, navigation, UX</li>
+<li>🟠 Infrastructure — tech stack, language, architecture</li>
+<li>🔴 Code Design — modules, classes, data models</li>
+<li>📋 Final Documentation — README, flow diagrams, API docs</li>
+<li>📅 Project Timeline — task list with durations</li>
+</ol>
+<p><strong>How to continue:</strong> Read this whole document to restore context, then pick up from the <strong>Next Steps</strong> section at the bottom. Ask the next question in the Q&amp;A flow. Update this document after every exchange.</p>
+<p><strong>Current focus:</strong> Stakeholder meeting (Feb 25) answered most open questions. Living doc updated with all answers. Next: rebuild proposal in new format (concise, page-by-page script, required vs optional, pricing).</p>
+<p><strong>User:</strong> Wholesale food distribution company. Food industry (bottles, cans, packaged goods). Company also does manufacturing and packaging. Currently on-premises setup. Plans to eventually move app to cloud, keep DB on-prem.</p>
+<p><strong>KEY CHANGES FROM MEETING (Feb 25-26):</strong></p>
+<ul>
+<li>5-digit product codes (not 6), auto-generated with structured hierarchy</li>
+<li>No sales tax — wholesale only. CRV separate and not taxed</li>
+<li>Stock-based with manual/import updates, dynamic over-order rules</li>
+<li>Dynamic unlimited price levels (by product, category, customer, type, area, zip, custom groups)</li>
+<li>Salespeople collect payments in the field</li>
+<li>Warehouse basic = paper pick, manager manual entry. Digital pick = optional</li>
+<li>Driver can edit order before confirming (flags accounting + notifies salesperson)</li>
+<li>Digital signature option instead of printout for driver</li>
+<li>Basic offline included (device storage, sync on reconnect, conflict resolution)</li>
+<li>Email notifications = base. SMS + WhatsApp = optional</li>
+<li>AI features (voice, OCR, invoice review) all moved to optional or removed</li>
+<li>Invoice review = rules-based price flagging (not AI)</li>
+<li>Credit scoring system = new optional feature</li>
+<li>Monthly statement lock (manual, like weekly invoice review)</li>
+<li>New customers default to $0 credit / pay-on-order</li>
+<li>Base price: $8,000 / 4 weeks</li>
+<li>Reports: full report builder with sort/filter/join, standard reports, saved/scheduled reports, export + graphs = BASE</li>
+<li>AI Reports (plain English → read-only queries, metadata-only AI access, Python sandbox) = OPTIONAL</li>
+</ul>
+</blockquote>
+<hr>
+<h2>📋 Session Roadmap</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Phase</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>User Flow</td>
+<td>🔵 IN PROGRESS</td>
+</tr>
+<tr>
+<td>2</td>
+<td>App Design</td>
+<td>⬜ Pending</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Infrastructure</td>
+<td>⬜ Pending</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Code Design</td>
+<td>⬜ Pending</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Documentation</td>
+<td>⬜ Pending</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Project Timeline</td>
+<td>⬜ Pending</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🧭 Core Design Principles</h2>
+<ul>
+<li><strong>Flexibility over rigidity</strong> — almost every rule (permissions, invoice locks, partial picks, discount caps) is configurable through admin panels, not hardcoded</li>
+<li><strong>Role-based permissions as a control panel</strong> — roles are labels; actual permissions are granular and admin-assigned per user or group</li>
+<li><strong>Mobile-first for field users</strong> — salespeople and drivers on Android handhelds; all field-facing screens must work perfectly on mobile browser</li>
+<li><strong>Offline resilience</strong> — system must function without live DB connection; save locally, sync on reconnect</li>
+<li><strong>Modular / optional features</strong> — offline mode, customer portal, cloud hosting, website integration are all toggleable modules</li>
+<li><strong>Voice as a first-class input</strong> — voice ordering matches to product catalog via cloud AI (GPT-class model), not just transcription</li>
+<li><strong>Minimize friction for field users</strong> — smart search, favorites, recents, duplicate order — reduce scrolling and taps</li>
+<li><strong>Audit trail everywhere</strong> — especially for invoices, payments, discounts, and any locked record modifications</li>
+</ul>
+<hr>
+<h2>👥 User Roles</h2>
+<blockquote>
+<p>Roles are configurable labels. Actual permissions set per user or group in admin control panel.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Primary Device</th>
+<th>Key Responsibilities</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Accounts Payable / Accounting</td>
+<td>Desktop</td>
+<td>Customer setup, payments, invoices, statements, notifications, transactions</td>
+</tr>
+<tr>
+<td>Product / Inventory Admin</td>
+<td>Desktop</td>
+<td>Categories, subcategories, products, flavors, sizes, pricing, deposits. May sync from external system</td>
+</tr>
+<tr>
+<td>Salesperson</td>
+<td>Mobile Android + Desktop</td>
+<td>Place orders, view customer account, search products, apply discounts within policy</td>
+</tr>
+<tr>
+<td>Warehouse Worker (Picker)</td>
+<td>Android handheld + small printer</td>
+<td>Receive orders, pick items, mark quantities, print pick lists</td>
+</tr>
+<tr>
+<td>Warehouse Manager</td>
+<td>Handheld / Tablet</td>
+<td>Approve picked orders, override picks, manage warehouse settings</td>
+</tr>
+<tr>
+<td>Route Planner</td>
+<td>Desktop / Tablet</td>
+<td>Assign deliveries to routes, organize stops, manage delivery dates</td>
+</tr>
+<tr>
+<td>Driver</td>
+<td>Mobile Android</td>
+<td>View route, open GPS navigation, print invoice on delivery, confirm or reject</td>
+</tr>
+<tr>
+<td>System Admin / Owner</td>
+<td>Desktop</td>
+<td>All permissions, invoice lock policies, multi-admin approval workflows, global settings</td>
+</tr>
+<tr>
+<td>Customer <em>(future module)</em></td>
+<td>Browser / Portal</td>
+<td>View account, pay invoices, optionally place orders</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🔵 PHASE 1: USER FLOW</h2>
+<h3>1.1 Salesperson Order Flow</h3>
+<p><strong>Entry points:</strong> Mobile browser (in-store, on the road) and Desktop (phone orders, office)</p>
+<p><strong>Order creation steps:</strong></p>
+<ol>
+<li>Select customer — quick search, recents list, favorites</li>
+<li>Build order — multiple input methods:<ul>
+<li><strong>Voice mode</strong> — speak naturally (&quot;3 cases black cherry, 8 cases lemon&quot;); AI matches to product catalog using cloud GPT-class model; plays back recording with each line highlighted for correction</li>
+<li><strong>Browse mode</strong> — Category → Subcategory → Product → Flavor → Size/Variant</li>
+<li><strong>Favorites / Quick lists</strong> — per salesperson or per customer</li>
+<li><strong>Duplicate previous order</strong> — reload past order and adjust quantities</li>
+</ul>
+</li>
+<li>Review full order summary</li>
+<li>Submit — enters system (secondary approval optional, per permission settings)</li>
+</ol>
+<p><strong>Product catalog rules:</strong></p>
+<ul>
+<li>Hierarchy: Category → Subcategory → Product → Flavor → Size/Variant</li>
+<li>Admin assigns which categories/products each salesperson can see</li>
+<li>Catalog layout and display order configurable globally and per salesperson</li>
+<li>Smart search across all levels — no endless scrolling</li>
+</ul>
+<p><strong>Scheduling:</strong></p>
+<ul>
+<li>Orders can be placed for a future delivery date</li>
+<li>Default delivery date configurable per customer</li>
+<li>Warehouse sees upcoming orders surfaced ahead of time</li>
+<li>&quot;ASAP&quot; option for same-day or next-available delivery</li>
+</ul>
+<hr>
+<h3>1.2 Pricing &amp; Discounts</h3>
+<ul>
+<li>Base price per product (unit/case — units TBD)</li>
+<li><strong>Government deposit (CRV or equivalent)</strong> — per container, shown separately on invoice, tracked separately in accounting</li>
+<li>Deposits can be discounted/waived by salesperson within policy-defined limits</li>
+<li>Salesperson can apply per-line-item discounts in the moment</li>
+<li>Discount caps enforced by policy — admin assigns policies to groups of salespeople</li>
+<li>Per-customer price lists — <strong>TBD (see Open Questions)</strong></li>
+<li>Automatic promotions / volume deals — <strong>TBD (see Open Questions)</strong></li>
+</ul>
+<hr>
+<h3>1.3 Warehouse Flow</h3>
+<ul>
+<li>Orders transferred to warehouse on scheduled date (surfaced ahead of time)</li>
+<li>Picker receives order on handheld device</li>
+<li>Picker selects quantities per line — full, partial, or zero</li>
+<li>Whether partial shipments are allowed is a manager-configurable setting</li>
+<li>Customer charged only for what is actually picked and shipped</li>
+<li>Picker prints pick list to small Bluetooth printer</li>
+<li>Warehouse manager reviews and approves picked order before dispatch</li>
+<li>Manager approval required before route assignment</li>
+</ul>
+<hr>
+<h3>1.4 Delivery / Driver Flow</h3>
+<p><strong>Route Planning (done by warehouse manager or designated planner):</strong></p>
+<ul>
+<li>Planner sees all open orders for the day, organized by area/region</li>
+<li>Planner manually arranges stops in logical street order (they know the area)</li>
+<li>Truck loading order matters — last stop loaded first, first stop unloaded first; route order should reflect this</li>
+<li>Route assigned to a specific driver and truck</li>
+</ul>
+<p><strong>Driver experience:</strong></p>
+<ul>
+<li>Driver sees their full route with stops in order on handheld device</li>
+<li>Opens integrated navigation per stop — Google Maps, Waze, or other (configurable)</li>
+<li><strong>Truck routing problem (flagged):</strong> Standard GPS apps (Google Maps) don&#39;t account for truck restrictions (weight limits, low bridges, no-truck streets) — especially in dense urban areas like NYC. Possible solutions to research: use truck-specific nav (Sygic Truck, CoPilot), or note as known limitation. See Open Questions [Q24]</li>
+<li>Driver must follow stop order (truck loaded accordingly) but can flag issues</li>
+</ul>
+<p><strong>At each stop:</strong></p>
+<ul>
+<li>Driver opens the order on device</li>
+<li>Driver can edit quantities or remove lines on-site (customer refused an item, short on truck, etc.)</li>
+<li>On confirmation, the system <strong>automatically generates the invoice</strong> from the actual delivered quantities</li>
+<li>Invoice is instantly posted to the system and visible to accounting in real time</li>
+<li>Driver then either <strong>prints it</strong> (Bluetooth thermal printer) <strong>or collects a digital signature</strong> on the device — one or the other serves as handoff proof</li>
+<li>Marks delivery as: <strong>Confirmed</strong> or <strong>Rejected</strong> (with reason)</li>
+<li>Any quantity edits are flagged to accounting and the salesperson is notified automatically</li>
+<li>Status updates in system in real time</li>
+</ul>
+<p><strong>Manager tracking dashboard:</strong></p>
+<ul>
+<li>Live view of all drivers on the road — location and progress</li>
+<li>Per-driver: which stops completed, which pending, which rejected</li>
+<li>Per-order: delivered / accepted / rejected with reason and timestamp</li>
+<li>Rejected orders flagged immediately to sales and accounting</li>
+</ul>
+<hr>
+<h3>1.5 Accounting &amp; Invoicing</h3>
+<ul>
+<li>Full transaction history per customer</li>
+<li>Unpaid invoice tracking and aging reports</li>
+<li>Invoice templates — per-customer assignment, customizable fields and layout</li>
+<li>Invoice locking — configurable lock period after creation or payment</li>
+<li>Invoice lock policy set by high-admin panel; policy changes may require multi-person approval workflow</li>
+<li>Adjustments after lock require documented reason and appropriate permission level</li>
+<li>Credit memos can be issued against locked invoices (rules TBD)</li>
+<li>Payment processing — integrated with <strong>Authorize.NET</strong></li>
+<li>Non-applied payment tracking and reconciliation</li>
+<li>Statement generation — outstanding balance, payment history, unapplied credits</li>
+</ul>
+<p><strong>Notifications:</strong></p>
+<ul>
+<li>Fully configurable notification system — managed primarily by accounting/managers</li>
+<li>Channels: SMS, WhatsApp, Email</li>
+<li>Triggers: configurable — invoice sent, payment due, payment received, statement ready, delivery confirmed, order placed, credit limit approaching, review date reached, custom triggers</li>
+<li>Timing/periods: configurable — e.g. reminder 3 days before due, again on due date, again 7 days after</li>
+<li>Salespeople can be granted permission to enable/manage certain notifications for their own customers</li>
+<li>Full log of all notifications sent — who received what, when, via which channel</li>
+<li>Customers can optionally reply (channel-dependent — e.g. WhatsApp replies logged)</li>
+</ul>
+<hr>
+<h3>1.6 Returns &amp; Credits</h3>
+<ul>
+<li><strong>No reverse logistics / return workflow needed</strong> — the company does not handle product returns in the traditional sense</li>
+<li><strong>Deposit/bottle returns</strong> (empty containers coming back) are treated as their own product line — same as any other SKU with a deposit value attached</li>
+<li>Exact structure of the deposit returns product line TBD — see Open Questions [Q19]</li>
+</ul>
+<hr>
+<h3>1.7 Customer Credit Tiers &amp; Payment Control</h3>
+<p><strong>Customer tiers — fully configurable, admin can add/remove tiers and define rules per tier:</strong></p>
+<p><strong>Tier 1 — Credit Customers</strong> (standard wholesale accounts):</p>
+<ul>
+<li>Order placed → enters warehouse flow immediately</li>
+<li>Pays later per payment terms (net-15, net-30, etc.)</li>
+<li>Credit limit set by accounting per customer</li>
+<li>Credit limit review is a manual scheduled feature — accountant sets a reminder/notification date (e.g. &quot;review in 2 months&quot;); system notifies accountant on that date to re-evaluate</li>
+<li>Salesperson sees warning or is hard-blocked when customer is over limit or has overdue balance (warn vs. hard-block is configurable per policy)</li>
+</ul>
+<p><strong>Tier 2 — Pay-First Customers</strong> (smaller / new / high-risk accounts):</p>
+<ul>
+<li>Order placed but held — does NOT enter warehouse flow until payment clears</li>
+<li><strong>First-time payment flow:</strong> payment link sent to customer → customer self-pays and gives consent → card/bank info saved to vault (Authorize.NET or compatible)</li>
+<li><strong>Returning payment flow:</strong> salesperson or accountant charges stored token directly, OR sends new payment link</li>
+<li>Vault options: tokenized card, direct payment info (for legacy payment systems) — configurable</li>
+<li>Only after payment confirmed does order release to warehouse</li>
+</ul>
+<p><strong>Credit tier system design:</strong></p>
+<ul>
+<li>Admin can create any number of tiers with custom names and rules</li>
+<li>Rules per tier are configurable: payment timing, credit limits, block vs. warn behavior, notification triggers, discount caps, etc.</li>
+<li>Assign customers to tiers individually or by group/policy</li>
+<li>All credit decisions and tier changes logged with full audit trail</li>
+</ul>
+<hr>
+<h3>1.9 Multi-Location Customers</h3>
+<ul>
+<li>A single customer (company/account) can have multiple delivery locations (store branches)</li>
+<li>Each location has its own delivery address, contact, and potentially its own order history</li>
+<li>Billing/accounting rolls up to the parent account level</li>
+<li>Credit limit, payment terms, tier — set at parent account level</li>
+<li>Salesperson selects customer → then selects which location when placing an order</li>
+<li>Exact account hierarchy structure TBD — see Open Questions [Q25]</li>
+</ul>
+<hr>
+<h3>1.10 User Onboarding</h3>
+<ul>
+<li>Formal in-app onboarding flow TBD — depends on client preference</li>
+<li>Options: guided in-app setup wizard, or informal (admin sets up users directly, trains in person)</li>
+<li>See Open Questions [Q26]</li>
+</ul>
+<hr>
+<h3>1.8 Salesperson Dashboard &amp; Reports</h3>
+<p><strong>Default view — &quot;smart summary&quot; between simple and informative:</strong></p>
+<ul>
+<li>Customer list with at-a-glance status: last order date, outstanding balance, credit available, overdue flag</li>
+<li>Quick actions: place new order, view account, call/message customer</li>
+<li>Upcoming deliveries for their accounts</li>
+<li>Recent activity feed</li>
+</ul>
+<p><strong>Customizable views:</strong></p>
+<ul>
+<li>Each salesperson configures their own default dashboard — what widgets, what columns, what order</li>
+<li>Save frequently-used reports as quick-access shortcuts</li>
+<li>Admin can set a company-wide default view that applies until salesperson customizes it</li>
+</ul>
+<p><strong>Reports &amp; dashboards:</strong></p>
+<ul>
+<li>Modern, smart, visual — charts, summaries, trends</li>
+<li>Per-customer: full transaction history, invoices, payments, aging, balance, credit status</li>
+<li>Portfolio view: all their customers in one list — who owes what, aging buckets, who to follow up with</li>
+<li>Sales performance: revenue by period, top products, top customers</li>
+<li>Custom report builder — salesperson defines columns, filters, date ranges, saves as named report</li>
+</ul>
+<p><strong>Admin back-end (separate from field UI):</strong></p>
+<ul>
+<li>Power-user control panel for managers/admins who want deep configurability</li>
+<li>Manage: roles, permissions, policies, groups, discount caps, credit tiers, invoice lock rules, notification rules, product catalog structure, etc.</li>
+<li>Clearly separated from the clean field-facing UI so it doesn&#39;t clutter the day-to-day experience</li>
+<li>Think of it as two apps in one: a clean simple front-end for field users, a powerful back-end for admins</li>
+</ul>
+<hr>
+<h3>1.11 Product Catalog Management</h3>
+<p><strong>Admin/manager panel:</strong></p>
+<ul>
+<li>Separate back-end panel for managing what salespeople see and how</li>
+<li>Create/edit: categories, subcategories, products, flavors, sizes, variants</li>
+<li>Set pricing, deposit values, tax flags per product</li>
+<li>Control visibility: assign categories/products to specific salespeople or groups</li>
+<li>Set display order and layout of catalog</li>
+<li>Enable/disable products (out of stock, seasonal, discontinued)</li>
+</ul>
+<p><strong>Salesperson catalog view:</strong></p>
+<ul>
+<li>Salespeople can customize how they personally see and navigate the catalog</li>
+<li>Save favorite products, custom quick-lists per customer</li>
+<li>View preferences (grid vs. list, sort order, etc.) saved per user</li>
+<li>Company default view set by admin, overridable by salesperson</li>
+</ul>
+<p><strong>Inventory integration:</strong></p>
+<ul>
+<li>Full details TBD pending stakeholder answer on current inventory/manufacturing system</li>
+<li>Goal: pull live inventory data automatically where possible</li>
+<li>Someone should still have manual override ability</li>
+<li>Out-of-stock handling during order flow TBD — see Open Questions [Q1, Q27]</li>
+</ul>
+<blockquote>
+<p>⬜ Inventory system details pending — see Open Questions [Q1] [Q27]</p>
+</blockquote>
+<hr>
+<h3>1.12 Statement Generation</h3>
+<ul>
+<li>Default: monthly auto-send per customer</li>
+<li>Fully flexible — configurable per customer or per group/policy</li>
+<li>Options: frequency (weekly, monthly, custom), delivery channel (email, WhatsApp, SMS), auto vs. manual</li>
+<li>Manual send always available — accountant can send on demand at any time</li>
+<li>Statement content: outstanding invoices, payment history, unapplied credits, balance due</li>
+<li>Different customers/groups can have different statement schedules</li>
+</ul>
+<hr>
+<h3>1.13 New Customer Onboarding Flow</h3>
+<ul>
+<li>Standard fields: company name, main contact, contact persons, email addresses, phone numbers</li>
+<li>Delivery address(es) — supports multiple locations under one account</li>
+<li>Billing address (may differ from delivery)</li>
+<li>Payment method(s) — card on file / vault token / payment terms</li>
+<li>Credit tier assignment</li>
+<li>Assigned salesperson(s)</li>
+<li>Any required documents or approvals TBD with accountant</li>
+<li>Admin or accounting creates the account; salesperson may be granted permission to create with limited fields</li>
+</ul>
+<hr>
+<h3>1.14 Order Modifications, Cancellations &amp; Adjustments</h3>
+<ul>
+<li>Salesperson can edit a placed order freely up to a configurable cutoff point (e.g. before warehouse starts picking)</li>
+<li>After picking begins — modifications restricted; who can do what is policy-controlled</li>
+<li>Cancellations and post-pick adjustments: rules TBD with stakeholders — will have a control panel similar to discount caps</li>
+<li>Adjustment caps: admin sets per-role limits on what adjustments salespeople or accountants can make</li>
+<li>All adjustments require a documented reason and are fully audit-logged</li>
+<li>Goal: more controlled than QuickBooks (which is too open) but not completely locked down</li>
+<li>⬜ Exact rules TBD — see Open Questions [Q28, Q29]</li>
+</ul>
+<hr>
+<h3>1.15 Manager / Owner Dashboard &amp; Reports</h3>
+<ul>
+<li>Current state: legacy local system accessed via RDP, limited reporting, mostly raw tables</li>
+<li>New system should be a significant upgrade — modern, visual, intuitive</li>
+<li><strong>Standard reports to include (baseline):</strong> sales by period, sales by salesperson, sales by customer, sales by product/category, outstanding receivables, aging report, payment collection rate, delivery performance (on-time, rejected), top customers, top products</li>
+<li>Reports should be visual — charts, trend lines, summaries, not just tables</li>
+<li>Custom report builder — filter by any field, date range, group by any dimension, save as named report</li>
+<li>Manager can see company-wide view; salesperson sees only their accounts</li>
+<li>All reports configurable and savable — manager sets up their own dashboard</li>
+<li>Feature ideas to propose to client: KPI tiles (revenue today/week/month vs. prior period), route completion live tracker, cash flow forecast, customer health score (order frequency + payment behavior)</li>
+<li>Client will review a summary before development begins — they can request additions or removals</li>
+</ul>
+<hr>
+<h2>🟡 Optional Feature Modules</h2>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Description</th>
+<th>Priority</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Basic Offline Mode</td>
+<td>Orders + delivery saved on device, sync on reconnect, conflict resolution</td>
+<td><strong>INCLUDED IN BASE</strong></td>
+</tr>
+<tr>
+<td>Temp Cloud Backup</td>
+<td>Cloud fallback during server downtime</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Digital Pick on Handheld</td>
+<td>Picker uses tablet/handheld, manager approves digitally</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>AI Pick Sheet OCR</td>
+<td>Photo scan of paper pick sheet, AI reads handwriting</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Voice Ordering</td>
+<td>Speak or upload recording/voice note, AI matches to catalog</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>SMS Notifications (Twilio)</td>
+<td>SMS channel for notifications</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>WhatsApp Notifications</td>
+<td>WhatsApp channel for notifications</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Credit Scoring System</td>
+<td>Auto credit rating based on usage/payments, auto-block, flag</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Customer Portal</td>
+<td>Customers view accounts, pay invoices, optionally place orders</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Customer-Facing Website</td>
+<td>For smaller customers — orders and account view</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Multi-Company / Multi-Tenant</td>
+<td>Each customer as separate accounting entity</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Full Private Network Lockdown</td>
+<td>VPN-only access, private DNS, zero public exposure</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>SSO + MFA Integration</td>
+<td>Azure AD / LDAP single sign-on with multi-factor auth</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Cloud App Deployment</td>
+<td>App on cloud, DB stays on-prem initially</td>
+<td>Future</td>
+</tr>
+<tr>
+<td>Extended Support (3 months)</td>
+<td>Bug fixes, minor adjustments, monitoring post-launch</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Data Migration</td>
+<td>Import from legacy system</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Truck-Specific Navigation</td>
+<td>Sygic/CoPilot integration for truck restrictions</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>AI-Powered Reports</td>
+<td>Plain English → SQL/Python queries. AI sees metadata only, never data. Read-only execution. Server sandbox for Python scripts</td>
+<td>Optional</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🚩 Open Questions — Stakeholder Interview Required</h2>
+<ul>
+<li><strong>[Q1]</strong> What inventory/manufacturing system is currently in use? Does it have an API or data export?</li>
+<li><strong>[Q2]</strong> Who is the owner-level admin — one person or a small group?</li>
+<li><strong>[Q3]</strong> Is there a credit approval step when onboarding a new customer?</li>
+<li><strong>[Q4]</strong> Are discounts per product, per customer, per order — or all three?</li>
+<li><strong>[Q5]</strong> What is the current invoicing system? What data needs to migrate?</li>
+<li><strong>[Q6]</strong> Voice recognition: on-device (offline) or cloud-only? — <em>NOTED: Cloud preferred</em></li>
+<li><strong>[Q7]</strong> Should the voice system recognize product SKU codes in addition to names?</li>
+<li><strong>[Q8]</strong> When duplicating a past order, should system check current inventory availability?</li>
+<li><strong>[Q9]</strong> Are deposits (CRV) per unit or per case? Do they vary by container type (can vs bottle vs size)?</li>
+<li><strong>[Q10]</strong> Do some customers have fully custom price lists, or always standard price minus a discount?</li>
+<li><strong>[Q11]</strong> Are there automatic promotions or volume deals (buy X get Y, tiered pricing)?</li>
+<li><strong>[Q12]</strong> Is tax calculated on the deposit separately from the product price?</li>
+<li><strong>[Q13]</strong> How are returns/credits handled? Does the driver pick up returns on delivery?</li>
+<li><strong>[Q14]</strong> Who can approve a return or issue a credit memo?</li>
+<li><strong>[Q15]</strong> What is the exact invoice lock period the company wants to start with?</li>
+<li><strong>[Q16]</strong> How many salespeople, warehouse workers, and drivers are there approximately?</li>
+<li><strong>[Q17]</strong> What Bluetooth printer models are currently in use or planned?</li>
+<li><strong>[Q18]</strong> Is there an existing customer database that needs to be imported?</li>
+<li><strong>[Q19]</strong> How exactly are deposit/bottle returns handled as a product line? Are they a negative line item on the next order, a separate credit transaction, or something else?</li>
+<li><strong>[Q20]</strong> Confirm with accountant: how many default credit tiers to start with, and what are their names/rules?</li>
+<li><strong>[Q21]</strong> What payment vault/legacy systems need to be supported beyond Authorize.NET?</li>
+<li><strong>[Q22]</strong> Should the credit review notification go to the accountant only, or also CC the salesperson on that account?</li>
+<li><strong>[Q23]</strong> What default dashboard view does management want for salespeople out of the box?</li>
+<li><strong>[Q24]</strong> Truck routing: should the app integrate a truck-specific navigation solution, or is standard GPS (Google Maps/Waze) acceptable with drivers using their own judgment?</li>
+<li><strong>[Q25]</strong> Multi-location customers: confirm account hierarchy — parent account with child locations? Any cases where a location has its own separate billing?</li>
+<li><strong>[Q26]</strong> User onboarding: invest in guided in-app onboarding, or handle training in person with simple admin setup?</li>
+<li><strong>[Q27]</strong> When a product is out of stock between order placement and warehouse picking, what is the rule — auto-remove from order, flag to salesperson, or let warehouse decide? Are they a negative line item on the next order, a separate credit transaction, or something else?</li>
+<li><strong>[Q32]</strong> <del>Order vs Invoice: confirm that orders and invoices are separate records (order is placed → invoice is generated from it once delivered). Or should the order become the invoice?</del> ✅ <strong>ANSWERED:</strong> Separate records. Invoice is auto-generated at the moment the driver confirms delivery, from the actual delivered quantities. Posted to system immediately.</li>
+<li><strong>[Q33]</strong> End-of-week invoice finalization: accounting mentioned they want to review and confirm/finalize all invoices before they are &quot;posted&quot; at end of week. What exactly does &quot;posted&quot; mean in your workflow — locked into the ledger? Sent to customer? Both? What specific discrepancies should AI flag during this review (pricing errors, unusual quantities, missing deposits, duplicate charges)?</li>
+<li><strong>[Q34]</strong> Customer classification/tags: do you want to tag/categorize customers by type (e.g. restaurant, grocery, gas station, chain, independent)? Would this affect pricing, catalog visibility, or reporting?</li>
+</ul>
+<hr>
+<h2>⏭️ Next Steps</h2>
+<ol>
+<li><strong>Continue now:</strong> Phase 2 — UI / App Design</li>
+<li><strong>Parallel:</strong> Stakeholder call using Stakeholder_Questions.md</li>
+<li><strong>After answers:</strong> Update open questions and adjust design decisions accordingly</li>
+<li><strong>Then:</strong> Remaining accounting edge cases</li>
+<li><strong>Then:</strong> Warehouse/delivery edge cases</li>
+<li><strong>Stakeholder interview:</strong> Use Open Questions list above</li>
+<li><strong>Session 2:</strong> App Design — screens, navigation, UX structure</li>
+</ol>
+<hr>
+<h2>🟡 PHASE 2: UI / APP DESIGN</h2>
+<h3>2.1 Platform &amp; Technology Direction</h3>
+<ul>
+<li><strong>Platform:</strong> Web browser-based — works on desktop, tablet, and mobile (responsive)</li>
+<li><strong>Deployment:</strong> Installed on client&#39;s Windows server; web stack served locally (on-prem)</li>
+<li>Server setup: will need Node.js / web server packages installed on Windows — exact specs TBD pending IT conversation</li>
+<li>Mobile users (salespeople, drivers, warehouse) access via mobile browser — no native app needed</li>
+<li>Offline capability handled at the web app layer (service workers, local storage, sync)</li>
+</ul>
+<h3>2.2 UI Design Principles</h3>
+<p><strong>The brief (directly from client):</strong></p>
+<ul>
+<li>Not fancy — decent, clean, modern. Not Excel-with-buttons.</li>
+<li>Fast and responsive — snappy, no lag, no waiting</li>
+<li>Not overcomplicated — clean default views, complexity hidden until needed</li>
+<li>Settings/control panels are powerful but kept <em>separate</em> from the main workflow</li>
+<li>Smart and adaptive — UI adjusts based on context, role, and user preferences</li>
+<li>Lots of options, but surfaced intelligently — not dumped on the user at once</li>
+</ul>
+<p><strong>Design language:</strong></p>
+<ul>
+<li>Clean, minimal chrome — content-first, not UI-first</li>
+<li>Modern data display — cards, summary tiles, smart tables (sortable, filterable, not static grids)</li>
+<li>Clear visual hierarchy — most important info largest, secondary info smaller</li>
+<li>Color used for status and alerts, not decoration (e.g. red = overdue, green = paid, yellow = pending)</li>
+<li>Consistent action patterns — same gestures/clicks do the same things everywhere</li>
+<li>Mobile: touch-friendly, large tap targets, minimal typing where possible</li>
+</ul>
+<p><strong>Two-layer UI model:</strong></p>
+<ul>
+<li><strong>Layer 1 — Field UI:</strong> Clean, focused, fast. What salespeople, drivers, and warehouse workers see. No clutter.</li>
+<li><strong>Layer 2 — Admin/Back-end:</strong> Power settings, control panels, policies, configurations. Separate area, separate mindset.</li>
+<li>Users only see what their role needs — complexity hidden by default, accessible when needed</li>
+</ul>
+<h3>2.3 Screen Inventory</h3>
+<p><strong>Planned screen groups:</strong></p>
+<ul>
+<li>Auth: Login, role-based redirect on login</li>
+<li>Salesperson: Dashboard, Customer List, Customer Profile, New Order, Order Review, Order History</li>
+<li>Warehouse: Order Queue, Pick Order, Pick Confirmation, Print Management</li>
+<li>Driver: My Route, Stop Detail, Delivery Confirmation, Navigation Launch</li>
+<li>Accounting: Dashboard, Customer Account, Invoice Detail, Payment Processing, Statements, Notifications</li>
+<li>Route Planner: Open Orders, Route Builder, Route Assignment</li>
+<li>Admin Back-end: User Management, Roles &amp; Permissions, Product Catalog, Pricing &amp; Policies, Invoice Rules, Notification Rules, Credit Tier Settings, Discount &amp; Adjustment Caps</li>
+<li>Manager: Reports Dashboard, Live Route Tracker, Sales Reports, Receivables</li>
+<li>Reports: Report Builder, Standard Reports Library, Saved Reports, Scheduled Exports, AI Query Interface (optional)</li>
+</ul>
+<hr>
+<h3>2.4 Salesperson Screens — Detailed Flow</h3>
+<h4>2.4.1 Login &amp; Role-Based Redirect</h4>
+<ul>
+<li>User logs in → system detects role → redirects to role-appropriate dashboard</li>
+<li>Salesperson → Salesperson Dashboard</li>
+<li>Driver → My Route screen</li>
+<li>Warehouse → Order Queue</li>
+<li>Accounting → Accounting Dashboard</li>
+<li>Admin → Admin Control Panel</li>
+</ul>
+<h4>2.4.2 Salesperson Dashboard (Hub)</h4>
+<ul>
+<li><strong>Minimal hub</strong> — not a heavy analytics page, more of a launchpad with at-a-glance info</li>
+<li><strong>Quick-action buttons:</strong> New Order, Customer List, My Orders Today, Messages/Alerts</li>
+<li><strong>Summary tiles:</strong> Orders today, outstanding balance total, deliveries in progress, alerts/flags</li>
+<li><strong>Recent activity feed</strong> — last few orders, recent payments, notifications (compact)</li>
+<li><strong>Link to &quot;Reports&quot; page</strong> — separate detailed reports screen where salesperson can build, save, and access custom report views (not cluttering the dashboard)</li>
+</ul>
+<h4>2.4.3 Customer List</h4>
+<ul>
+<li>Default: list view with key info visible per row — customer name, last order date, outstanding balance, overdue flag, credit status</li>
+<li>Toggle option: switch to card view for a more visual layout</li>
+<li><strong>Search &amp; filter bar</strong> at top — search by name, filter by status, area, tier, etc.</li>
+<li><strong>&quot;New Order&quot; button directly on each row</strong> — salesperson can start an order without entering the customer profile first</li>
+<li>Click customer name → opens Customer Profile</li>
+</ul>
+<h4>2.4.4 Customer Profile</h4>
+<p>Four tabs:</p>
+<ul>
+<li><strong>Overview</strong> — contact info, delivery addresses, billing address, credit status, tier, payment terms, assigned salesperson</li>
+<li><strong>Orders</strong> — order history with status (placed, picking, shipped, delivered, rejected). Can duplicate any past order. Can view order detail. Filter by date range, status</li>
+<li><strong>Account</strong> — invoices, payments, balance, aging buckets, statements, unapplied credits. Links to pay/send statement</li>
+<li><strong>Notes / Activity</strong> — internal notes (salesperson can add), full notification log (what was sent when), activity feed (orders, payments, changes)</li>
+</ul>
+<h4>2.4.5 New Order — Step-by-Step Wizard</h4>
+<p><strong>Step 1: Select Customer</strong></p>
+<ul>
+<li>Quick search, recents, favorites</li>
+<li>If started from customer list &quot;New Order&quot; button → this step is pre-filled, skip to Step 2</li>
+<li>Select delivery location if multi-location customer</li>
+</ul>
+<p><strong>Step 2: Build Order — Add Items</strong></p>
+<ul>
+<li>Multiple input modes available:<ul>
+<li><strong>Browse:</strong> Category → Subcategory → Product → Flavor → Size — add quantity</li>
+<li><strong>Search:</strong> Smart search bar — type product name, SKU, or partial match</li>
+<li><strong>Voice:</strong> Tap mic, speak naturally, AI matches to catalog, review matches</li>
+<li><strong>Favorites / Quick List:</strong> Per-customer or per-salesperson saved product lists</li>
+<li><strong>Duplicate Past Order:</strong> Select a previous order → loads all items with quantities → edit as needed</li>
+</ul>
+</li>
+<li>Running item count / subtotal visible at top or bottom of screen</li>
+<li>Each added item shows: product name, qty, unit price, line total, discount (if any)</li>
+<li>Can adjust quantity or remove items inline</li>
+</ul>
+<p><strong>Step 3: Review Order (Editable Invoice Preview)</strong></p>
+<ul>
+<li>Looks like the final invoice layout — but every field is still editable</li>
+<li>Line items with product, qty, unit price, discount, deposit, line total</li>
+<li>Subtotal, deposits total, tax, grand total</li>
+<li>Delivery date selector (default pre-filled per customer settings, editable)</li>
+<li>Notes / special instructions field</li>
+<li>Salesperson can still add/remove/edit items at this stage</li>
+<li>Discount per line or per order — within policy caps (system enforces)</li>
+</ul>
+<p><strong>Step 4: Submit</strong></p>
+<ul>
+<li>Confirm and submit → order enters the system</li>
+<li>If customer is Tier 2 (pay-first) → system holds order and triggers payment flow</li>
+<li>If secondary approval required (per policy) → order goes to approval queue</li>
+<li>Confirmation screen with order number, summary, estimated delivery date</li>
+</ul>
+<hr>
+<h3>2.5 Product Display Rules</h3>
+<ul>
+<li><strong>All products must have a 5-digit numeric-only code</strong> (e.g. 10023) — this is the universal product identifier across the system</li>
+<li><strong>Auto-generated</strong> when product is first added, with structured hierarchy (encodes category → subcategory → type → flavor where practical)</li>
+<li><strong>Catalog view differs by role — customizable:</strong><ul>
+<li><strong>Salesperson view:</strong> consumer-oriented units — e.g. &quot;10 × 12-packs&quot;</li>
+<li><strong>Warehouse worker view:</strong> warehouse-oriented units — e.g. &quot;1 pallet&quot; or &quot;10 cases&quot;</li>
+</ul>
+</li>
+<li>Display unit mapping is configurable per product in admin — defines how the same quantity is described to different roles</li>
+<li>The underlying data is always the same; only the display label changes per role context</li>
+</ul>
+<hr>
+<h3>2.6 Warehouse Screens — Detailed Flow</h3>
+<h4>2.6.1 Warehouse Order Queue</h4>
+<ul>
+<li><strong>Grouped by route / delivery area</strong> — picker sees orders organized by which truck/route they belong to</li>
+<li>Orders show: customer name, product code, item count (in cases), delivery date, route assignment</li>
+<li><strong>Manager assigns orders to specific pickers</strong> — pickers don&#39;t self-claim</li>
+<li>Filter/sort by: date, route, priority, status</li>
+<li>Status columns within each group: <strong>New → Assigned → Picked → Approved</strong></li>
+<li>Manager must approve picked orders before they move forward</li>
+</ul>
+<h4>2.6.2 Pick Flow — Three Tiers</h4>
+<p><strong>BASIC (included): Paper Pick + Manual Entry</strong></p>
+<ul>
+<li>Manager prints pick list for the order</li>
+<li>Worker picks using pen and physical clipboard — marks quantities by hand on the printout</li>
+<li>Worker returns completed clipboard to manager</li>
+<li>Manager manually enters results in the system: removes lines or edits quantities, rest is confirmed</li>
+<li>Confirmed pick → order moves to approved status</li>
+</ul>
+<p><strong>OPTIONAL: Digital Pick (picker on handheld/tablet)</strong></p>
+<ul>
+<li>Picker opens assigned order on device</li>
+<li>Sees line items: 5-digit product code, product name, requested qty (in cases/pallets)</li>
+<li>Enters picked qty per item — can be less than requested (partial pick if allowed by policy)</li>
+<li>Submits pick → goes to manager for approval</li>
+</ul>
+<p><strong>OPTIONAL: Print &amp; Scan (AI OCR)</strong></p>
+<ul>
+<li>Worker picks using pen and physical clipboard — marks quantities by hand on the printout</li>
+<li>Manager snaps a photo of the completed pick sheet</li>
+<li>AI analyzes the photo — extracts handwritten quantities, maps to line items using the 5-digit product codes</li>
+<li>Manager sees AI-extracted data on screen → reviews and confirms (can correct any AI misreads)</li>
+<li>Confirmed pick → order moves to approved status</li>
+</ul>
+<blockquote>
+<p>All modes result in the same data: a confirmed pick with actual quantities per line item. Mode selection is configurable per warehouse or per manager preference.</p>
+</blockquote>
+<h4>2.6.3 Pick Approval</h4>
+<ul>
+<li>Manager reviews all picked orders before they are released</li>
+<li>Can override quantities, flag issues, or reject back to picker</li>
+<li>Approved orders → ready for route assignment and truck loading</li>
+</ul>
+<hr>
+<h3>2.7 Route Planner Screens — Detailed Flow</h3>
+<blockquote>
+<p><strong>Important:</strong> Route planning happens BEFORE the truck is loaded. The route determines the loading order (last stop loaded first).</p>
+</blockquote>
+<h4>2.7.1 Route Builder</h4>
+<ul>
+<li>Planner sees all <strong>approved/picked orders</strong> for a given delivery date</li>
+<li>Orders displayed grouped by area/region — list view + optional map view for geographic context</li>
+<li>Planner drags orders into <strong>route groups</strong> — each route = one truck + one driver</li>
+<li>Within each route, planner arranges <strong>stop order</strong> (they know the streets/area)</li>
+<li>System shows: total cases/weight per route, number of stops, estimated time</li>
+<li>Assign route to a specific driver and truck</li>
+<li>Once finalized → route is locked and sent to warehouse for truck loading (load in reverse stop order)</li>
+</ul>
+<h4>2.7.2 Route Assignment View</h4>
+<ul>
+<li>Summary of all routes for the day: driver, truck, # stops, # cases, status</li>
+<li>Can reassign driver/truck, reorder stops, add/remove orders until truck loading begins</li>
+</ul>
+<hr>
+<h3>2.8 Driver Screens — Detailed Flow</h3>
+<h4>2.8.1 My Route</h4>
+<ul>
+<li>Driver opens app → sees their assigned route for the day</li>
+<li>List of stops in delivery order: stop #, customer name, address, # cases, delivery window</li>
+<li>Overall progress bar: X of Y stops completed</li>
+<li>Tap a stop → opens Stop Detail</li>
+</ul>
+<h4>2.8.2 Stop Detail</h4>
+<ul>
+<li>Customer name, address, contact phone</li>
+<li>Order summary: line items with 5-digit codes, product names, quantities (cases)</li>
+<li><strong>Driver can view and EDIT the order before confirming</strong> — e.g. customer spots a discrepancy at the door. Edits flag for accounting review and notify the salesperson automatically</li>
+<li><strong>Print Invoice button</strong> — prints to Bluetooth printer<ul>
+<li>⚠️ <strong>Location check:</strong> If driver is NOT near the delivery address when they tap Print → <strong>medium warning</strong> (&quot;You don&#39;t appear to be at this location. Print anyway?&quot;) — not a hard block, but logged</li>
+</ul>
+</li>
+<li><strong>Digital Signature option</strong> — customer can sign on device screen instead of receiving printout</li>
+<li><strong>Launch Navigation</strong> — opens Google Maps / Waze / configured nav app with the stop address</li>
+<li><strong>Delivery Confirmation:</strong><ul>
+<li><strong>Confirmed</strong> — delivery accepted, tap to confirm</li>
+<li><strong>Rejected</strong> — select reason from dropdown (not home, refused, damaged, wrong order, other) + optional note</li>
+<li>Status update pushes to system in real time</li>
+</ul>
+</li>
+</ul>
+<h4>2.8.3 End of Route</h4>
+<ul>
+<li>Summary: stops completed, stops rejected (with reasons), total delivered</li>
+<li>Driver confirms route complete → data finalized</li>
+</ul>
+<hr>
+<h3>2.9 Auto-Delivery Confirmation Rule</h3>
+<blockquote>
+<p><strong>Key rule:</strong> When the driver <strong>prints the invoice</strong> (Bluetooth) or <strong>sends it electronically</strong> (email/WhatsApp/SMS) at a stop, the delivery status <strong>automatically changes to &quot;Delivered/Confirmed&quot;</strong> — no extra tap needed. The driver only needs to interact if they are <strong>rejecting</strong> the delivery (must select reason + optional note). This removes friction from the happy path.</p>
+</blockquote>
+<hr>
+<h3>2.10 Order Modification &amp; Adjustment Policy</h3>
+<ul>
+<li><strong>Before picking starts:</strong> Salespeople and accounting can apply all kinds of changes — add/remove items, adjust quantities, apply discounts, change delivery date, cancel order. Full flexibility.</li>
+<li><strong>After picking begins:</strong> Modifications become <strong>very strict</strong> — limited adjustments only, controlled by configurable policies per role, per user, and per group</li>
+<li><strong>Policy engine:</strong> Admin defines what adjustments are possible post-pick, who can make them, and what caps/limits apply. Sensible defaults out of the box, fully adjustable.</li>
+<li><strong>Discount application:</strong> Salespeople and accounting can apply discounts freely until the order is picked. Post-pick discount adjustments follow the same strict policy controls.</li>
+<li><strong>Audit trail:</strong> Every change at every stage is logged — who, what, when, reason</li>
+</ul>
+<hr>
+<h3>2.11 Accounting Screens — Detailed Flow</h3>
+<blockquote>
+<p><strong>Design principle:</strong> Simpler than heavy accounting apps (not QuickBooks, not SAP). Clean and approachable UI. BUT — under the hood, the system follows <strong>proper accounting principles</strong>: double-entry ledger, journal entries, chart of accounts, transaction records, and standard financial statements. The user doesn&#39;t need to be an accountant to use it — the system handles the accounting mechanics automatically when they perform business actions (invoice, payment, credit, adjustment).</p>
+</blockquote>
+<h4>2.11.1 Accounting Fundamentals Built Into the System</h4>
+<p><strong>Double-Entry Ledger (runs automatically behind every action):</strong></p>
+<ul>
+<li>Every financial event creates proper journal entries — invoice created, payment received, credit issued, discount applied, deposit charged, adjustment made</li>
+<li>Users don&#39;t manually create journal entries — the system generates them from business actions</li>
+<li>But an accountant CAN view the full ledger and drill into any entry for audit/verification</li>
+</ul>
+<p><strong>Chart of Accounts (pre-configured, admin-adjustable):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Account</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Accounts Receivable</td>
+<td>Asset</td>
+<td>What customers owe</td>
+</tr>
+<tr>
+<td>Sales Revenue</td>
+<td>Revenue</td>
+<td>Product sales income</td>
+</tr>
+<tr>
+<td>Deposit Revenue (CRV)</td>
+<td>Revenue/Liability</td>
+<td>Government deposits collected</td>
+</tr>
+<tr>
+<td>Deposit Returns</td>
+<td>Contra-Revenue</td>
+<td>Deposits refunded on returns</td>
+</tr>
+<tr>
+<td>Discounts Given</td>
+<td>Contra-Revenue</td>
+<td>All discounts applied</td>
+</tr>
+<tr>
+<td>Cash / Bank</td>
+<td>Asset</td>
+<td>Money received</td>
+</tr>
+<tr>
+<td>Unapplied Payments</td>
+<td>Liability</td>
+<td>Payments received but not matched to invoices</td>
+</tr>
+<tr>
+<td>Credit Memos</td>
+<td>Liability</td>
+<td>Credits issued to customers</td>
+</tr>
+<tr>
+<td>Sales Tax Payable</td>
+<td>Liability</td>
+<td>Tax collected, owed to government</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>Admin can add/rename accounts as needed. System enforces that debits = credits on every transaction.</p>
+</blockquote>
+<p><strong>What happens automatically:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Business Action</th>
+<th>System Creates</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Invoice generated</td>
+<td>Debit: Accounts Receivable → Credit: Sales Revenue + Deposit Revenue + Tax Payable</td>
+</tr>
+<tr>
+<td>Payment received</td>
+<td>Debit: Cash/Bank → Credit: Accounts Receivable</td>
+</tr>
+<tr>
+<td>Discount applied</td>
+<td>Debit: Discounts Given → Credit: Accounts Receivable</td>
+</tr>
+<tr>
+<td>Credit memo issued</td>
+<td>Debit: Credit Memos → Credit: Accounts Receivable</td>
+</tr>
+<tr>
+<td>Unapplied payment</td>
+<td>Debit: Cash/Bank → Credit: Unapplied Payments (until matched)</td>
+</tr>
+</tbody></table>
+<p><strong>Standard Financial Reports (auto-generated):</strong></p>
+<ul>
+<li><strong>Accounts Receivable Aging</strong> — who owes what, how overdue (current, 30, 60, 90+ days)</li>
+<li><strong>Customer Statement</strong> — per-customer: invoices, payments, credits, balance</li>
+<li><strong>Transaction Journal</strong> — chronological log of all financial entries</li>
+<li><strong>Revenue Report</strong> — sales by period, by product, by customer, by salesperson</li>
+<li><strong>Cash Receipts Report</strong> — payments received by period, by method</li>
+<li><strong>Tax Report</strong> — tax collected by period (for government filing)</li>
+<li><strong>Trial Balance</strong> — all account balances at a point in time (for accountant verification)</li>
+</ul>
+<h4>2.11.2 Accounting Dashboard</h4>
+<ul>
+<li><strong>KPI tiles:</strong> Total receivables, overdue amount, payments received today/this week, cash flow summary</li>
+<li><strong>Action queue:</strong> Invoices pending review, unapplied payments to reconcile, credit limit reviews due, flagged orders (rejected deliveries, over-limit customers)</li>
+<li><strong>Quick access:</strong> Customer lookup, send statement, process payment, issue credit memo</li>
+<li><strong>Today&#39;s deliveries/orders visible</strong> — accounting needs to see what&#39;s going out (for invoicing awareness)</li>
+</ul>
+<h4>2.11.3 Invoice Detail Screen</h4>
+<ul>
+<li>Full invoice view — same layout as printed/sent invoice</li>
+<li>Payment status and payment history for this invoice</li>
+<li>Actions: apply payment, issue credit memo, send to customer (email/WhatsApp/SMS), print, adjust (if within lock policy)</li>
+<li><strong>PDF preview and download</strong> — for email attachment or file storage</li>
+<li>Linked journal entries visible (expandable) — for accountant who wants to see the ledger impact</li>
+</ul>
+<h4>2.11.4 Payment Processing</h4>
+<ul>
+<li><strong>Both entry points available:</strong><ul>
+<li>From customer → see all open invoices → select which to pay → enter amount → process via Authorize.NET</li>
+<li>From invoice → click &quot;Apply Payment&quot; → enter amount → process</li>
+</ul>
+</li>
+<li><strong>Batch payment view</strong> — select multiple invoices across multiple customers, process in one session</li>
+<li><strong>Unapplied payment handling:</strong> If payment doesn&#39;t match exact invoice total → remainder goes to Unapplied Payments → accountant matches later</li>
+<li><strong>Payment methods:</strong> Authorize.NET (card), ACH/bank, check (manual entry), cash (manual entry)</li>
+</ul>
+<h4>2.11.5 Statements</h4>
+<ul>
+<li>Select customer → generate statement (outstanding invoices, payments applied, credits, running balance)</li>
+<li>Send via email / WhatsApp / SMS per customer preference</li>
+<li><strong>Batch statement run</strong> — generate and send statements for all customers (or filtered group) at once</li>
+<li>Configurable schedule — monthly, weekly, custom per customer or group</li>
+<li>Auto-send on schedule + manual send on demand anytime</li>
+</ul>
+<hr>
+<h3>2.12 Admin / Back-End Screens</h3>
+<blockquote>
+<p><strong>Separate area from field UI.</strong> Power-user control panel. Only accessible to users with admin permissions.</p>
+</blockquote>
+<h4>2.12.1 Admin Panel — Main Sections</h4>
+<ol>
+<li><strong>Users &amp; Roles</strong> — create/edit users, assign roles, set granular permissions per user or group, manage teams</li>
+<li><strong>Product Catalog</strong> — categories, subcategories, products, 6-digit codes, pricing, deposits, display units (sales vs. warehouse), visibility rules per salesperson/group</li>
+<li><strong>Policies</strong> — discount caps (per role/user/group), adjustment rules (pre-pick open, post-pick strict), invoice lock period, order modification rules, credit tier definitions, approval workflows</li>
+<li><strong>Notifications</strong> — define triggers (invoice sent, payment due, delivery confirmed, etc.), channels (email/SMS/WhatsApp), timing/frequency, templates per event type</li>
+<li><strong>System Settings</strong> — company info, default delivery date rules, payment gateway config (Authorize.NET), Bluetooth printer settings, statement schedules, location warning thresholds</li>
+</ol>
+<h4>2.12.2 Each admin section has:</h4>
+<ul>
+<li>List view with search/filter</li>
+<li>Detail/edit form per item</li>
+<li>Audit log — who changed what, when</li>
+</ul>
+<hr>
+<h3>2.13 Manager / Owner Dashboard</h3>
+<ul>
+<li><strong>All features included by default</strong> — owner sees everything, can customize which sections/tiles are visible</li>
+<li><strong>Multiple saved views</strong> — manager can create and switch between different dashboard layouts (e.g. &quot;Daily Overview&quot;, &quot;Sales Focus&quot;, &quot;Collections Focus&quot;)</li>
+</ul>
+<h4>Default view includes:</h4>
+<ul>
+<li><strong>Live Route Tracker</strong> — all drivers on a map in real time, per-driver stop progress, color-coded status</li>
+<li><strong>KPI Tiles:</strong> Revenue today/week/month vs prior period, total deliveries, rejection rate, collection rate, outstanding receivables</li>
+<li><strong>Salesperson Performance</strong> — individual and comparison/leaderboard view, revenue, orders, new customers, collection rate</li>
+<li><strong>Reports Section:</strong> Sales by salesperson, by customer, by product/category, aging report, receivables, payment history — all with charts and trend lines</li>
+<li><strong>Custom Report Builder</strong> — pick columns, filters, date ranges, group-by dimensions, save as named report, schedule auto-generation</li>
+<li><strong>Alerts &amp; Flags</strong> — rejected deliveries, over-limit customers, overdue accounts, pending approvals</li>
+</ul>
+<h4>View customization:</h4>
+<ul>
+<li>Drag-and-drop tile arrangement</li>
+<li>Show/hide any section</li>
+<li>Save multiple named views, switch between them</li>
+<li>Admin can set a company-wide default view for managers; each manager can override with their own</li>
+</ul>
+<hr>
+<h3>2.14 Reports — Detailed Flow</h3>
+<blockquote>
+<p><strong>Design principle:</strong> Reports are a first-class feature, not an afterthought. Every user should be able to get answers from system data without asking IT or exporting to Excel.</p>
+</blockquote>
+<h4>2.14.1 Report Builder (Base — All Roles)</h4>
+<ul>
+<li><strong>User-friendly interface</strong> — no SQL knowledge needed, no technical jargon</li>
+<li><strong>Build a report in 3 steps:</strong><ol>
+<li><strong>Pick data source(s)</strong> — Orders, Invoices, Payments, Customers, Products, Deliveries, Routes, etc.</li>
+<li><strong>Select columns</strong> — drag/drop or checkbox to pick fields. System automatically handles joins when combining data from multiple sources (e.g. Orders + Customers + Products)</li>
+<li><strong>Filter &amp; sort</strong> — date range, status, customer, salesperson, area, product category, any field. Multiple filters combinable with AND/OR</li>
+</ol>
+</li>
+<li><strong>Live preview</strong> — results update as filters are changed</li>
+<li><strong>Simple graphs auto-generated</strong> — when the report includes numeric/metric columns (revenue, quantities, counts), system automatically offers chart options:<ul>
+<li>Bar chart, line chart, pie chart — pick one or auto-suggested based on data shape</li>
+<li>Charts are interactive — hover for values, click to drill down</li>
+</ul>
+</li>
+<li><strong>Export options:</strong> PDF, Excel (.xlsx), CSV</li>
+<li><strong>Grouping &amp; aggregation</strong> — group by any dimension (customer, product, salesperson, date period), auto-calculate sums, averages, counts per group</li>
+</ul>
+<h4>2.14.2 Standard Pre-Built Reports (Base)</h4>
+<p>Shipped with the system — ready to use out of the box, customizable:</p>
+<p><strong>Sales Reports:</strong></p>
+<ul>
+<li>Sales by period (daily, weekly, monthly, custom range)</li>
+<li>Sales by salesperson (with comparison/leaderboard)</li>
+<li>Sales by customer (top customers, revenue ranking)</li>
+<li>Sales by product / category / subcategory</li>
+<li>Sales by area / zip code / customer group</li>
+<li>Order volume trends (line chart over time)</li>
+</ul>
+<p><strong>Accounting Reports:</strong></p>
+<ul>
+<li>Accounts Receivable Aging (current, 30, 60, 90+ days)</li>
+<li>Customer statements (outstanding invoices, payments, credits, balance)</li>
+<li>Revenue report by period</li>
+<li>Cash receipts report (payments by method, by period)</li>
+<li>Tax report (for government filing)</li>
+<li>Trial balance</li>
+<li>Transaction journal (chronological ledger)</li>
+<li>Unapplied payments report</li>
+<li>Credit memo report</li>
+</ul>
+<p><strong>Operations Reports:</strong></p>
+<ul>
+<li>Delivery performance (on-time rate, rejection rate, reasons)</li>
+<li>Route efficiency (stops per route, cases per route)</li>
+<li>Warehouse pick accuracy</li>
+<li>Driver performance</li>
+<li>Inventory movement</li>
+</ul>
+<p><strong>Customer Reports:</strong></p>
+<ul>
+<li>Customer activity (orders, payments, credits over time)</li>
+<li>New customer acquisition by period</li>
+<li>Customer retention / churn</li>
+<li>Credit utilization</li>
+</ul>
+<h4>2.14.3 Saved Reports &amp; Scheduled Exports (Base)</h4>
+<ul>
+<li><strong>Save any report</strong> — give it a name, save filters/columns/sort/chart settings</li>
+<li><strong>Recurring exports</strong> — schedule a saved report to auto-run and export (e.g. &quot;Sales by Salesperson — Weekly&quot; auto-generates every Monday and emails to manager)</li>
+<li><strong>Report library</strong> — each user has their saved reports; admin can publish company-wide shared reports</li>
+<li><strong>Quick-access dashboard</strong> — pin favorite reports to dashboard for one-click access</li>
+</ul>
+<h4>2.14.4 Role-Based Report Access</h4>
+<ul>
+<li>Salespeople see only reports scoped to their assigned customers</li>
+<li>Accounting sees all financial data</li>
+<li>Managers see everything</li>
+<li>Admin controls who can access which report types and data scopes via the same permission engine</li>
+</ul>
+<h4>2.14.5 AI-Powered Reports (OPTIONAL MODULE)</h4>
+<blockquote>
+<p><strong>CRITICAL PRIVACY GUARANTEE:</strong> The AI model <strong>NEVER sees actual business data</strong>. It only receives <strong>metadata</strong> — table names, column headers, column data types, and relationships. The AI writes queries; it never reads results.</p>
+</blockquote>
+<p><strong>How it works — step by step:</strong></p>
+<ol>
+<li>User types a question in plain English: <em>&quot;Show me total revenue by salesperson for the last 3 months, compared to the previous 3 months&quot;</em></li>
+<li>System sends <strong>only metadata</strong> to the AI model:<ul>
+<li>Table names: <code>orders</code>, <code>invoices</code>, <code>users</code></li>
+<li>Column headers: <code>invoice_date</code>, <code>grand_total</code>, <code>salesperson_id</code>, <code>full_name</code></li>
+<li>Column types: <code>date</code>, <code>decimal</code>, <code>uuid</code>, <code>string</code></li>
+<li>Table relationships: <code>invoices.salesperson_id → users.user_id</code></li>
+<li><strong>NO actual data values are ever sent</strong></li>
+</ul>
+</li>
+<li>AI writes a <strong>read-only SQL query</strong> based on the metadata</li>
+<li>Query is executed on the server against the database in <strong>read-only mode</strong> (SELECT only — no INSERT, UPDATE, DELETE, DROP, or any write operation possible)</li>
+<li>Results are displayed to the user in the report builder UI with auto-generated charts</li>
+<li><strong>Query results are NEVER sent back to the AI</strong> — the AI&#39;s job is done after writing the query</li>
+</ol>
+<p><strong>Advanced mode — Python scripts (OPTIONAL, part of AI module):</strong></p>
+<ul>
+<li>For complex analysis that SQL alone can&#39;t handle (statistical analysis, forecasting, custom calculations)</li>
+<li>AI writes a Python script based on the same metadata-only approach</li>
+<li>Script executes in a <strong>sandboxed environment on the server</strong> — isolated process, no network access, no file system access outside sandbox, memory-limited, time-limited</li>
+<li>Script can only read data (read-only DB connection), perform calculations, and output results</li>
+<li>Results displayed in the report builder UI</li>
+<li>Scripts are logged and can be reviewed by admin</li>
+</ul>
+<p><strong>Security layers:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Protection</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AI input</td>
+<td>Metadata only — table names, column headers, types. Zero data values</td>
+</tr>
+<tr>
+<td>AI output</td>
+<td>SQL query or Python script text only</td>
+</tr>
+<tr>
+<td>Query execution</td>
+<td>Read-only database connection (SELECT only)</td>
+</tr>
+<tr>
+<td>Data return</td>
+<td>Results go to user&#39;s screen only. Never sent to AI</td>
+</tr>
+<tr>
+<td>Python sandbox</td>
+<td>Isolated process, no network, no filesystem, memory cap, time cap</td>
+</tr>
+<tr>
+<td>Audit</td>
+<td>Every AI-generated query logged with user, timestamp, query text</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🔴 PHASE 3: DATA MODEL</h2>
+<blockquote>
+<p><strong>Purpose:</strong> Define the core entities, their fields, and relationships. This is the blueprint for the database and drives everything — UI, API, accounting, reports.</p>
+</blockquote>
+<h3>3.1 Customer</h3>
+<p><strong>Parent Account (Company Level):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>customer_id</td>
+<td>UUID</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>company_name</td>
+<td>string</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>billing_address</td>
+<td>Address object</td>
+<td>Street, city, state, zip</td>
+</tr>
+<tr>
+<td>credit_tier_id</td>
+<td>FK → CreditTier</td>
+<td>Tier 1 (credit), Tier 2 (pay-first), custom</td>
+</tr>
+<tr>
+<td>credit_limit</td>
+<td>decimal</td>
+<td>Set by accounting</td>
+</tr>
+<tr>
+<td>payment_terms</td>
+<td>enum</td>
+<td>net-15, net-30, COD, custom</td>
+</tr>
+<tr>
+<td>tax_exempt</td>
+<td>boolean</td>
+<td>Default false</td>
+</tr>
+<tr>
+<td>assigned_salesperson_ids</td>
+<td>FK[] → User</td>
+<td>One or more salespeople</td>
+</tr>
+<tr>
+<td>default_statement_schedule</td>
+<td>config object</td>
+<td>Frequency, channel, auto vs manual</td>
+</tr>
+<tr>
+<td>payment_vault_token</td>
+<td>encrypted string</td>
+<td>Authorize.NET token</td>
+</tr>
+<tr>
+<td>outstanding_balance</td>
+<td>decimal (computed)</td>
+<td>Sum of unpaid invoices</td>
+</tr>
+<tr>
+<td>unapplied_credits</td>
+<td>decimal (computed)</td>
+<td>Payments not yet matched</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>active, inactive, suspended</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>text</td>
+<td>Internal notes</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>FK → User</td>
+<td></td>
+</tr>
+<tr>
+<td>tags</td>
+<td>string[]</td>
+<td>Optional: restaurant, grocery, chain, etc.</td>
+</tr>
+</tbody></table>
+<p><strong>Child Location (Delivery Site):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>location_id</td>
+<td>UUID</td>
+<td>Primary key</td>
+</tr>
+<tr>
+<td>parent_customer_id</td>
+<td>FK → Customer</td>
+<td>Links to parent account</td>
+</tr>
+<tr>
+<td>location_name</td>
+<td>string</td>
+<td>e.g. &quot;Store #3 - Brooklyn&quot;</td>
+</tr>
+<tr>
+<td>delivery_address</td>
+<td>Address object</td>
+<td></td>
+</tr>
+<tr>
+<td>contact_person</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>phone</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>email</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>default_delivery_day</td>
+<td>enum</td>
+<td>Mon-Sun or null</td>
+</tr>
+<tr>
+<td>delivery_time_window</td>
+<td>string</td>
+<td>e.g. &quot;6am-10am&quot;</td>
+</tr>
+<tr>
+<td>delivery_notes</td>
+<td>text</td>
+<td>Gate code, dock instructions, etc.</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.2 Product &amp; Catalog</h3>
+<p><strong>Product Hierarchy:</strong> Category → Subcategory → Product → Flavor → Size/Variant</p>
+<p><strong>Category:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>category_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>e.g. &quot;Beverages&quot;, &quot;Snacks&quot;</td>
+</tr>
+<tr>
+<td>display_order</td>
+<td>int</td>
+<td>Sort position in catalog</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>active / inactive</td>
+</tr>
+</tbody></table>
+<p><strong>Subcategory:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>subcategory_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>category_id</td>
+<td>FK → Category</td>
+<td></td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>e.g. &quot;Sparkling Water&quot;, &quot;Juice&quot;</td>
+</tr>
+<tr>
+<td>display_order</td>
+<td>int</td>
+<td></td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>active / inactive</td>
+</tr>
+</tbody></table>
+<p><strong>Product:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>product_id</td>
+<td>UUID</td>
+<td>Internal PK</td>
+</tr>
+<tr>
+<td>product_code</td>
+<td>char(6)</td>
+<td><strong>6-digit numeric code</strong> — unique, user-facing identifier</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>e.g. &quot;Crystal Sparkling Water&quot;</td>
+</tr>
+<tr>
+<td>description</td>
+<td>text</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>subcategory_id</td>
+<td>FK → Subcategory</td>
+<td></td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>active / inactive / discontinued</td>
+</tr>
+<tr>
+<td>image_url</td>
+<td>string</td>
+<td>Optional product image</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Product Variant (Flavor + Size combination):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>variant_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>FK → Product</td>
+<td></td>
+</tr>
+<tr>
+<td>variant_code</td>
+<td>char(6)</td>
+<td><strong>6-digit code</strong> — each sellable variant has its own code</td>
+</tr>
+<tr>
+<td>flavor</td>
+<td>string</td>
+<td>e.g. &quot;Black Cherry&quot;, &quot;Lemon&quot; (nullable if N/A)</td>
+</tr>
+<tr>
+<td>size</td>
+<td>string</td>
+<td>e.g. &quot;12oz&quot;, &quot;1L&quot;, &quot;2L&quot;</td>
+</tr>
+<tr>
+<td>base_price</td>
+<td>decimal</td>
+<td>Price per selling unit</td>
+</tr>
+<tr>
+<td>deposit_amount</td>
+<td>decimal</td>
+<td>CRV/deposit per unit</td>
+</tr>
+<tr>
+<td>tax_rule</td>
+<td>enum</td>
+<td>taxable / exempt / deposit-only-taxable</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>active / inactive</td>
+</tr>
+</tbody></table>
+<p><strong>Packaging / Display Units (flexible, per variant):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>packaging_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>variant_id</td>
+<td>FK → ProductVariant</td>
+<td></td>
+</tr>
+<tr>
+<td>unit_name</td>
+<td>string</td>
+<td>e.g. &quot;12-pack&quot;, &quot;case&quot;, &quot;pallet&quot;</td>
+</tr>
+<tr>
+<td>units_per_package</td>
+<td>int</td>
+<td>e.g. 12, 24, 48</td>
+</tr>
+<tr>
+<td>display_context</td>
+<td>enum</td>
+<td>salesperson / warehouse / both</td>
+</tr>
+<tr>
+<td>is_default</td>
+<td>boolean</td>
+<td>Default display for this context</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>Flexibility:</strong> A single variant (e.g. 12oz Black Cherry) can have multiple packaging definitions — a salesperson sees &quot;12-pack&quot; while warehouse sees &quot;case of 2 trays&quot;. Admin defines as many packaging levels as needed per product. Products can be combined into bundles/kits for different customer levels.</p>
+</blockquote>
+<p><strong>Catalog Visibility (who sees what):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>visibility_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>entity_type</td>
+<td>enum</td>
+<td>category / subcategory / product / variant</td>
+</tr>
+<tr>
+<td>entity_id</td>
+<td>UUID</td>
+<td>FK to the relevant catalog entity</td>
+</tr>
+<tr>
+<td>visible_to_type</td>
+<td>enum</td>
+<td>user / group / role / all</td>
+</tr>
+<tr>
+<td>visible_to_id</td>
+<td>UUID</td>
+<td>FK to user/group/role (null if &quot;all&quot;)</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.3 Order</h3>
+<blockquote>
+<p><strong>Orders and invoices are separate records.</strong> An order tracks what was requested; an invoice is generated from the delivered/picked quantities. <em>(Pending stakeholder confirmation — see Q32)</em></p>
+</blockquote>
+<p><strong>Order Header:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>order_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>order_number</td>
+<td>string</td>
+<td>Auto-generated, human-readable (e.g. ORD-2026-00142)</td>
+</tr>
+<tr>
+<td>customer_id</td>
+<td>FK → Customer</td>
+<td></td>
+</tr>
+<tr>
+<td>location_id</td>
+<td>FK → Location</td>
+<td>Delivery site</td>
+</tr>
+<tr>
+<td>salesperson_id</td>
+<td>FK → User</td>
+<td>Who placed it</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>draft / placed / approved / picking / picked / routed / loaded / in-transit / delivered / rejected / cancelled</td>
+</tr>
+<tr>
+<td>requested_delivery_date</td>
+<td>date</td>
+<td></td>
+</tr>
+<tr>
+<td>actual_delivery_date</td>
+<td>date</td>
+<td>Filled on delivery</td>
+</tr>
+<tr>
+<td>notes</td>
+<td>text</td>
+<td>Special instructions</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>modified_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>modification_log</td>
+<td>JSON[]</td>
+<td>Array of change records with who/what/when/reason</td>
+</tr>
+</tbody></table>
+<p><strong>Order Line Item:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>line_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>FK → Order</td>
+<td></td>
+</tr>
+<tr>
+<td>variant_id</td>
+<td>FK → ProductVariant</td>
+<td></td>
+</tr>
+<tr>
+<td>product_code</td>
+<td>char(6)</td>
+<td>Denormalized for display/search</td>
+</tr>
+<tr>
+<td>product_name</td>
+<td>string</td>
+<td>Denormalized — snapshot at time of order</td>
+</tr>
+<tr>
+<td>ordered_qty</td>
+<td>int</td>
+<td>What salesperson requested (in selling units)</td>
+</tr>
+<tr>
+<td>picked_qty</td>
+<td>int</td>
+<td>What warehouse actually picked (null until picked)</td>
+</tr>
+<tr>
+<td>unit_price</td>
+<td>decimal</td>
+<td>Price at time of order (snapshot)</td>
+</tr>
+<tr>
+<td>discount_amount</td>
+<td>decimal</td>
+<td>Per-line discount applied</td>
+</tr>
+<tr>
+<td>discount_reason</td>
+<td>string</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>deposit_per_unit</td>
+<td>decimal</td>
+<td>CRV at time of order</td>
+</tr>
+<tr>
+<td>line_total</td>
+<td>decimal (computed)</td>
+<td>(picked_qty or ordered_qty) × (unit_price - discount) + deposits</td>
+</tr>
+<tr>
+<td>tax_amount</td>
+<td>decimal (computed)</td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.4 Invoice</h3>
+<blockquote>
+<p>Generated from a delivered order. Represents the financial record. <em>(Pending: exact timing of generation — on delivery vs. end-of-week finalization — see Q33)</em></p>
+</blockquote>
+<p><strong>Invoice Header:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>invoice_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>invoice_number</td>
+<td>string</td>
+<td>Auto-generated (e.g. INV-2026-00142)</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>FK → Order</td>
+<td>Source order</td>
+</tr>
+<tr>
+<td>customer_id</td>
+<td>FK → Customer</td>
+<td></td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>draft / pending-review / finalized / posted / paid / partial / void</td>
+</tr>
+<tr>
+<td>subtotal</td>
+<td>decimal</td>
+<td>Sum of line totals</td>
+</tr>
+<tr>
+<td>total_deposits</td>
+<td>decimal</td>
+<td>Sum of all deposits</td>
+</tr>
+<tr>
+<td>total_tax</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>total_discounts</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>grand_total</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>amount_paid</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>balance_due</td>
+<td>decimal (computed)</td>
+<td>grand_total - amount_paid</td>
+</tr>
+<tr>
+<td>due_date</td>
+<td>date</td>
+<td>Based on customer payment terms</td>
+</tr>
+<tr>
+<td>lock_date</td>
+<td>date</td>
+<td>After this date, requires elevated permission to modify</td>
+</tr>
+<tr>
+<td>finalized_by</td>
+<td>FK → User</td>
+<td>Accountant who confirmed</td>
+</tr>
+<tr>
+<td>finalized_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>posted_at</td>
+<td>timestamp</td>
+<td>When officially posted to ledger</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>pdf_url</td>
+<td>string</td>
+<td>Stored PDF version</td>
+</tr>
+</tbody></table>
+<p><strong>Invoice Line Items:</strong> Mirror of order line items with actual delivered quantities (picked_qty becomes the billed qty).</p>
+<p><strong>AI Discrepancy Review (end-of-week finalization):</strong></p>
+<ul>
+<li>Before invoices are &quot;posted,&quot; accounting reviews the week&#39;s invoices</li>
+<li>AI flags potential issues: pricing anomalies, unusual quantities vs. customer history, missing deposits, duplicate charges, discount policy violations, mismatched pick vs. order quantities</li>
+<li>Accountant reviews flagged items, approves or corrects, then finalizes → invoice is posted to ledger</li>
+<li><em>(Exact workflow details pending stakeholder input — see Q33)</em></li>
+</ul>
+<hr>
+<h3>3.5 Payment &amp; Ledger</h3>
+<p><strong>Payment:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>payment_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>customer_id</td>
+<td>FK → Customer</td>
+<td></td>
+</tr>
+<tr>
+<td>amount</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>method</td>
+<td>enum</td>
+<td>credit-card / ACH / check / cash</td>
+</tr>
+<tr>
+<td>reference_number</td>
+<td>string</td>
+<td>Transaction ID from Authorize.NET, check #, etc.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>pending / completed / failed / refunded</td>
+</tr>
+<tr>
+<td>received_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>processed_by</td>
+<td>FK → User</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Payment Application (links payments to invoices):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>application_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>payment_id</td>
+<td>FK → Payment</td>
+<td></td>
+</tr>
+<tr>
+<td>invoice_id</td>
+<td>FK → Invoice</td>
+<td>null if unapplied</td>
+</tr>
+<tr>
+<td>amount_applied</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>applied_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>applied_by</td>
+<td>FK → User</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Journal Entry (double-entry ledger):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>entry_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>entry_date</td>
+<td>date</td>
+<td></td>
+</tr>
+<tr>
+<td>description</td>
+<td>string</td>
+<td>Auto-generated from business action</td>
+</tr>
+<tr>
+<td>source_type</td>
+<td>enum</td>
+<td>invoice / payment / credit-memo / adjustment / deposit-return</td>
+</tr>
+<tr>
+<td>source_id</td>
+<td>UUID</td>
+<td>FK to the source record</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>FK → User</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Journal Entry Lines (debit/credit pairs):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>line_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>entry_id</td>
+<td>FK → JournalEntry</td>
+<td></td>
+</tr>
+<tr>
+<td>account_id</td>
+<td>FK → ChartOfAccounts</td>
+<td></td>
+</tr>
+<tr>
+<td>debit</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>credit</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>memo</td>
+<td>string</td>
+<td>Optional detail</td>
+</tr>
+</tbody></table>
+<p><strong>Chart of Accounts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>account_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>account_code</td>
+<td>string</td>
+<td>e.g. &quot;1100&quot;, &quot;4000&quot;</td>
+</tr>
+<tr>
+<td>account_name</td>
+<td>string</td>
+<td>e.g. &quot;Accounts Receivable&quot;, &quot;Sales Revenue&quot;</td>
+</tr>
+<tr>
+<td>account_type</td>
+<td>enum</td>
+<td>asset / liability / equity / revenue / expense / contra-revenue</td>
+</tr>
+<tr>
+<td>is_system</td>
+<td>boolean</td>
+<td>True = system-managed, can&#39;t delete</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>active / inactive</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.6 Route &amp; Delivery</h3>
+<p><strong>Route:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>route_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>route_date</td>
+<td>date</td>
+<td></td>
+</tr>
+<tr>
+<td>driver_id</td>
+<td>FK → User</td>
+<td></td>
+</tr>
+<tr>
+<td>truck_id</td>
+<td>FK → Truck</td>
+<td></td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>planned / loading / in-progress / completed</td>
+</tr>
+<tr>
+<td>total_stops</td>
+<td>int</td>
+<td></td>
+</tr>
+<tr>
+<td>completed_stops</td>
+<td>int</td>
+<td></td>
+</tr>
+<tr>
+<td>created_by</td>
+<td>FK → User</td>
+<td>Route planner</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Route Stop:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>stop_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>route_id</td>
+<td>FK → Route</td>
+<td></td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>FK → Order</td>
+<td></td>
+</tr>
+<tr>
+<td>stop_order</td>
+<td>int</td>
+<td>Sequence position (1, 2, 3...)</td>
+</tr>
+<tr>
+<td>loading_order</td>
+<td>int</td>
+<td>Reverse of stop_order (last stop loaded first)</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>pending / delivered / rejected / skipped</td>
+</tr>
+<tr>
+<td>rejection_reason</td>
+<td>string</td>
+<td>If rejected</td>
+</tr>
+<tr>
+<td>rejection_note</td>
+<td>text</td>
+<td>Optional detail</td>
+</tr>
+<tr>
+<td>delivered_at</td>
+<td>timestamp</td>
+<td>Auto-set when invoice printed/sent</td>
+</tr>
+<tr>
+<td>gps_lat</td>
+<td>decimal</td>
+<td>Driver location at delivery</td>
+</tr>
+<tr>
+<td>gps_lon</td>
+<td>decimal</td>
+<td></td>
+</tr>
+<tr>
+<td>location_warning_fired</td>
+<td>boolean</td>
+<td>True if driver was not near address when printing</td>
+</tr>
+</tbody></table>
+<p><strong>Truck:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>truck_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>truck_name</td>
+<td>string</td>
+<td>e.g. &quot;Truck 3&quot;</td>
+</tr>
+<tr>
+<td>license_plate</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>capacity_cases</td>
+<td>int</td>
+<td>Max cases</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>available / in-use / maintenance</td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.7 Users, Roles &amp; Permissions</h3>
+<p><strong>User:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>user_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>username</td>
+<td>string</td>
+<td>Login</td>
+</tr>
+<tr>
+<td>password_hash</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>full_name</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>email</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>phone</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>role_id</td>
+<td>FK → Role</td>
+<td>Primary role label</td>
+</tr>
+<tr>
+<td>group_ids</td>
+<td>FK[] → Group</td>
+<td>For policy assignment</td>
+</tr>
+<tr>
+<td>status</td>
+<td>enum</td>
+<td>active / inactive / suspended</td>
+</tr>
+<tr>
+<td>preferences</td>
+<td>JSON</td>
+<td>UI preferences, saved views, favorites</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Role:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>role_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>role_name</td>
+<td>string</td>
+<td>Label only — actual access is via permissions</td>
+</tr>
+</tbody></table>
+<p><strong>Permission:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>permission_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>permission_key</td>
+<td>string</td>
+<td>e.g. &quot;order.create&quot;, &quot;invoice.adjust&quot;, &quot;discount.apply&quot;</td>
+</tr>
+<tr>
+<td>description</td>
+<td>string</td>
+<td>Human-readable</td>
+</tr>
+</tbody></table>
+<p><strong>User/Group Permission Assignment:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>assignment_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>assignee_type</td>
+<td>enum</td>
+<td>user / group / role</td>
+</tr>
+<tr>
+<td>assignee_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>permission_id</td>
+<td>FK → Permission</td>
+<td></td>
+</tr>
+<tr>
+<td>granted</td>
+<td>boolean</td>
+<td>True = allow, False = explicitly deny</td>
+</tr>
+</tbody></table>
+<p><strong>Policy (discount caps, adjustment limits, etc.):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>policy_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>policy_type</td>
+<td>enum</td>
+<td>discount-cap / adjustment-limit / order-modification / invoice-lock</td>
+</tr>
+<tr>
+<td>policy_name</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>rules</td>
+<td>JSON</td>
+<td>Configurable rules specific to policy type</td>
+</tr>
+<tr>
+<td>applies_to_type</td>
+<td>enum</td>
+<td>user / group / role / all</td>
+</tr>
+<tr>
+<td>applies_to_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.8 Notifications &amp; Audit</h3>
+<p><strong>Notification Rule:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rule_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>trigger_event</td>
+<td>enum</td>
+<td>invoice-sent / payment-due / delivery-confirmed / credit-limit-warning / review-date / custom</td>
+</tr>
+<tr>
+<td>channel</td>
+<td>enum</td>
+<td>email / sms / whatsapp</td>
+</tr>
+<tr>
+<td>timing</td>
+<td>JSON</td>
+<td>e.g. {&quot;before_days&quot;: 3}, {&quot;after_days&quot;: 7}, {&quot;on_event&quot;: true}</td>
+</tr>
+<tr>
+<td>template_id</td>
+<td>FK → Template</td>
+<td>Message template</td>
+</tr>
+<tr>
+<td>applies_to</td>
+<td>JSON</td>
+<td>Customer groups, tiers, or specific customers</td>
+</tr>
+<tr>
+<td>enabled</td>
+<td>boolean</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>Notification Log:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>log_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>rule_id</td>
+<td>FK → NotificationRule</td>
+<td></td>
+</tr>
+<tr>
+<td>customer_id</td>
+<td>FK → Customer</td>
+<td></td>
+</tr>
+<tr>
+<td>channel</td>
+<td>enum</td>
+<td></td>
+</tr>
+<tr>
+<td>message_content</td>
+<td>text</td>
+<td>Actual message sent</td>
+</tr>
+<tr>
+<td>sent_at</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>delivery_status</td>
+<td>enum</td>
+<td>sent / delivered / failed / read</td>
+</tr>
+<tr>
+<td>reply_content</td>
+<td>text</td>
+<td>If customer replied (WhatsApp)</td>
+</tr>
+</tbody></table>
+<p><strong>Audit Log (system-wide):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>audit_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>FK → User</td>
+<td>Who performed the action</td>
+</tr>
+<tr>
+<td>action</td>
+<td>string</td>
+<td>e.g. &quot;order.modified&quot;, &quot;discount.applied&quot;, &quot;invoice.adjusted&quot;</td>
+</tr>
+<tr>
+<td>entity_type</td>
+<td>string</td>
+<td>e.g. &quot;order&quot;, &quot;invoice&quot;, &quot;customer&quot;</td>
+</tr>
+<tr>
+<td>entity_id</td>
+<td>UUID</td>
+<td></td>
+</tr>
+<tr>
+<td>old_value</td>
+<td>JSON</td>
+<td>Before state</td>
+</tr>
+<tr>
+<td>new_value</td>
+<td>JSON</td>
+<td>After state</td>
+</tr>
+<tr>
+<td>reason</td>
+<td>text</td>
+<td>Required for restricted actions</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>timestamp</td>
+<td></td>
+</tr>
+<tr>
+<td>ip_address</td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h3>3.9 Data Model — Entity Relationship Summary</h3>
+<pre><code>Customer (1) ──→ (N) Location
+Customer (1) ──→ (N) Order
+Customer (1) ──→ (N) Invoice
+Customer (1) ──→ (N) Payment
+Order    (1) ──→ (N) OrderLineItem
+Order    (1) ──→ (1) Invoice
+Invoice  (1) ──→ (N) InvoiceLineItem
+Invoice  (N) ←──→ (N) Payment  (via PaymentApplication)
+Payment  (1) ──→ (N) PaymentApplication
+JournalEntry (1) ──→ (N) JournalEntryLine
+JournalEntryLine (N) ──→ (1) ChartOfAccounts
+Route    (1) ──→ (N) RouteStop
+RouteStop (1) ──→ (1) Order
+Route    (N) ──→ (1) User (driver)
+Route    (N) ──→ (1) Truck
+Category (1) ──→ (N) Subcategory
+Subcategory (1) ──→ (N) Product
+Product  (1) ──→ (N) ProductVariant
+ProductVariant (1) ──→ (N) PackagingUnit
+User     (N) ──→ (1) Role
+User     (N) ←──→ (N) Permission (via assignment)
+</code></pre>
+<hr>
+<h2>🟠 PHASE 4: ARCHITECTURE &amp; TECH STACK</h2>
+<h3>4.1 Technology Decisions</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Choice</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Backend</strong></td>
+<td>ASP.NET Core (.NET 8+)</td>
+<td>Native on Windows Server, strong typing for ERP complexity, built-in auth (Identity + Policies), SignalR for real-time, Entity Framework ORM, easy Azure migration path later, safe for parallel dev across agents</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>PostgreSQL + PostGIS</td>
+<td>Free (no licensing), native geographic queries (PostGIS) for driver tracking &amp; distance-from-stop calculations, excellent time-series handling for audit logs &amp; order history, range types, table partitioning. Runs well on Windows</td>
+</tr>
+<tr>
+<td><strong>Frontend (default)</strong></td>
+<td>Razor Pages (server-rendered)</td>
+<td>HTML rendered on server, lightweight on client, snappy on cheap Android handhelds, low bandwidth, works on any browser. Used for: accounting, admin, reports, customer profiles, catalog management</td>
+</tr>
+<tr>
+<td><strong>Frontend (interactive)</strong></td>
+<td>HTMX + Alpine.js (targeted)</td>
+<td>Tiny JS footprint (~15-30KB). Used only where client interaction is needed: order builder (live cart), route planner (drag/drop), driver map (live tracking), voice input, camera/photo capture. No full SPA framework</td>
+</tr>
+<tr>
+<td><strong>Real-time</strong></td>
+<td>SignalR (built into .NET)</td>
+<td>Live driver tracking, order status updates, notification pushes — all over WebSocket, no extra dependencies</td>
+</tr>
+<tr>
+<td><strong>AI / Voice</strong></td>
+<td>Cloud API (OpenAI GPT-class)</td>
+<td>Voice order matching, pick sheet OCR (photo → data extraction), invoice discrepancy detection. API calls from server — client just sends audio/photo</td>
+</tr>
+<tr>
+<td><strong>Payment Gateway</strong></td>
+<td>Authorize.NET SDK</td>
+<td>Tokenized vault, card processing, ACH support</td>
+</tr>
+<tr>
+<td><strong>Notifications</strong></td>
+<td>Twilio (SMS) + WhatsApp Business API + SMTP (email)</td>
+<td>All channels from one notification engine on the server</td>
+</tr>
+<tr>
+<td><strong>Bluetooth Printing</strong></td>
+<td>Web Bluetooth API or native print bridge</td>
+<td>Browser-based printing to Bluetooth receipt printers. Exact approach depends on printer model (see Q17)</td>
+</tr>
+<tr>
+<td><strong>Maps / Navigation</strong></td>
+<td>Google Maps JS API (tracking display) + deep-link to Waze/Google Maps app (turn-by-turn nav)</td>
+<td>Map tiles for planner/manager view. Driver launches external nav app for directions</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>ASP.NET Identity + JWT tokens</td>
+<td>Cookie auth for desktop/server-rendered pages, JWT for any client-side API calls</td>
+</tr>
+</tbody></table>
+<h3>4.2 Rendering Strategy — Hybrid Model</h3>
+<p><strong>Default mode (server-dominant):</strong></p>
+<pre><code>Browser ←→ ASP.NET Server ←→ PostgreSQL
+  │              │
+  │  HTML pages  │  Razor Pages render full HTML
+  │  ←───────────│  HTMX handles partial page updates (no full reload)
+  │              │  Alpine.js for small UI interactions (dropdowns, toggles)
+  │              │
+  │  API calls   │  Only for: live map, voice recording, photo upload
+  │  ←──JSON──→  │  SignalR for push updates
+</code></pre>
+<ul>
+<li>Server does all heavy lifting — DB queries, business logic, rendering</li>
+<li>Client receives ready HTML — minimal JS, fast load, low memory</li>
+<li>HTMX swaps page fragments on user actions (e.g. filtering a table → server renders new rows, HTMX swaps them in) — feels like a SPA but server does the work</li>
+<li>Alpine.js handles micro-interactions (expanding a card, toggle switch, dropdown menus)</li>
+<li><strong>Field workers (salesperson, driver, warehouse)</strong> get this lightweight experience</li>
+</ul>
+<p><strong>Interactive sections (client-side, embedded in server pages):</strong></p>
+<ul>
+<li>Order builder: JS module for cart management, search-as-you-type, voice recording</li>
+<li>Route planner: JS module for drag-and-drop stop ordering, map view</li>
+<li>Live tracker: JS + SignalR for real-time driver map</li>
+<li>Camera capture: JS for pick sheet photo → upload to server for AI processing</li>
+</ul>
+<h3>4.3 Offline Mode (Optional — Priced Separately)</h3>
+<p><strong>Without offline (default build):</strong></p>
+<ul>
+<li>Server renders everything, client is thin</li>
+<li>Requires network connection at all times</li>
+<li>Simple, fast, cheaper to build</li>
+</ul>
+<p><strong>With offline (add-on module):</strong></p>
+<ul>
+<li>Service worker caches key pages (order form, customer list, product catalog)</li>
+<li>IndexedDB stores: cached product catalog, customer data, orders created offline</li>
+<li>Sync engine queues offline actions → pushes to server when connection returns</li>
+<li>Conflict resolution: server timestamp wins, client notified of any overrides</li>
+<li>Scope: offline ordering + offline delivery confirmation. Accounting/admin always requires connection</li>
+<li><strong>Engineering impact:</strong> ~25-30% additional dev effort — separate price line in proposal</li>
+</ul>
+<h3>4.4 Project Structure (High-Level)</h3>
+<pre><code>WholesaleERP/
+├── src/
+│   ├── WholesaleERP.Web/           ← ASP.NET Core web app (Razor Pages + API controllers)
+│   │   ├── Pages/                   ← Razor Pages (server-rendered UI)
+│   │   │   ├── Auth/                ← Login, logout, password reset
+│   │   │   ├── Sales/               ← Salesperson dashboard, customer list, order wizard
+│   │   │   ├── Warehouse/           ← Order queue, pick flow, AI pick review
+│   │   │   ├── Delivery/            ← Driver route, stop detail, delivery confirmation
+│   │   │   ├── Accounting/          ← Dashboard, invoices, payments, statements
+│   │   │   ├── RoutePlanning/       ← Route builder, assignment
+│   │   │   ├── Admin/               ← Users, roles, policies, catalog, settings
+│   │   │   ├── Reports/             ← Report builder, saved reports, dashboards
+│   │   │   └── Shared/              ← Layouts, partials, components
+│   │   ├── wwwroot/                 ← Static assets
+│   │   │   ├── js/                  ← HTMX, Alpine.js, custom modules (order builder, map, voice)
+│   │   │   ├── css/                 ← Stylesheets
+│   │   │   └── images/
+│   │   ├── Hubs/                    ← SignalR hubs (live tracking, notifications)
+│   │   └── Program.cs              ← App startup, DI config
+│   │
+│   ├── WholesaleERP.Core/          ← Domain models, interfaces, business rules
+│   │   ├── Entities/                ← Customer, Product, Order, Invoice, etc.
+│   │   ├── Interfaces/              ← Repository + service interfaces
+│   │   ├── Enums/
+│   │   └── ValueObjects/            ← Address, Money, DateRange, etc.
+│   │
+│   ├── WholesaleERP.Application/   ← Business logic / use cases
+│   │   ├── Orders/                  ← Order creation, modification, cancellation
+│   │   ├── Invoicing/               ← Invoice generation, finalization, AI review
+│   │   ├── Payments/                ← Payment processing, application, reconciliation
+│   │   ├── Accounting/              ← Ledger entries, chart of accounts, reports
+│   │   ├── Routing/                 ← Route building, assignment, tracking
+│   │   ├── Warehouse/               ← Pick assignment, AI pick sheet, approval
+│   │   ├── Notifications/           ← Notification engine (triggers, channels, templates)
+│   │   ├── Catalog/                 ← Product management, visibility, pricing
+│   │   ├── Auth/                    ← User management, permissions, policies
+│   │   └── AI/                      ← Voice matching, OCR, discrepancy detection
+│   │
+│   ├── WholesaleERP.Infrastructure/ ← External integrations &amp; data access
+│   │   ├── Data/                    ← EF Core DbContext, migrations, repositories
+│   │   ├── Payment/                 ← Authorize.NET integration
+│   │   ├── Messaging/               ← Twilio SMS, WhatsApp, email (SMTP)
+│   │   ├── AI/                      ← OpenAI API client (voice, OCR, discrepancy)
+│   │   ├── Maps/                    ← Google Maps API integration
+│   │   └── Printing/                ← Bluetooth print bridge
+│   │
+│   └── WholesaleERP.Tests/         ← Unit + integration tests
+│       ├── Core.Tests/
+│       ├── Application.Tests/
+│       └── Integration.Tests/
+│
+├── docs/                            ← Design docs, API docs, deployment guide
+├── scripts/                         ← DB migrations, seed data, deployment scripts
+└── README.md
+</code></pre>
+<blockquote>
+<p><strong>Clean Architecture layers:</strong> Web → Application → Core ← Infrastructure. Core has zero dependencies. Application contains all business logic. Infrastructure handles DB, APIs, external services. Web is the thin UI layer.</p>
+</blockquote>
+<h3>4.5 Parallel Development Splits</h3>
+<blockquote>
+<p>When developing, the project splits naturally across multiple coding agents:</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Module</th>
+<th>Dependencies</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent 1</td>
+<td>Core entities + DB schema + migrations</td>
+<td>None — starts first</td>
+</tr>
+<tr>
+<td>Agent 2</td>
+<td>Auth, Users, Roles, Permissions</td>
+<td>Core entities</td>
+</tr>
+<tr>
+<td>Agent 3</td>
+<td>Product Catalog + Pricing</td>
+<td>Core entities</td>
+</tr>
+<tr>
+<td>Agent 4</td>
+<td>Order flow + Order UI (sales pages)</td>
+<td>Core + Catalog</td>
+</tr>
+<tr>
+<td>Agent 5</td>
+<td>Warehouse flow + Pick UI + AI OCR</td>
+<td>Core + Orders</td>
+</tr>
+<tr>
+<td>Agent 6</td>
+<td>Routing + Driver UI + Maps</td>
+<td>Core + Orders</td>
+</tr>
+<tr>
+<td>Agent 7</td>
+<td>Invoicing + Payments + Ledger + Accounting UI</td>
+<td>Core + Orders</td>
+</tr>
+<tr>
+<td>Agent 8</td>
+<td>Notifications engine + all channels</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>Agent 9</td>
+<td>Admin panel + Policies + Reports</td>
+<td>Core + all above</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>Agents 1 must finish first (shared foundation). Then 2-4 can run in parallel. Then 5-8 in parallel. Agent 9 last (ties everything together).</p>
+</blockquote>
+<h3>4.6 Server Requirements (Preliminary)</h3>
+<ul>
+<li><strong>OS:</strong> Windows Server 2019+ (or Windows 10/11 for dev)</li>
+<li><strong>.NET Runtime:</strong> .NET 8+ (self-contained deployment possible — no runtime install needed)</li>
+<li><strong>PostgreSQL:</strong> 15+ with PostGIS extension</li>
+<li><strong>RAM:</strong> 8GB minimum, 16GB recommended</li>
+<li><strong>Storage:</strong> 50GB+ (depends on data volume, images, PDFs)</li>
+<li><strong>Network:</strong> LAN access for all users. Internet required for: AI API calls, payment processing, notifications (SMS/email), map tiles</li>
+<li><em>(Exact specs TBD pending client server info)</em></li>
+</ul>
+<hr>
+<p>⬜ Stakeholder questions pending: [Q17] printer models, [Q32] order/invoice separation, [Q33] invoice finalization workflow, server specs</p>
+<hr>
+<h2>🔐 PHASE 5: SECURITY &amp; ACCESS CONTROL</h2>
+<h3>5.1 Network Architecture &amp; Isolation</h3>
+<p><strong>Core principle:</strong> The app server and database sit on a <strong>private network</strong>. No direct public internet access to the app or DB.</p>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│  PRIVATE NETWORK (Office LAN / VPN)                     │
+│                                                         │
+│   ┌──────────────┐     ┌──────────────┐                │
+│   │  App Server   │────→│  PostgreSQL  │                │
+│   │  ASP.NET Core │     │  (DB)        │                │
+│   └──────┬───────┘     └──────────────┘                │
+│          │                                              │
+│   Desktop users connect directly on LAN                 │
+│                                                         │
+└──────────┼──────────────────────────────────────────────┘
+           │
+    ┌──────┴───────┐
+    │   Firewall   │  ← Standard firewall + antivirus on server
+    │  + Reverse   │  ← Only specific ports open
+    │   Proxy      │  ← Rate limiting, DDoS protection
+    └──────┬───────┘
+           │
+    ┌──────┴───────┐
+    │  Mobile      │  ← Registered devices only
+    │  Devices     │  ← VPN or certificate-pinned connection
+    │  (Field)     │  ← App-layer auth on top
+    └──────────────┘
+</code></pre>
+<p><strong>Key rules:</strong></p>
+<ul>
+<li>Database is <strong>never</strong> exposed to any external network — app server only</li>
+<li>App server listens on private LAN — desktop users connect directly</li>
+<li>Mobile/field devices connect through firewall — only the app&#39;s specific port is open</li>
+<li><strong>Logically isolated:</strong> Only the app can talk to the server — no general browser access from public internet</li>
+<li>Standard <strong>firewall</strong> on server (Windows Firewall + network firewall)</li>
+<li><strong>Antivirus</strong> on server (Windows Defender or enterprise AV)</li>
+</ul>
+<h3>5.2 Mobile Device Security</h3>
+<blockquote>
+<p>Mobile devices (Android handhelds) are <strong>company-owned and handed over to workers</strong>. This is a controlled device scenario.</p>
+</blockquote>
+<p><strong>Device Verification:</strong></p>
+<ul>
+<li>Each mobile device is <strong>registered</strong> in the admin panel — device ID, assigned user, approved date</li>
+<li>First connection: admin generates a device registration code → worker enters it on the device → device is paired to that user account</li>
+<li>Only registered devices can authenticate — unregistered devices are rejected at login</li>
+<li>Admin can revoke a device instantly (lost/stolen/employee leaves) → device is blocked immediately</li>
+</ul>
+<p><strong>Easy to use, hard to breach:</strong></p>
+<ul>
+<li>After device registration, worker logs in with <strong>simple PIN or biometric</strong> (fingerprint) — not full username/password every time</li>
+<li>Full credentials required only on first setup or after device revocation</li>
+<li>Session stays alive during work hours — no annoying re-logins (configurable session duration per role)</li>
+<li>Auto-lock after configurable idle period — requires PIN/biometric to resume (not full re-login)</li>
+</ul>
+<p><strong>Data protection on device:</strong></p>
+<ul>
+<li>No sensitive data cached in plain text on device — any local storage is encrypted</li>
+<li>If offline mode is enabled: local DB is encrypted at rest</li>
+<li>Remote wipe capability — admin can clear app data on a lost device</li>
+</ul>
+<h3>5.3 Desktop Access — IP-Based Permissions</h3>
+<ul>
+<li>Desktop users (accounting, admin, managers) connect from <strong>office network only</strong> by default</li>
+<li><strong>IP allowlist</strong> configured in admin panel — only approved IP addresses / ranges can access the app</li>
+<li>Attempts from unapproved IPs are blocked and logged</li>
+</ul>
+<p><strong>Optional bypass (stakeholder decision — adds cost):</strong></p>
+<ul>
+<li>SSO integration (Azure AD, Google Workspace, or company LDAP/Active Directory) — if enabled, users can authenticate from outside the office via SSO + MFA</li>
+<li>VPN requirement for remote access — connect to office VPN first, then access app normally</li>
+<li><em>(Ask stakeholder: do they need remote access outside the office, or is IP-lock sufficient? — see Q35)</em></li>
+</ul>
+<h3>5.4 Authentication Layers</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Method</th>
+<th>Applies to</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Device registration</td>
+<td>Device ID + registration code</td>
+<td>Mobile only</td>
+</tr>
+<tr>
+<td>Primary login</td>
+<td>Username + password</td>
+<td>All users (first time / new session)</td>
+</tr>
+<tr>
+<td>Quick unlock</td>
+<td>PIN or biometric</td>
+<td>Mobile users (resume after idle)</td>
+</tr>
+<tr>
+<td>IP allowlist</td>
+<td>Approved IPs only</td>
+<td>Desktop users (default)</td>
+</tr>
+<tr>
+<td>SSO + MFA (optional)</td>
+<td>Azure AD / LDAP + authenticator app</td>
+<td>All users (optional bypass for IP restriction)</td>
+</tr>
+<tr>
+<td>Session management</td>
+<td>Configurable timeout per role</td>
+<td>All users</td>
+</tr>
+</tbody></table>
+<h3>5.5 Visibility &amp; Data Access Policy</h3>
+<blockquote>
+<p><strong>All data visibility is policy-managed</strong> — configured by admin in the control panel.</p>
+</blockquote>
+<ul>
+<li><strong>Who sees what</strong> is NOT hardcoded by role — admin sets policies per user, per group, or per role</li>
+<li>Default sensible policies out of the box:<ul>
+<li>Salesperson sees only their assigned customers, orders, and accounts</li>
+<li>Warehouse worker sees only orders assigned to them for picking</li>
+<li>Driver sees only their assigned route and stops</li>
+<li>Accounting sees all customers, all financial data</li>
+<li>Manager sees everything — all users, all data, all reports</li>
+<li>Admin has full system access including security settings</li>
+</ul>
+</li>
+<li>Admin can override any default — e.g. grant a senior salesperson visibility into another salesperson&#39;s accounts, or restrict an accountant to specific customer groups</li>
+<li><strong>Policy engine</strong> — same system that controls discount caps and adjustment limits also controls data visibility</li>
+</ul>
+<h3>5.6 Additional Security Measures</h3>
+<ul>
+<li><strong>HTTPS everywhere</strong> — even on local network, all traffic encrypted (self-signed cert or internal CA)</li>
+<li><strong>Rate limiting on login</strong> — 5 failed attempts → account locked for 15 min (configurable)</li>
+<li><strong>Tamper-proof audit log</strong> — audit entries are append-only; even system admins cannot delete or modify them. Stored in a separate DB schema with restricted write access</li>
+<li><strong>Reason codes required</strong> for sensitive actions — adjusting an invoice, overriding a pick, changing a credit limit, modifying a locked record → must select reason from predefined list + optional note</li>
+<li><strong>Payment data (PCI)</strong> — raw card numbers never touch the app; all card data goes directly to Authorize.NET via their SDK. App only stores tokenized references (&quot;Visa ending 4242&quot;)</li>
+<li><strong>Password policy</strong> — minimum length, complexity rules, expiration period (all configurable in admin)</li>
+<li><strong>Active session dashboard</strong> — admin can see all logged-in users, their device, IP, and last activity. Can force-logout any user remotely</li>
+</ul>
+<h3>5.7 Optional: Full Private Network Lockdown (Zero Public Exposure)</h3>
+<blockquote>
+<p><strong>Optional module — adds cost.</strong> For clients who want maximum network isolation.</p>
+</blockquote>
+<p><strong>Everything runs on private network — nothing public-facing:</strong></p>
+<ul>
+<li>App server: private LAN only, no public IP, no public DNS record</li>
+<li>Database: private LAN only (already default)</li>
+<li><strong>No public DNS entries</strong> — the app has no resolvable domain name on the public internet. Internal DNS only (e.g. <code>erp.company.local</code> resolved by internal DNS server)</li>
+<li>All external services (AI API, Authorize.NET, Twilio, Google Maps) accessed through the server outbound only — no inbound ports open to the internet</li>
+</ul>
+<p><strong>VPN-only access for all users:</strong></p>
+<ul>
+<li><strong>Desktop users:</strong> Must connect to company VPN to access the app — even from inside the office (or LAN-only if on-site)</li>
+<li><strong>Mobile/field users:</strong> VPN client installed on Android handhelds — auto-connects when app opens. All traffic tunnels through company VPN before reaching the app server</li>
+<li>VPN server runs on-prem (WireGuard, OpenVPN, or Windows SSTP) or through a managed VPN gateway</li>
+<li>VPN certificates per device — tied to device registration. Revoke device = revoke VPN cert = instant lockout</li>
+</ul>
+<p><strong>DNS isolation:</strong></p>
+<ul>
+<li>Internal DNS server resolves <code>erp.company.local</code> (or chosen hostname) to the app server&#39;s private IP</li>
+<li>No A/CNAME records exist in any public DNS — the app is invisible to the outside world</li>
+<li>Mobile devices use VPN&#39;s DNS resolver — resolves internal hostnames only when connected</li>
+</ul>
+<p><strong>Network diagram with full lockdown:</strong></p>
+<pre><code>┌───────────────────────────────────────────────────────────┐
+│  PRIVATE NETWORK (Zero public exposure)                   │
+│                                                           │
+│   ┌──────────────┐     ┌──────────────┐  ┌────────────┐ │
+│   │  App Server   │────→│  PostgreSQL  │  │ Internal   │ │
+│   │  (no public   │     │  (no public  │  │ DNS Server │ │
+│   │   IP/DNS)     │     │   exposure)  │  │ *.local    │ │
+│   └──────┬───────┘     └──────────────┘  └────────────┘ │
+│          │                                                │
+│   Desktop users (on LAN) ← direct access                 │
+│                                                           │
+│   ┌──────────────┐                                       │
+│   │  VPN Server   │ ← Only inbound entry point           │
+│   │  (WireGuard/  │                                      │
+│   │   OpenVPN)    │                                      │
+│   └──────┬───────┘                                       │
+│          │                                                │
+└──────────┼────────────────────────────────────────────────┘
+           │ (encrypted tunnel)
+    ┌──────┴───────┐
+    │  Mobile      │  VPN auto-connect
+    │  Devices     │  Device cert + PIN
+    │  (Field)     │  Internal DNS via VPN
+    └──────────────┘
+</code></pre>
+<p><strong>Trade-offs:</strong></p>
+<ul>
+<li><strong>Pro:</strong> Maximum security — app is invisible to the internet, zero attack surface</li>
+<li><strong>Con:</strong> VPN adds setup complexity, slight latency for mobile users, VPN server is an extra component to maintain</li>
+<li><strong>Con:</strong> External services (AI, payments, notifications) still need outbound internet — server must have outbound access while blocking all inbound</li>
+</ul>
+<blockquote>
+<p>This is a <strong>priced optional module</strong> — the default build uses IP allowlist + device registration (already very secure). Full VPN lockdown is for clients who want enterprise-grade network isolation.</p>
+</blockquote>
+<hr>
+<p>⬜ Stakeholder questions:</p>
+<ul>
+<li><strong>[Q35]</strong> Do users need remote access from outside the office network? If yes — SSO + MFA, VPN, or both? (Affects pricing)</li>
+<li><strong>[Q36]</strong> Are the Android handhelds company-managed (MDM like Intune) or just handed out as-is? MDM would add device-level security</li>
+</ul>
+<hr>
+<p><em>Document last updated: Session 2 — February 25, 2026 | v1.0 — Architecture complete</em></p>
+
+</body>
+</html>

@@ -20,6 +20,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   ChevronRight, ChevronLeft, AlertTriangle, Package, Trash2,
   Check, Plus, Minus, Scissors, Grid3X3, Search, GitBranch, MapPin,
+  MoreVertical, Printer, Mail,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useCart, CART_ACTIONS } from '../context/CartContext';
@@ -27,6 +28,8 @@ import PageHeader from '../components/PageHeader';
 import ProductModal from '../components/ProductModal';
 import StatusBadge from '../components/StatusBadge';
 import ConfirmDialog from '../components/ConfirmDialog';
+import OrderReceipt from '../components/OrderReceipt';
+import SendMessageModal from '../components/SendMessageModal';
 import styles from '../styles/ReturnOrder.module.css';
 import { RETURN_REASONS, DAMAGE_TYPES } from '../data/mockData';
 import { formatCurrency, formatDate } from '../utils/format';
@@ -73,6 +76,14 @@ class ReturnOrder extends React.Component {
     this._loadInitialData();
   }
 
+  componentDidUpdate(prevProps) {
+    // WHY: React Router reuses same component when navigating /returns/new → /returns/:id.
+    //   componentDidMount won't re-fire, so we detect the prop change here.
+    if (prevProps.returnId !== this.props.returnId) {
+      this._loadInitialData();
+    }
+  }
+
   _loadInitialData() {
     const { storage, queryFromOrderId, returnId, cartDispatch } = this.props;
     const customers = storage.getCustomers().sort((a, b) => a.name.localeCompare(b.name));
@@ -82,28 +93,12 @@ class ReturnOrder extends React.Component {
     this.setState({ customers, customersById, categories });
 
     // MODE: View existing return
+    // WHY: View mode only reads the saved return — does NOT reload the cart.
+    //   Loading into cart here would refill a just-cleared cart after submit.
     if (returnId) {
       const ret = storage.getReturn(Number(returnId));
       if (ret) {
         this.setState({ existingReturn: ret });
-        // Load into cart for consistency
-        const customer = storage.getCustomer(ret.customerId);
-        cartDispatch({
-          type: CART_ACTIONS.LOAD_CART,
-          payload: {
-            customerId: ret.customerId,
-            customerName: customer ? customer.name : '',
-            lineItems: ret.lineItems.map(li => ({ ...li })),
-            notes: ret.notes || '',
-            isReturn: true,
-            returnFromOrderId: ret.originalOrderId,
-            returnFromOrderNumber: ret.originalOrderId
-              ? storage.getOrder(ret.originalOrderId)?.orderNumber
-              : null,
-            returnReason: ret.returnReason,
-          },
-        });
-        cartDispatch({ type: CART_ACTIONS.SET_RETURN_MODE, payload: { isReturn: true, returnFromOrderId: ret.originalOrderId } });
       }
       return;
     }
@@ -111,6 +106,13 @@ class ReturnOrder extends React.Component {
     // MODE: Create return from existing delivered order
     if (queryFromOrderId) {
       const order = storage.getOrder(Number(queryFromOrderId));
+      // Block returning same order twice
+      const existingReturns = storage.getReturnsForOrder(Number(queryFromOrderId));
+      if (existingReturns.length > 0) {
+        this.props.showToast('A return already exists for this order', 'error');
+        this.props.navigate('/orders', { replace: true });
+        return;
+      }
       if (order && order.status === 'Delivered') {
         const customer = storage.getCustomer(order.customerId);
         // Load order items into cart as return
@@ -324,7 +326,9 @@ class ReturnOrder extends React.Component {
 
     cartDispatch({ type: CART_ACTIONS.CLEAR_CART });
     showToast(`Return ${ret.returnNumber} created!`);
-    navigate(`/returns/${ret.id}`);
+    // WHY: replace:true so back button from the return view goes to orders,
+    //   not back to the wizard.
+    navigate(`/returns/${ret.id}`, { replace: true });
   };
 
   // ─── Process Return (view mode) ───────────────────────────
@@ -734,13 +738,15 @@ class ReturnOrder extends React.Component {
   }
 
   _renderViewMode() {
-    const { navigate, storage } = this.props;
-    const { existingReturn } = this.state;
+    const { navigate, storage, showToast } = this.props;
+    const { existingReturn, showProcessConfirm } = this.state;
+    // [MOD #view-rework] showMenu and showEmailModal added for OrderDetail-style actions
+    const { showMenu = false, showEmailModal = false } = this.state;
 
     if (!existingReturn) {
       return (
         <div className="page">
-          <PageHeader title="Return" showBack onBack={() => navigate(-1)} />
+          <PageHeader title="Return" showBack onBack={() => navigate('/orders')} />
           <p style={{ padding: 16, textAlign: 'center' }}>Return not found</p>
         </div>
       );
@@ -750,151 +756,199 @@ class ReturnOrder extends React.Component {
     const originalOrder = existingReturn.originalOrderId
       ? storage.getOrder(existingReturn.originalOrderId)
       : null;
-    const damagedCount = existingReturn.lineItems.filter(li => li.isDamaged).length;
     const reason = RETURN_REASONS.find(r => r.id === existingReturn.returnReason);
+    const isPending = existingReturn.status === 'Pending';
+
+    // Find linked invoice
+    const invoice = existingReturn.originalOrderId
+      ? storage.getInvoices().find(i => i.orderId === existingReturn.originalOrderId)
+      : null;
+    // Determine mode: credit (paid invoice / no invoice) vs invoice adjustment (unpaid)
+    const isInvoiceAdjustment = existingReturn.invoiceAdjusted === true;
+    const isCreditMode = existingReturn.creditApplied === true;
+
+    // Status timeline — mirrors OrderDetail pattern but for return statuses
+    const RETURN_STEPS = ['Pending', 'Processed'];
+    const statusIdx = RETURN_STEPS.indexOf(existingReturn.status);
+
+    // Totals shape expected by OrderReceipt
+    const totals = {
+      subtotal:      existingReturn.subtotal,
+      depositTotal:  existingReturn.depositTotal,
+      discountTotal: existingReturn.discountTotal || 0,
+      grandTotal:    existingReturn.grandTotal,
+      totalCases:    existingReturn.totalCases,
+    };
+
+    // afterTotals: credit receipt or invoice adjustment block — only shown once processed
+    let afterTotals = null;
+    if (isInvoiceAdjustment && invoice) {
+      afterTotals = (
+        <div className={styles.creditReceiptBlock}>
+          <div className={styles.creditReceiptHeader}>
+            <Check size={16} />
+            Invoice Adjusted
+          </div>
+          <div className={styles.creditReceiptRow}>
+            <span>Invoice</span>
+            <span style={{ cursor: 'pointer', color: '#1a73e8' }}
+              onClick={() => navigate(`/invoices/${invoice.id}`)}
+            >{invoice.invoiceNumber}</span>
+          </div>
+          <div className={styles.creditReceiptRow}>
+            <span>Amount Reduced</span>
+            <span className={styles.creditReceiptAmt}>-{formatCurrency(existingReturn.grandTotal)}</span>
+          </div>
+          {existingReturn.processedDate && (
+            <div className={styles.creditReceiptRow}>
+              <span>Date</span>
+              <span>{formatDate(existingReturn.processedDate)}</span>
+            </div>
+          )}
+        </div>
+      );
+    } else if (isCreditMode) {
+      afterTotals = (
+        <div className={styles.creditReceiptBlock}>
+          <div className={styles.creditReceiptHeader}>
+            <Check size={16} />
+            Credit Receipt
+          </div>
+          <div className={styles.creditReceiptRow}>
+            <span>Credit Applied</span>
+            <span className={styles.creditReceiptAmt}>{formatCurrency(existingReturn.grandTotal)}</span>
+          </div>
+          <div className={styles.creditReceiptRow}>
+            <span>Applied to</span>
+            <span>{customer?.name}</span>
+          </div>
+          {invoice && (
+            <div className={styles.creditReceiptRow}>
+              <span>Invoice</span>
+              <span style={{ cursor: 'pointer', color: '#1a73e8' }}
+                onClick={() => navigate(`/invoices/${invoice.id}`)}
+              >{invoice.invoiceNumber}</span>
+            </div>
+          )}
+          {existingReturn.processedDate && (
+            <div className={styles.creditReceiptRow}>
+              <span>Date</span>
+              <span>{formatDate(existingReturn.processedDate)}</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Subheader shown under order number — original order ref, invoice ref + return reason
+    const subInfo = [
+      originalOrder ? `From ${originalOrder.orderNumber}` : null,
+      invoice ? `Invoice ${invoice.invoiceNumber}` : null,
+      reason ? `${reason.icon} ${reason.label}` : null,
+    ].filter(Boolean).join('  ·  ');
 
     return (
       <div className="page">
         <PageHeader
           title={existingReturn.returnNumber}
           showBack
-          onBack={() => navigate(-1)}
+          onBack={() => navigate('/orders')}
+          rightContent={
+            <div style={{ position: 'relative' }}>
+              <button
+                className={styles.menuBtn}
+                onClick={() => this.setState({ showMenu: !showMenu })}
+              >
+                <MoreVertical size={22} />
+              </button>
+              {showMenu && (
+                <div className={styles.menu}>
+                  <button onClick={() => { this.setState({ showMenu: false }); window.print(); }}>
+                    <Printer size={16} /> Print
+                  </button>
+                  <button onClick={() => this.setState({ showMenu: false, showEmailModal: true })}>
+                    <Mail size={16} /> Send Email
+                  </button>
+                </div>
+              )}
+            </div>
+          }
         />
 
         <div className={styles.content}>
-          {/* Status banner */}
-          <div className={`${styles.statusBanner} ${styles[`status${existingReturn.status}`]}`}>
-            <StatusBadge status={existingReturn.status} />
-            {existingReturn.status === 'Processed' && existingReturn.creditApplied && (
-              <span className={styles.creditAppliedBadge}>✓ Credit Applied</span>
-            )}
-          </div>
-
-          {/* Customer + Original Order */}
-          <div className={styles.detailCard}>
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Customer</span>
-              <span
-                className={styles.detailValue}
-                onClick={() => navigate(`/customers/${customer?.id}`)}
-                style={{ cursor: 'pointer', color: 'var(--primary-color)' }}
-              >
-                {customer?.name || 'Unknown'}
-              </span>
-            </div>
-            {originalOrder && (
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Original Order</span>
-                <span
-                  className={styles.detailValue}
-                  onClick={() => navigate(`/orders/${originalOrder.id}`)}
-                  style={{ cursor: 'pointer', color: 'var(--primary-color)' }}
-                >
-                  {originalOrder.orderNumber}
-                </span>
-              </div>
-            )}
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Reason</span>
-              <span className={styles.detailValue}>
-                {reason?.icon} {reason?.label || existingReturn.returnReason}
-              </span>
-            </div>
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>Created</span>
-              <span className={styles.detailValue}>
-                {formatDate(existingReturn.createdDate)}
-              </span>
-            </div>
-            {existingReturn.processedDate && (
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Processed</span>
-                <span className={styles.detailValue}>
-                  {formatDate(existingReturn.processedDate)}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Line items */}
-          <div className={styles.detailCard}>
-            <h3 className={styles.cardTitle}>
-              Items ({existingReturn.totalCases} cases)
-              {damagedCount > 0 && (
-                <span className={styles.damagedCountBadge}>{damagedCount} damaged</span>
-              )}
-            </h3>
-            <div className={styles.lineItemsList}>
-              {existingReturn.lineItems.map((item, idx) => (
-                <div
-                  key={idx}
-                  className={`${styles.reviewLine} ${item.isDamaged ? styles.reviewLineDamaged : ''}`}
-                >
-                  <div className={styles.lineMain}>
-                    <span className={styles.lineQty}>{item.quantity}x</span>
-                    <span className={styles.lineName}>{item.productName}</span>
-                    <span className={styles.linePrice}>
-                      {formatCurrency(item.lineTotal + item.depositTotal)}
-                    </span>
-                  </div>
-                  {item.isDamaged && (
-                    <div className={styles.lineDamageNote}>
-                      💔 {DAMAGE_TYPES.find(d => d.id === item.damageType)?.label || 'Damaged'}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Totals */}
-          <div className={styles.detailCard}>
-            <div className={styles.totalsGrid}>
-              <div className={styles.totalRow}>
-                <span>Subtotal</span>
-                <span>{formatCurrency(existingReturn.subtotal)}</span>
-              </div>
-              <div className={styles.totalRow}>
-                <span>Deposit</span>
-                <span>{formatCurrency(existingReturn.depositTotal)}</span>
-              </div>
-              <div className={`${styles.totalRow} ${styles.totalRowGrand}`}>
-                <span>Credit Amount</span>
-                <span className={styles.creditAmount}>
-                  {formatCurrency(existingReturn.grandTotal)}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Notes */}
-          {existingReturn.notes && (
-            <div className={styles.detailCard}>
-              <h3 className={styles.cardTitle}>Notes</h3>
-              <p className={styles.notesText}>{existingReturn.notes}</p>
-            </div>
+          {/* Ref + reason line */}
+          {subInfo && (
+            <p className={styles.returnSubInfo}>{subInfo}</p>
           )}
 
-          {/* Process button */}
-          {existingReturn.status === 'Pending' && (
+          {/* Status timeline — same pattern as OrderDetail */}
+          <div className={styles.timeline}>
+            {RETURN_STEPS.map((step, i) => (
+              <div
+                key={step}
+                className={`${styles.timelineStep} ${i <= statusIdx ? styles.timelineActive : ''}`}
+              >
+                <div className={styles.timelineDot} />
+                <span>{step}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Process button — mirrors OrderDetail's advance-status button */}
+          {isPending && (
             <button
               className={styles.processBtn}
               onClick={() => this.setState({ showProcessConfirm: true })}
             >
-              <Check size={18} />
-              Process Return & Apply Credit
+              <Check size={16} />
+              {invoice && invoice.status !== 'Paid'
+                ? 'Process Return & Adjust Invoice'
+                : 'Process Return & Apply Credit'}
             </button>
           )}
+
+          {/* OrderReceipt — same component as OrderDetail, read-only */}
+          <OrderReceipt
+            editable={false}
+            customer={customer}
+            lineItems={existingReturn.lineItems}
+            totals={totals}
+            orderNumber={existingReturn.returnNumber}
+            statusBadge={<StatusBadge status={existingReturn.status} />}
+            createdDate={existingReturn.createdDate}
+            notes={existingReturn.notes}
+            onCustomerClick={() => navigate(`/customers/${customer?.id}`)}
+            afterTotals={afterTotals}
+            hidePayment={true}
+            returnMode={true}
+          />
         </div>
 
         {/* Process confirm dialog */}
-        {this.state.showProcessConfirm && (
+        {showProcessConfirm && (
           <ConfirmDialog
             title="Process Return?"
-            message={`This will credit ${formatCurrency(existingReturn.grandTotal)} to ${customer?.name}'s account. This cannot be undone.`}
+            message={
+              invoice && invoice.status !== 'Paid'
+                ? `This will reduce invoice ${invoice.invoiceNumber} by ${formatCurrency(existingReturn.grandTotal)}. This cannot be undone.`
+                : `This will credit ${formatCurrency(existingReturn.grandTotal)} to ${customer?.name}'s account. This cannot be undone.`
+            }
             confirmLabel="Process Return"
             onConfirm={this.handleProcessReturn}
             onCancel={() => this.setState({ showProcessConfirm: false })}
+          />
+        )}
+
+        {/* Email modal */}
+        {showEmailModal && customer && (
+          <SendMessageModal
+            recipientEmail={customer.email}
+            subject={`Return ${existingReturn.returnNumber} — ${customer.name}`}
+            body={`Dear ${customer.contact || customer.name},\n\nPlease find details for return ${existingReturn.returnNumber}.\nCredit Amount: ${formatCurrency(existingReturn.grandTotal)}\nStatus: ${existingReturn.status}\n\nThank you.`}
+            attachmentType="return"
+            attachmentData={{ returnOrder: existingReturn, customer }}
+            onClose={() => this.setState({ showEmailModal: false })}
+            onSent={() => showToast('Email opened')}
           />
         )}
       </div>

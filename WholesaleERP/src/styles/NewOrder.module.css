@@ -198,17 +198,22 @@
   display: none;
 }
 
+/* [MOD #catOverflow] Removed white-space: nowrap — long category names like
+   "Flavored Seltzer" or "Syrup Containers" overflowed the card boundary.
+   WHY: Fixed width with centered wrap keeps cards uniform in the scroll row. */
 .categoryCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-sm) var(--space-md);
+  justify-content: center;
+  padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   background: var(--bg-card);
   cursor: pointer;
-  white-space: nowrap;
-  min-width: 72px;
+  width: 76px;
+  min-width: 76px;
+  text-align: center;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -223,8 +228,11 @@
 }
 
 .catName {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-secondary);
+  line-height: 1.2;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .categoryActive .catName {
@@ -268,6 +276,12 @@
 .productMeta {
   font-size: 0.8125rem;
   color: var(--text-secondary);
+}
+
+/* [MOD #unitPrice] Per-bottle price — smaller than meta, muted color */
+.productUnitPrice {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
 }
 
 .stockWarning {

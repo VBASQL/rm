@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stakeholder Questions</title>
+  <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    padding: 28mm 22mm 28mm 22mm;
+    max-width: 100%;
+  }
+  h1 { font-size: 20pt; margin: 0 0 6px 0; color: #0d1b2a; border-bottom: 2px solid #0d1b2a; padding-bottom: 6px; }
+  h2 { font-size: 15pt; margin: 28px 0 10px 0; color: #0d1b2a; border-bottom: 1px solid #c0c8d0; padding-bottom: 4px; }
+  h3 { font-size: 12pt; margin: 18px 0 6px 0; color: #1a3a5c; }
+  h4 { font-size: 11pt; margin: 14px 0 4px 0; color: #1a3a5c; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0 8px 22px; }
+  li { margin: 3px 0; }
+  a { color: #1a6bb5; text-decoration: underline; }
+  a:hover { color: #0e4780; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 10pt; }
+  th { background: #0d1b2a; color: #fff; padding: 7px 10px; text-align: left; }
+  td { padding: 6px 10px; border-bottom: 1px solid #dde3ea; }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  code { background: #f0f0f0; padding: 2px 5px; border-radius: 3px; font-family: Consolas, monospace; font-size: 9.5pt; }
+  pre { background: #f7f7f7; border: 1px solid #ddd; border-radius: 5px; padding: 12px 16px; margin: 12px 0; overflow-x: auto; }
+  pre code { background: none; padding: 0; font-size: 9pt; }
+  blockquote { border-left: 4px solid #1a6bb5; margin: 12px 0; padding: 6px 14px; background: #f0f5fb; color: #2a4a6a; border-radius: 0 4px 4px 0; }
+  hr { border: none; border-top: 1px solid #c0c8d0; margin: 20px 0; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  @media print {
+    body { padding: 0; }
+    a { color: #1a6bb5; }
+    h2 { page-break-before: auto; }
+    tr { page-break-inside: avoid; }
+    pre { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<h1>Stakeholder Interview — Question List</h1>
+<h3>Wholesale ERP / Order-to-Cash Platform</h3>
+<p><strong>Updated: February 26, 2026 — Post-Meeting Answers</strong></p>
+<blockquote>
+<p><strong>Meeting held February 25, 2026.</strong> Most questions answered. Remaining items noted below.</p>
+</blockquote>
+<hr>
+<h2>1 — Inventory &amp; Manufacturing Model ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q1a]</strong> <strong>Stock-based for now.</strong> Inventory managed via manual updates or spreadsheet imports. Dynamic rules allow over-ordering on certain products or categories.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q1b]</strong> Salespeople see stock levels. <strong>Warning on out-of-stock — salesperson can override</strong> and place the order anyway. Not a hard block.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q1c]</strong> No manufacturing integration needed at this time. Standalone system.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q8]</strong> Duplicating a past order — inventory check applies (same warning, can override).</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q27]</strong> Out of stock between order and picking — <strong>warehouse decides</strong> (partial pick allowed via policy settings). Salesperson already warned at order time.</li>
+</ul>
+<hr>
+<h2>2 — Product Codes &amp; Integration ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q7a]</strong> <strong>5-digit code</strong> (not 6). Auto-generated when product is first added. Standalone — no mapping to external departments. Structured hierarchy preferred: code should encode category → subcategory → type → flavor where practical.</li>
+</ul>
+<hr>
+<h2>3 — Customer Accounts &amp; Credit ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q2]</strong> <strong>1-3 admins</strong> control the admin panel. Small team.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q3]</strong> <strong>All new customers default to $0 credit / pay-on-order.</strong> Even salespeople can add these. To upgrade to credit customer → must be reviewed and approved by accounting and/or owner.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q20]</strong> Two starting tiers: <strong>Pay-First</strong> (default for new customers) and <strong>Credit</strong> (approved customers with set limits/terms). Credit scoring system requested as <strong>OPTIONAL feature</strong> — accounting sets policies for auto credit rating based on usage and payments, auto-block, flag for lowering, assist credit reviews.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q34]</strong> <strong>Yes — customer tags/types</strong> used for pricing and grouping. Part of the dynamic price level system (type, area, zip, custom groups all affect pricing).</li>
+</ul>
+<hr>
+<h2>4 — Pricing, Deposits &amp; Tax ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q9]</strong> CRV <strong>per case</strong>. Separate line on invoices. Varies by product (set per product/variant in catalog).</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q10]</strong> <strong>Dynamic, unlimited price levels.</strong> Can be assigned by: individual customer, customer type, area, zip code, custom group, product, product category, or any combination. Not just &quot;standard minus discount.&quot;</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q11]</strong> <strong>No automatic promotions</strong> or volume deals at this time.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q12]</strong> <strong>No sales tax.</strong> Wholesale only. CRV is separate and not taxed.</li>
+</ul>
+<hr>
+<h2>5 — Returns &amp; Credits ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q19a]</strong> <strong>Yes, product returns happen.</strong> Credit is applied to the customer&#39;s account (credit memo). Details of approval workflow TBD but accounting manages.</li>
+</ul>
+<hr>
+<h2>6 — Order Modifications &amp; Cancellations ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q28/29]</strong> <strong>Modifications allowed until picked.</strong> Configurable rules per salesperson, per customer type, etc. After picking → treated as a return. <strong>Invoice is only created on actual delivery</strong> — not at order time.</li>
+</ul>
+<hr>
+<h2>7 — Invoicing &amp; Accounting Workflow ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q32]</strong> <strong>Separate records.</strong> Order = what was requested. Invoice = generated from delivered quantities.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q33]</strong> <strong>No AI review needed.</strong> System should flag price differences between standard/assigned price level and actual invoice prices — per invoice and per product. Regular rules-based flagging, not AI.</li>
+</ul>
+<hr>
+<h2>8 — Data Migration ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q5]</strong> <strong>Custom legacy system</strong> — the one being replaced. Data migration required.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q18]</strong> Data is in the legacy system. Will need export/import. <strong>Custom invoice and statement templates</strong> are critical — must be assignable per customer.</li>
+</ul>
+<hr>
+<h2>9 — Onboarding ✅ ANSWERED</h2>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q26]</strong> Admin sets up accounts. No in-app wizard needed.</li>
+<li><input checked="" disabled="" type="checkbox"> <strong>[Q30]</strong> <strong>No special documents.</strong> New customers default to pay-first ($0 credit). Credit upgrade requires accounting approval.</li>
+</ul>
+<hr>
+<h2>10 — Security &amp; Access ⚠️ PARTIALLY ANSWERED</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <strong>[Q35]</strong> <strong>Currently RDP only.</strong> Need to discuss server specs and remote access with IT. <strong>PENDING — requires IT conversation.</strong></li>
+<li><input disabled="" type="checkbox"> <strong>[Q36]</strong> <strong>PENDING</strong> — will be discussed with IT.</li>
+</ul>
+<hr>
+<h2>Additional Insights from Meeting</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Invoice/Statement Templates</strong></td>
+<td>Critical requirement — customizable templates assignable per customer</td>
+</tr>
+<tr>
+<td><strong>Voice Ordering</strong></td>
+<td>Moved to <strong>OPTIONAL</strong>. Includes uploading recordings/voice notes, not just live speech</td>
+</tr>
+<tr>
+<td><strong>AI Pick Sheet OCR</strong></td>
+<td>Moved to <strong>OPTIONAL</strong></td>
+</tr>
+<tr>
+<td><strong>AI Invoice Review</strong></td>
+<td><strong>Removed.</strong> Replaced with rules-based price difference flagging (not AI)</td>
+</tr>
+<tr>
+<td><strong>Credit Scoring System</strong></td>
+<td><strong>New OPTIONAL feature</strong> — auto credit rating, auto-block, flag for lowering, assist reviews</td>
+</tr>
+<tr>
+<td><strong>Printers</strong></td>
+<td>Standard Bluetooth printers, system supports unlimited devices</td>
+</tr>
+<tr>
+<td><strong>Sales Tax</strong></td>
+<td>None. Wholesale only. CRV is separate and not taxed</td>
+</tr>
+<tr>
+<td><strong>5-Digit Codes</strong></td>
+<td>Changed from 6-digit to 5-digit, auto-generated with structured hierarchy</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>⚠️ Still Pending (Requires IT Meeting)</h2>
+<ul>
+<li>Server specifications and current hardware</li>
+<li>Remote access requirements (VPN/SSO/MFA)</li>
+<li>Android device management approach (MDM or not)</li>
+</ul>
+<hr>
+<p><em>Answers documented February 26, 2026. Living Document updated accordingly.</em></p>
+
+</body>
+</html>

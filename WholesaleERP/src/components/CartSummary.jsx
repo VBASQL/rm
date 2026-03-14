@@ -74,7 +74,13 @@ class CartSummary extends React.Component {
     if (lineItems.length === 0) return null;
 
     return (
-      <div className={styles.container}>
+      <>
+        {/* [MOD #cartBlock] Backdrop when expanded — prevents cart from silently
+            blocking product list / category dropdown behind it. */}
+        {expanded && (
+          <div className={styles.backdrop} onClick={this.toggleExpand} />
+        )}
+        <div className={styles.container}>
         {/* Expanded view — editable line items */}
         {expanded && (
           <div className={styles.expanded}>
@@ -90,7 +96,9 @@ class CartSummary extends React.Component {
                   <div className={styles.itemInfo}>
                     <span className={styles.itemName}>{item.productName}</span>
                     <span className={styles.itemQty}>
-                      ${item.casePrice.toFixed(2)}/cs · ${item.lineTotal.toFixed(2)}
+                      ${item.casePrice.toFixed(2)}/cs
+                      {item.unitPrice != null && <> · ${item.unitPrice.toFixed(2)}/ea</>}
+                      {' '}· ${item.lineTotal.toFixed(2)}
                     </span>
                   </div>
                   {/* [MOD #002] Inline qty controls */}
@@ -138,6 +146,7 @@ class CartSummary extends React.Component {
           Review Order →
         </button>
       </div>
+      </>
     );
   }
 }

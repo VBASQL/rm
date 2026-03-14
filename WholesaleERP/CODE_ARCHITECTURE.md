@@ -202,6 +202,45 @@ Customer ──── 1:N ──── CustomerLocation
 
 ---
 
+#### #007 — [2026-03-15] Category overflow, cart blocking fix, unit price everywhere
+
+- **PROBLEM:** (1) Category name cards in the order catalog used `white-space: nowrap` — longer names like "Flavored Seltzer" or "Syrup Containers" overflowed their boxes. (2) When the cart summary was expanded (40vh), it covered the entire product list and category row with no way to dismiss short of collapsing manually. (3) No per-unit (per-bottle) price shown anywhere — only case price. Salesperson couldn't quickly reference individual bottle cost. (4) InvoiceDetail used wrong field names (`sku` instead of `productCode`, `unitPrice` instead of `casePrice`, `deposit` instead of `depositPerCase`) — line items rendered with $0.00 prices.
+
+- **FIX:**
+  - **Category cards:** Removed `white-space: nowrap`, added fixed `width: 76px` + `text-align: center` + `word-break: break-word` so names wrap neatly inside uniform boxes.
+  - **Cart blocking:** Added semi-transparent `.backdrop` overlay behind the expanded CartSummary. Tapping the backdrop closes the cart. Backdrop z-index just below the cart so product list is fully visible when cart is collapsed.
+  - **Unit price — ProductModal:** Added `unitPrice` (= `casePrice / unitsPerCase`) to the lineItem payload created by `handleAdd()`. Shows `$X.XX/ea` beneath size/packSize in the modal.
+  - **Unit price — Catalog rows:** Added small `$X.XX/ea` line beneath the case-price meta text in each product row.
+  - **Unit price — CartSummary:** Shows `$X.XX/ea` in expanded cart item detail lines.
+  - **Unit price — OrderReceipt:** Shows `$X.XX/ea` below the case price in both editable and read-only item rows.
+  - **Unit price — InvoiceDetail:** Fixed field name mapping (supports both old and new lineItem shapes). Shows unit price beneath case price.
+  - **Seed data:** Added `unitPrice` to every lineItem in ORDERS (4), INVOICES (6), RETURNS (2). Bumped `SEED_VERSION` to `'v6'`.
+
+- **FILES:** `NewOrder.module.css`, `CartSummary.jsx`, `CartSummary.module.css`, `ProductModal.jsx`, `NewOrder.jsx`, `OrderReceipt.jsx`, `OrderReceipt.module.css`, `InvoiceDetail.jsx`, `InvoiceDetail.module.css`, `mockData.js`
+
+- **REVERT RISK:** LOW — visual and data additions only. Reverting removes unit price display and backdrop; no logic depends on `unitPrice` field for calculations (lineTotal still computed from casePrice × qty).
+
+---
+
+#### #006 — [2026-03-15] Real product catalog from business CSV — 19 categories, 122 products
+
+- **PROBLEM:** Product catalog was entirely placeholder data (8 generic categories, 24 fake products). Needed real business catalog from CSV. Spelling errors throughout the CSV needed correction. Data model must support future server-sourced catalog that changes often.
+
+- **FIX:**
+  - Replaced all 8 placeholder categories with 19 real business categories (28oz Glass, 1 Liter Seltzer, 1 Liter Flavor, 2 Liter Flavor, Flavored Seltzer, Cans 12 Pack, Cans 24 Pack, 16.9oz Vichy, 16.9oz Flavor, Spring Water, Ice Tea & Drinks, Clear Flavor, Syrup Gallons, Syrup Containers, Kids Drinks, First Class, 10x Energy, Halo2, Yo Bev).
+  - Replaced all 24 placeholder products with 122 real products parsed from business CSV. Each product has: id, categoryId, code, name, flavor, size, packSize, unitsPerCase, casePrice, depositPerCase — same field shape, ready for future API swap.
+  - Fixed 20+ spelling/consistency errors from CSV: "1 lter"→"1 Liter", "flavored seltzwer"→"Flavored Seltzer", "charry"→"Cherry", "manderin"→"Mandarin", "resbery lime"→"Raspberry Lime", "strawbarry"→"Strawberry", "sprin water"→"Spring Water", "vichy watter"→"Vichy Water", "cola syrup cont."→"Cola Syrup Container", "ginger ail.."→"Ginger Ale Syrup Container", "manderine"→"Mandarin", "srawberry"→"Strawberry", "blubery"→"Blueberry", etc.
+  - Normalized pack-size labels: "12 pc"→"(12PK)", "24 pc"→"(24PK)" for consistent display.
+  - Two categories intentionally empty (Cans 12 Pack, Kids Drinks) — no products in CSV, marked with comments.
+  - Remapped all ORDERS (4), INVOICES (6), RETURNS (2), and FAVORITES (3 customers) to reference new product IDs. Old→New ID mapping: 1→45, 4→21, 6→49, 9→44, 12→55, 15→53, 17→108, 20→68, 22→78.
+  - Bumped `SEED_VERSION` from `'v4'` to `'v5'` — forces full localStorage re-seed on next load.
+
+- **FILES:** `mockData.js`
+
+- **REVERT RISK:** HIGH — every product ID in every order/invoice/return/favorite changed. Reverting requires restoring ALL arrays simultaneously and resetting SEED_VERSION. Partial revert will break cross-references.
+
+---
+
 #### #005 — [2026-03-14] Reports — pre-build options + compact print styles
 
 - **PROBLEM:** Age bucket chips and the "Balance Only / Invoice Breakdown" toggle were in the report phase (after Build). Salesperson had to generate the report before knowing what scope they were generating — confusing for collection calls. Print styles were too padded for production reports (50–200+ customers would waste pages).
@@ -294,4 +333,4 @@ Customer ──── 1:N ──── CustomerLocation
 
 ---
 
-**Last updated:** March 14, 2026 (changelog #005 added)
+**Last updated:** March 15, 2026 (changelog #007 added)
