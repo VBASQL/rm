@@ -61,3 +61,21 @@
   font-weight: 600;
   color: var(--text-primary);
 }
+
+/* [MOD #returns] New Return button in header */
+.returnBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--border-radius);
+  background: #d32f2f;
+  color: white;
+  cursor: pointer;
+}
+
+.returnBtn:active {
+  opacity: 0.85;
+}

@@ -202,6 +202,73 @@ Customer ──── 1:N ──── CustomerLocation
 
 ---
 
+#### #005 — [2026-03-14] Reports — pre-build options + compact print styles
+
+- **PROBLEM:** Age bucket chips and the "Balance Only / Invoice Breakdown" toggle were in the report phase (after Build). Salesperson had to generate the report before knowing what scope they were generating — confusing for collection calls. Print styles were too padded for production reports (50–200+ customers would waste pages).
+
+- **FIX:**
+  - Moved `bucketChips` and `viewToggle` from `_renderReport()` into `_renderSelectionPanel()`, above the Build button, inside two labeled `.preBuildSection` containers.
+  - Build button disabled if no buckets selected (would produce empty report).
+  - In `_renderReport()` the bucket chips are now read-only `<div>` (showing selected buckets + post-build dollar amounts) instead of interactive buttons — options were already set before build.
+  - Completely rewrote `@media print` block: `font-size` reduced to 0.65–0.75rem for most text, all card padding collapsed (4px headers, 2px rows), `.reportRows` gap tightened, box shadows removed, `@page { margin: 10mm }` added for tight margins.
+  - Added `.preBuildSection` and `.preBuildLabel` CSS classes.
+
+- **FILES:** `Reports.jsx`, `Reports.module.css`
+
+- **REVERT RISK:** LOW — changes isolated to selection panel layout and print CSS. Reverting moves bucket/toggle JSX back to report phase.
+
+---
+
+#### #004 — [2026-03-14] Reports complete redesign — single Balance Report
+
+- **PROBLEM:** The three-tab Reports page (Aging / Open Invoices / Customer Balances) showed all data immediately on open. Salesperson needed a way to build a targeted collection report: pick specific customers, pick which aging buckets, and choose how much detail to show. Also: no contact info (phone, email, address) on exports — required for collection calls.
+
+- **FIX:** Completely replaced the three-tab layout with a single **Balance Report** flow:
+  1. **Selection phase (empty start):** Salesperson searches/filters customers by name or type, checks boxes, taps "Build Report". Nothing shown until build.
+  2. **Report phase:** A/R summary card → aging bucket chips (Current / 1–30 / 31–60 / 61–90 / 90+ — tap to toggle) → "Balance Only" / "Invoice Breakdown" toggle → one card per customer (contact info always visible) → Export / Print / Send.
+  3. **Export CSV:** Two formats depending on view mode. Both include: Customer Name, Contact Person, Phone, Email, Address, then bucket columns or invoice rows.
+  4. **Print styles:** Controls hidden, cards break across pages cleanly.
+  - Removed: REPORT_TABS, `_getFilteredInvoices()`, `_getAgingData()`, `_renderAging()`, `_renderOpenInvoices()`, `_renderBalances()`, old `_handleExport()` (tab-based).
+  - Added: `BalanceReport` class (renamed from `Reports`), `_getFilteredCustomers()`, `_buildReport()`, `_getGrandTotals()`, `_renderSelectionPanel()`, `_renderReport()`, new `_handleExport()` (contact-info + two modes).
+
+- **FILES:** `Reports.jsx` (full rewrite), `Reports.module.css` (full rewrite)
+
+- **REVERT RISK:** HIGH — three-tab layout fully removed. Reverting requires restoring all three render methods, REPORT_TABS, old filters, and old CSS. Do not revert without restoring full prior content.
+
+---
+
+#### #002 — [2026-03-13] Shared OrderReceipt component — unified receipt/edit layout
+
+- **PROBLEM:** Receipt layout was duplicated across NewOrder step 3 and OrderDetail. OrderDetail edit mode was bare-bones (qty ±1 only — no price editing, no discount %, no deposits, no totals). discountTotal calculation in handleSaveEdit was wrong: `(li.discount || 0) * li.quantity` treated discount as flat dollar amount instead of percentage.
+
+- **FIX:** Extracted shared `OrderReceipt` class component used by both pages:
+  - **OrderReceipt.jsx** (NEW): Handles editable mode (qty ±, price input with discount cap, discount % input with cap, per-line totals, deposit sub-lines, remove button) and read-only mode (6-col grid). Renders customer header block, line items, totals. Two injection slots: `children` (before totals, for order-level discount) and `afterTotals` (for delivery/notes/save buttons).
+  - **OrderReceipt.module.css** (NEW): Consolidated receipt CSS — editable 7-col grid, read-only 6-col grid, customer block, totals section, deposit lines, discount warning states.
+  - **NewOrder.jsx:** Replaced 5 inline edit handlers (`handleReviewQtyChange`, `handleReviewQtyInput`, `handleReviewPriceChange`, `handleReviewDiscountChange`, `_updateReviewItem`) with single `handleReceiptUpdateItem`. Replaced `_renderStep3` inline JSX with `<OrderReceipt editable>`.
+  - **OrderDetail.jsx:** Replaced `handleEditQty`/`handleRemoveEditItem` with `handleEditUpdateItem`/`handleEditRemoveItem`. Fixed `discountTotal` formula: now `casePrice * quantity * (discount / 100)`. Added `displayItems`/`displayTotals` computed values for edit mode. Replaced inline receipt/edit JSX with `<OrderReceipt>`.
+  - **Dead CSS removed** from NewOrder.module.css (~180 lines: old reviewItem card classes, old invoiceTable/totalSection) and OrderDetail.module.css (~100 lines: old invoiceTable, editRow, statusRow, customerLink).
+
+- **FILES:** OrderReceipt.jsx (NEW), OrderReceipt.module.css (NEW), NewOrder.jsx, NewOrder.module.css, OrderDetail.jsx, OrderDetail.module.css
+
+- **REVERT RISK:** MEDIUM — reverting requires restoring duplicated receipt JSX in both pages, restoring 5 edit handlers in NewOrder, restoring old editRow/invoiceTable in OrderDetail, and re-introducing the discountTotal calculation bug.
+
+---
+
+#### #003 — [2026-03-13] Submit & Pay for orders, mock CC/ACH payment processing
+
+- **PROBLEM:** Prepaid customers had no way to pay for orders upfront. CC/ACH payments were just recorded — no processing flow. Full-credit customers needed forced credit-only option.
+
+- **FIX:**
+  - **PaymentModal:** Added mock payment processing — if customer has `savedPaymentMethods` for CC/ACH, shows processing spinner then success. If no saved method, shows "Send Payment Link" button. Added `orderMode`, `creditOnly`, `onToast` props. Processing states (spinner, checkmark).
+  - **NewOrder:** Added "Submit & Pay" button for prepaid customers (required). Credit customers see both "Pay Now" (optional) and "Submit Order". Payment modal opens with order total, payment recorded against order.
+  - **mockData:** Added `savedPaymentMethods` array to sample customers (Bella Cucina has CC, Grand Hotel has CC + ACH).
+
+- **FILES:** PaymentModal.jsx, PaymentModal.module.css, NewOrder.jsx, NewOrder.module.css, mockData.js
+
+- **REVERT RISK:** LOW — isolated to payment flow. Reverting removes Submit & Pay option but doesn't break other functionality.
+
+---
+
 #### #001 — [2026-03-13] Salesperson frontend feature build — Phase 1
 
 - **PROBLEM:** Initial React SPA had basic page scaffolding but lacked real business logic — no discount caps, no payment credit mode, no editable orders, no status transitions, no filters, no email integration, no prepaid enforcement.
@@ -227,4 +294,4 @@ Customer ──── 1:N ──── CustomerLocation
 
 ---
 
-**Last updated:** March 13, 2026
+**Last updated:** March 14, 2026 (changelog #005 added)

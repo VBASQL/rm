@@ -12,6 +12,14 @@
 //   See BUILD_PLAN.md §5.6.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-14] #returns Added SET_RETURN_MODE, SET_RETURN_REASON, TOGGLE_ITEM_DAMAGE,
+//     SET_ITEM_DAMAGE_TYPE, SPLIT_LINE actions for return order creation workflow.
+//     Added isReturn, returnFromOrderId, returnReason fields to cart state.
+//     Line items now support isDamaged and damageType for return tracking.
+//   [2026-03-14] #branch Added SET_BRANCH action and branchId/branchName/branchAddress
+//     fields to cart state. When a branch location is selected in Step 1, the cart
+//     stores the branch so the order is delivered to the correct address.
+//     SET_CUSTOMER now clears branch state to avoid stale branch from a previous order.
 //   [2026-03-13] #001 Added LOAD_CART (duplicate), REORDER_ITEMS (move up/down),
 //     APPLY_ORDER_DISCOUNT (order-wide discount). Added orderDiscount to state.
 //   [2026-03-12] Initial creation.
@@ -22,6 +30,10 @@ const CartContext = createContext(null);
 
 const CART_ACTIONS = {
   SET_CUSTOMER: 'SET_CUSTOMER',
+  // [MOD #branch] Set the branch location for delivery (keeps parent as customerId).
+  // WHY: Orders are billed to the parent account but delivered to the branch address.
+  //   branchId = null means delivery goes to the main/parent address.
+  SET_BRANCH: 'SET_BRANCH',
   ADD_ITEM: 'ADD_ITEM',
   UPDATE_ITEM: 'UPDATE_ITEM',
   REMOVE_ITEM: 'REMOVE_ITEM',
@@ -33,17 +45,41 @@ const CART_ACTIONS = {
   LOAD_CART: 'LOAD_CART',
   REORDER_ITEMS: 'REORDER_ITEMS',
   APPLY_ORDER_DISCOUNT: 'APPLY_ORDER_DISCOUNT',
+  // [MOD #returns] Return order actions.
+  // WHY: Returns are recorded as credit orders. These actions manage the return
+  // workflow: loading from a delivered order, marking items damaged, splitting lines.
+  SET_RETURN_MODE: 'SET_RETURN_MODE',
+  SET_RETURN_REASON: 'SET_RETURN_REASON',
+  TOGGLE_ITEM_DAMAGE: 'TOGGLE_ITEM_DAMAGE',
+  SET_ITEM_DAMAGE_TYPE: 'SET_ITEM_DAMAGE_TYPE',
+  SPLIT_LINE: 'SPLIT_LINE',
+  MARK_ALL_DAMAGED: 'MARK_ALL_DAMAGED',
 };
 
 const initialCartState = {
   customerId: null,
   customerName: '',
+  // [MOD #branch] Branch delivery location fields.
+  // WHY: null = order delivers to the main customer address.
+  //   When a branch is selected, these hold the branch's id/name/address
+  //   so Step 2 and the submitted order know where to deliver.
+  branchId: null,
+  branchName: '',
+  branchAddress: '',
   lineItems: [],
   deliveryDate: null,
   deliverNow: false,
   notes: '',
   // [MOD #001] Order-wide discount (fixed $ or %)
   orderDiscount: { type: 'percent', value: 0 },
+  // [MOD #returns] Return order fields.
+  // WHY: When isReturn=true, the cart is building a credit return order.
+  //   returnFromOrderId links to the original delivered order (or null for scratch).
+  //   returnReason is a standard reason code from RETURN_REASONS.
+  isReturn: false,
+  returnFromOrderId: null,
+  returnFromOrderNumber: null,
+  returnReason: null,
 };
 
 function cartReducer(state, action) {
@@ -53,6 +89,23 @@ function cartReducer(state, action) {
         ...state,
         customerId: action.payload.id,
         customerName: action.payload.name,
+        // [MOD #branch] Always clear branch when customer changes.
+        // WHY: Previous branch belongs to the old customer — stale branch
+        // on a new customer would send the order to the wrong address.
+        branchId: null,
+        branchName: '',
+        branchAddress: '',
+      };
+
+    // [MOD #branch] SET_BRANCH — store branch delivery location.
+    // WHY: branchId is stored separately from customerId because the
+    // order is billed to the parent account but delivered to the branch.
+    case CART_ACTIONS.SET_BRANCH:
+      return {
+        ...state,
+        branchId: action.payload.id,
+        branchName: action.payload.name,
+        branchAddress: action.payload.address,
       };
 
     case CART_ACTIONS.ADD_ITEM: {
@@ -132,6 +185,97 @@ function cartReducer(state, action) {
     // [MOD #001] Apply order-wide discount (type: 'fixed' or 'percent', value: number).
     case CART_ACTIONS.APPLY_ORDER_DISCOUNT:
       return { ...state, orderDiscount: action.payload };
+
+    // [MOD #returns] Set return mode and link to original order.
+    // WHY: Called when starting a return from an existing delivered order.
+    // payload: { isReturn, returnFromOrderId, returnFromOrderNumber }
+    case CART_ACTIONS.SET_RETURN_MODE:
+      return {
+        ...state,
+        isReturn: action.payload.isReturn,
+        returnFromOrderId: action.payload.returnFromOrderId || null,
+        returnFromOrderNumber: action.payload.returnFromOrderNumber || null,
+      };
+
+    // [MOD #returns] Set return reason code (e.g., 'damaged', 'overstocked').
+    case CART_ACTIONS.SET_RETURN_REASON:
+      return { ...state, returnReason: action.payload };
+
+    // [MOD #returns] Toggle isDamaged flag on a line item.
+    // WHY: Damaged items may receive different credit treatment in reports.
+    case CART_ACTIONS.TOGGLE_ITEM_DAMAGE:
+      return {
+        ...state,
+        lineItems: state.lineItems.map(li =>
+          li.productId === action.payload
+            ? { ...li, isDamaged: !li.isDamaged, damageType: li.isDamaged ? null : li.damageType }
+            : li
+        ),
+      };
+
+    // [MOD #returns] Set damage type for a damaged item.
+    // payload: { productId, damageType }
+    case CART_ACTIONS.SET_ITEM_DAMAGE_TYPE:
+      return {
+        ...state,
+        lineItems: state.lineItems.map(li =>
+          li.productId === action.payload.productId
+            ? { ...li, damageType: action.payload.damageType }
+            : li
+        ),
+      };
+
+    // [MOD #returns] Split a line item into two separate lines.
+    // WHY: When only part of a case lot is damaged, the rep splits the line
+    // so damaged quantity is tracked separately for reporting.
+    // payload: { productId, keepQty, splitQty, splitIsDamaged, splitDamageType }
+    case CART_ACTIONS.SPLIT_LINE: {
+      const { productId, keepQty, splitQty, splitIsDamaged, splitDamageType } = action.payload;
+      const items = [];
+      for (const li of state.lineItems) {
+        if (li.productId === productId) {
+          // WHY: Original line gets keepQty; new split line gets splitQty.
+          // Recalculate lineTotal and depositTotal for both.
+          const keepLine = {
+            ...li,
+            quantity: keepQty,
+            lineTotal: keepQty * li.casePrice,
+            depositTotal: keepQty * li.depositPerCase,
+          };
+          items.push(keepLine);
+          // WHY: Split line needs unique ID suffix for React keys.
+          // Use productId_split to avoid collision with original line.
+          const splitLine = {
+            ...li,
+            productId: `${li.productId}_damaged`,
+            productName: li.productName + ' (DAMAGED)',
+            quantity: splitQty,
+            lineTotal: splitQty * li.casePrice,
+            depositTotal: splitQty * li.depositPerCase,
+            isDamaged: splitIsDamaged,
+            damageType: splitDamageType,
+          };
+          items.push(splitLine);
+        } else {
+          items.push(li);
+        }
+      }
+      return { ...state, lineItems: items };
+    }
+
+    // [MOD #returns] Mark ALL items as damaged with a damage type.
+    // WHY: When entire return is due to a single incident (e.g., truck accident),
+    // salesperson can mark all items damaged in one click.
+    // payload: damageType (string)
+    case CART_ACTIONS.MARK_ALL_DAMAGED:
+      return {
+        ...state,
+        lineItems: state.lineItems.map(li => ({
+          ...li,
+          isDamaged: true,
+          damageType: action.payload,
+        })),
+      };
 
     default:
       return state;

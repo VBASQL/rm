@@ -1,225 +1,306 @@
 /* ============================================================
    FILE: Reports.module.css
-   PURPOSE: Reports page styles — tabs, aging buckets, invoice list, balances.
+   PURPOSE: Balance Report page styles — selection panel, report
+            view, bucket chips, customer cards, contact layout.
    MODIFICATION HISTORY:
+     [2026-03-14] #salesReport Added tab bar + sales report classes:
+       tabBar, tab, tabActive; salesDateRow/Field/Label/Input; radioOpts,
+       radioOpt; salesProductList/Row/Info/Name/Code/CaseBadge/CaseLabel;
+       salesPeriodBar/Label/Cases; salesCustomerCases; emptyNote; emptyPeriod.
+     [2026-03-14] #002 Complete rewrite for single-report redesign.
+       Removed: tab, summaryCard, bucketSection, invoiceList, balanceList,
+       filterPanel, actionBar (old). Replaced with: selectionPanel,
+       customerPickList, reportPanel, grandSummary, bucketChips,
+       viewToggle, customerCard, cardContact, breakdownWrap, balSummary.
      [2026-03-12] Initial creation.
    ============================================================ */
 
+/* ── Page wrapper ─────────────────────────────────────────── */
 .content {
   padding: var(--space-md);
-  padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-xl));
 }
 
-/* Tabs */
-.tabs {
-  display: flex;
-  gap: var(--space-xs);
-  margin-bottom: var(--space-lg);
-  background: var(--bg-card);
-  border-radius: var(--border-radius);
-  padding: 4px;
-  box-shadow: var(--shadow-sm);
-}
+/* ═══════════════════════════════════════════════════════════
+   SELECTION PHASE
+   ═══════════════════════════════════════════════════════════ */
 
-.tab {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: var(--space-sm);
-  border: none;
-  background: none;
-  border-radius: var(--border-radius);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.tabActive {
-  background: var(--color-primary);
-  color: white;
-}
-
-/* Summary card */
-.summaryCard {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-md);
-  background: var(--color-primary);
-  color: white;
-  border-radius: var(--border-radius);
-  margin-bottom: var(--space-lg);
-}
-
-.summaryLabel {
-  font-size: 0.875rem;
-  opacity: 0.9;
-}
-
-.summaryValue {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-/* Aging buckets */
-.bucketSection {
-  margin-bottom: var(--space-md);
-}
-
-.bucketHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--bg-primary);
-  border-radius: var(--border-radius) var(--border-radius) 0 0;
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--text-primary);
-}
-
-.bucketTotal {
-  font-weight: 700;
-}
-
-.bucketList {
-  background: var(--bg-card);
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
-  box-shadow: var(--shadow-sm);
-}
-
-.bucketRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.bucketRow:last-child {
-  border-bottom: none;
-}
-
-.bucketInvNum {
-  font-weight: 500;
-  font-size: 0.8125rem;
-  color: var(--text-primary);
-  margin-right: var(--space-sm);
-}
-
-.bucketCust {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-
-.bucketAmt {
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--text-primary);
-}
-
-/* Open invoices */
-.invoiceList {
+.selectionPanel {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
 }
 
-.invoiceRow {
-  background: var(--bg-card);
-  border-radius: var(--border-radius);
-  padding: var(--space-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.invoiceRowTop {
+.selectionHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
-}
-
-.invoiceNum {
-  font-weight: 600;
-  font-size: 0.9375rem;
-}
-
-.invoiceRowMid {
-  display: flex;
   justify-content: space-between;
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
+  margin-bottom: var(--space-xs);
 }
 
-.invoiceRowBot {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8125rem;
-  color: var(--text-muted);
+.selectionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
-.balanceText {
+.selectionCount {
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--color-danger);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  padding: 2px 8px;
+  border-radius: 99px;
 }
 
-/* Customer balances */
-.balanceList {
+/* Search bar + type dropdown row */
+.selectionFilters {
   display: flex;
-  flex-direction: column;
   gap: var(--space-xs);
 }
 
-.balanceRow {
+.searchWrap {
+  flex: 1;
+  position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: var(--space-md);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 9px 32px 9px 32px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--color-primary);
+}
+
+.clearSearch {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+
+.typeFilter {
+  min-width: 110px;
+  padding: 9px var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.typeFilter:focus {
+  border-color: var(--color-primary);
+}
+
+/* Select-all checkbox row */
+.selectAllRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.selectAllLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Customer pick list */
+.customerPickList {
+  display: flex;
+  flex-direction: column;
   background: var(--bg-card);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.customerPickRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border-color);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
-.balanceRow:active {
+.customerPickRow:last-child {
+  border-bottom: none;
+}
+
+.customerPickRow:active {
   background: var(--bg-primary);
 }
 
-.balanceRow > div {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+.checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
 }
 
-.balanceName {
+.pickRowInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pickRowName {
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.balanceAmt {
+.pickRowMeta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.pickRowBal {
+  font-size: 0.875rem;
   font-weight: 700;
-  font-size: 1rem;
-  color: var(--text-primary);
+  color: var(--color-danger);
+  white-space: nowrap;
 }
 
-.emptyText {
-  text-align: center;
+.pickRowZero {
+  font-size: 0.875rem;
   color: var(--text-muted);
-  padding: var(--space-xl);
 }
 
-/* [MOD #001] Action bar for filter/export/print/send */
-.actionBar {
+.emptyPick {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.emptyHint {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding: var(--space-xs) 0;
+}
+
+/* Pre-build option sections: buckets + view mode above the build button */
+.preBuildSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preBuildLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Build Report button */
+.buildBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-md);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: var(--space-xs);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.buildBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.buildBtn:not(:disabled):active {
+  filter: brightness(0.9);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REPORT PANEL
+   ═══════════════════════════════════════════════════════════ */
+
+.reportPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Controls: back button + action buttons */
+.reportControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.backBtn:active {
+  background: var(--bg-primary);
+}
+
+.reportActions {
   display: flex;
   gap: var(--space-xs);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-md);
 }
+
 .actionBtn {
   display: flex;
   align-items: center;
@@ -227,35 +308,680 @@
   padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  background: var(--bg-primary);
-  font-size: 0.8rem;
-  cursor: pointer;
+  background: var(--bg-card);
+  font-size: 0.8125rem;
   color: var(--text-secondary);
-}
-.actionBtn:active {
-  background: var(--bg-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* [MOD #001] Filter panel */
-.filterPanel {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-md);
+.actionBtn:active {
+  background: var(--bg-primary);
 }
-.filterField {
+
+/* Grand total summary */
+.grandSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-primary);
+  border-radius: var(--border-radius);
+  color: white;
+}
+
+.grandLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.grandSub {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin-top: 2px;
+  display: block;
+}
+
+.grandValue {
+  font-size: 1.625rem;
+  font-weight: 800;
+}
+
+/* ── Bucket filter chips ─────────────────────────────────── */
+/* WHY: Chips are toggleable — off = muted gray, on = bucket color.
+   Salesperson taps to include/exclude an aging bracket from the view. */
+
+.bucketChips {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.chip {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.2;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s;
 }
-.filterField label {
+
+.chipAmt {
+  font-size: 0.65rem;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.chipOff {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Active chip colors */
+.chipCurrent  { background: #dcfce7; color: #166534; }
+.chip1to30    { background: #fef9c3; color: #854d0e; }
+.chip31to60   { background: #ffedd5; color: #9a3412; }
+.chip61to90   { background: #fee2e2; color: #991b1b; }
+.chip90plus   { background: #f3e8ff; color: #6b21a8; }
+
+/* ── View mode toggle ────────────────────────────────────── */
+
+.viewToggle {
+  display: flex;
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius);
+  padding: 3px;
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: var(--space-sm);
+  border: none;
+  background: none;
+  border-radius: calc(var(--border-radius) - 2px);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toggleActive {
+  background: var(--bg-card);
+  color: var(--color-primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Customer cards ──────────────────────────────────────── */
+
+.reportRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.customerCard {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md) var(--space-xs);
+}
+
+.cardHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cardName {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cardMeta {
   font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.cardBalance {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--color-danger);
+  white-space: nowrap;
+}
+
+/* WHY: When credit covers all open invoices the net is $0 — show green
+   so the salesperson knows to apply the credit, not that the account is clear. */
+.cardBalanceClear {
+  color: #2e7d32;
+}
+
+/* Contact info — always shown; important for print & collection */
+.cardContact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px var(--space-md);
+  padding: 0 var(--space-md) var(--space-sm);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.contactLink {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.contactLink:active {
+  opacity: 0.75;
+}
+
+/* Credit offset line — shown when customer has on-account credit */
+/* WHY: Visually separates the credit from bucket rows so the salesperson
+   can see gross A/R vs. what is actually collectible after credits. */
+.creditLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px var(--space-md);
+  background: #f0faf4;
+  border-bottom: 1px solid #c3e6cb;
+}
+
+.creditLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.creditAmt {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+/* ── Invoice breakdown mode ──────────────────────────────── */
+
+.breakdownWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.breakdownBucket {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.breakdownBucket:last-child {
+  border-bottom: none;
+}
+
+/* Colored bar header per bucket */
+.bucketBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px var(--space-md);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.barCurrent  { background: #dcfce7; color: #166534; }
+.bar1to30    { background: #fef9c3; color: #854d0e; }
+.bar31to60   { background: #ffedd5; color: #9a3412; }
+.bar61to90   { background: #fee2e2; color: #991b1b; }
+.bar90plus   { background: #f3e8ff; color: #6b21a8; }
+
+/* Individual invoice row */
+.invRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.invRow:last-child {
+  border-bottom: none;
+}
+
+.invRow:active {
+  background: var(--bg-primary);
+}
+
+.invLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.invNum {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.invDue {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.invRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.invOver {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+  padding: 2px 6px;
+  border-radius: 99px;
+}
+
+.invBal {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── Balance-only mode ───────────────────────────────────── */
+
+.balSummary {
+  display: flex;
+  flex-direction: column;
+}
+
+.balRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.balRow:last-child {
+  border-bottom: none;
+}
+
+.balLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.balAmt {
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+/* No-results state */
+.noResults {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+}
+
+/* ── Print styles ────────────────────────────────────────── */
+/* WHY: Production reports can be 50–200+ customers. Print must be
+   compact — small fonts, tight padding, no decorative shadows/borders.
+   Every pixel saved = fewer pages = faster review during collection calls. */
+@media print {
+  /* Hide all interactive controls — salesperson can't click during print */
+  .reportControls,
+  .bucketChips,
+  .viewToggle,
+  .backBtn,
+  .reportActions,
+  .preBuildSection {
+    display: none !important;
+  }
+
+  /* Tight page layout */
+  .content {
+    padding: 6px !important;
+    padding-bottom: 0 !important;
+  }
+
+  .reportPanel {
+    gap: 4px !important;
+  }
+
+  /* Grand summary: compact */
+  .grandSummary {
+    padding: 6px 10px !important;
+    border-radius: 4px !important;
+    margin-bottom: 4px !important;
+  }
+  .grandLabel { font-size: 0.7rem !important; }
+  .grandSub   { font-size: 0.65rem !important; }
+  .grandValue { font-size: 1rem !important; }
+
+  /* Customer card: never break mid-card, zero decoration */
+  .customerCard {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #d0d0d0 !important;
+    border-radius: 3px !important;
+    margin-bottom: 5px !important;
+  }
+
+  .reportRows {
+    gap: 5px !important;
+  }
+
+  /* Card header: tighter */
+  .cardHeader {
+    padding: 4px 8px 2px !important;
+  }
+  .cardName    { font-size: 0.75rem !important; font-weight: 700 !important; }
+  .cardMeta    { font-size: 0.65rem !important; }
+  .cardBalance { font-size: 0.85rem !important; }
+
+  /* Contact row: single line, compact */
+  .cardContact {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    padding: 2px 8px 3px !important;
+    gap: 4px 10px !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+  }
+  .contactItem,
+  .contactLink {
+    font-size: 0.65rem !important;
+    gap: 2px !important;
+  }
+
+  /* Bucket bar: minimal */
+  .bucketBar {
+    padding: 2px 8px !important;
+    font-size: 0.65rem !important;
+  }
+
+  /* Invoice rows: compact */
+  .invRow {
+    padding: 2px 8px !important;
+    cursor: default !important;
+  }
+  .invNum  { font-size: 0.7rem !important; }
+  .invDue  { font-size: 0.62rem !important; }
+  .invOver { font-size: 0.6rem !important; padding: 1px 4px !important; }
+  .invBal  { font-size: 0.75rem !important; }
+
+  /* Balance-only rows: compact */
+  .balRow   { padding: 2px 8px !important; }
+  .balLabel { font-size: 0.7rem !important; }
+  .balAmt   { font-size: 0.75rem !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TAB BAR — shared by Balance Report and Sales Report
+   [MOD #salesReport] Added for two-report tab navigation.
+   WHY: Both report types live under /reports; tabs let the
+   salesperson switch without navigating away.
+   ═══════════════════════════════════════════════════════════ */
+
+.tabBar {
+  display: flex;
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--border-color);
+  /* WHY: Negative margin so tab bar touches the page header with no gap. */
+  margin: 0 calc(-1 * var(--space-md));
+  padding: 0 var(--space-md);
+}
+
+.tab {
+  flex: 1;
+  padding: var(--space-sm) var(--space-xs);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px; /* align with tabBar bottom border */
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+
+.tabActive {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SALES REPORT — selection panel & report view
+   [MOD #salesReport] New classes for SalesReport component.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Date range row: two fields side by side */
+.salesDateRow {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.salesDateField {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.salesDateLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.salesDateInput {
+  padding: 8px var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  outline: none;
+  width: 100%;
+}
+
+.salesDateInput:focus {
+  border-color: var(--color-primary);
+}
+
+/* Breakdown radio options */
+.radioOpts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+}
+
+.radioOpt {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.radioOpt input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* ── Product list (shared by all three breakdown modes) ───── */
+
+.salesProductList {
+  display: flex;
+  flex-direction: column;
+}
+
+.salesProductRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+  gap: var(--space-sm);
+}
+
+.salesProductRow:last-child {
+  border-bottom: none;
+}
+
+.salesProductInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.salesProductName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.salesProductCode {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.salesCaseBadge {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.salesCaseLabel {
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--text-secondary);
 }
-.filterField:first-child {
-  grid-column: 1 / -1;
+
+/* ── Period header bar (by-date breakdown) ──────────────── */
+
+.salesPeriodBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px var(--space-md);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
+
+.salesPeriodLabel {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.salesPeriodCases {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ── Customer total cases (by-customer breakdown) ────────── */
+
+.salesCustomerCases {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.salesCustomerCasesNum {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.salesCustomerCasesUnit {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Empty state for a single period with no data */
+.emptyPeriod {
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Note above report rows telling user how many empty periods are hidden */
+.emptyNote {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: var(--space-xs) 0;
+}
+
+/* ── Print: hide sales-only interactive elements ─────────── */
+@media print {
+  .tabBar                { display: none !important; }
+  .salesDateRow          { display: none !important; }
+  .radioOpts             { display: none !important; }
+  .salesPeriodBar {
+    background: #f0f0f0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+

@@ -1,0 +1,224 @@
+/* ============================================================
+   FILE: PaymentReceipt.module.css
+   PURPOSE: Styles for PaymentReceipt page — print-friendly receipt layout.
+   MODIFICATION HISTORY:
+     [2026-03-14] Initial creation.
+   ============================================================ */
+
+.content {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-xxl));
+}
+
+/* Header actions (print/email buttons) */
+.headerActions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.iconBtn:hover {
+  background: var(--bg-hover);
+}
+
+/* Receipt header with big amount */
+.receiptHeader {
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  background: linear-gradient(135deg, var(--color-primary), #1a5f2a);
+  color: white;
+  border-radius: var(--border-radius-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.receiptLabel {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin: 0 0 var(--space-xs);
+}
+
+.receiptAmount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.receiptDate {
+  font-size: 0.875rem;
+  opacity: 0.85;
+  margin: var(--space-sm) 0 0;
+}
+
+/* Payment details card */
+.detailCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.detailLabel {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.detailValue {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* Customer card */
+.customerCard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  cursor: pointer;
+}
+
+.customerCard:hover {
+  border-color: var(--color-primary);
+}
+
+.customerIcon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.customerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xxs);
+}
+
+.customerName {
+  font-weight: 600;
+}
+
+.customerAddress {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+/* Applied to section */
+.appliedSection {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.sectionTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 var(--space-sm);
+}
+
+.appliedRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border-color-light);
+  cursor: pointer;
+}
+
+.appliedRow:last-child {
+  border-bottom: none;
+}
+
+.appliedRow:hover {
+  color: var(--color-primary);
+}
+
+.appliedIcon {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.appliedLabel {
+  flex: 1;
+  font-size: 0.875rem;
+}
+
+.appliedAmount {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* Thank you message */
+.thankYou {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: var(--space-lg);
+}
+
+/* ============================================================
+   PRINT STYLES — Clean receipt for printing
+   ============================================================ */
+@media print {
+  .content {
+    padding: 0;
+  }
+
+  .headerActions {
+    display: none;
+  }
+
+  .receiptHeader {
+    background: white !important;
+    color: black !important;
+    border: 2px solid #000;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .customerCard,
+  .detailCard,
+  .appliedSection {
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
+  }
+
+  .customerCard:hover,
+  .appliedRow:hover {
+    color: inherit;
+    border-color: #ccc;
+  }
+}

@@ -183,3 +183,38 @@
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--bg-primary);
 }
+
+/* [MOD #demo-delivery] Delivery day toggle buttons — Mon–Sun */
+.dayToggles {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-xs);
+}
+
+.dayToggle {
+  flex: 1;
+  min-width: 44px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.dayToggleActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--text-inverse);
+  font-weight: 600;
+}
+
+.dayToggleHint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+}

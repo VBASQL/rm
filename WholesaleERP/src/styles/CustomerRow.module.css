@@ -130,3 +130,37 @@
 .newOrderBtn:active {
   background: var(--color-primary-light);
 }
+
+/* ── [MOD #branch] Branch row styles ──────────────────────────── */
+
+/* Purple "Branch" label next to name */
+.branchTag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #f3e5f5;
+  color: #6a1b9a;
+  border-radius: 4px;
+  padding: 1px 6px;
+  flex-shrink: 0;
+}
+
+/* Branch meta block: parent account name + delivery address */
+.branchMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--space-xs);
+}
+
+.branchParent {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.branchAddress {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+

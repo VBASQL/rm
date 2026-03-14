@@ -13,10 +13,13 @@
 //   See BUILD_PLAN.md §9.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #004 shareWithAttachment — Web Share API (real draft+attachment
+//                     on mobile); falls back to download+mailto on desktop.
 //   [2026-03-14] #003 Added attachment generation + download support
 //   [2026-03-13] #002 Added composeEmail() general-purpose method
 //   [2026-03-12] Initial creation — mailto: only.
 // ============================================================
+import { formatDate } from '../utils/format';
 
 class EmailService {
 
@@ -35,6 +38,42 @@ class EmailService {
     }
   }
 
+  // [MOD #004] Mobile-first: opens native OS share sheet with the file already
+  //            attached so the user just picks their email app — real draft + attachment.
+  //            Falls back to download + mailto: on desktop / unsupported browsers.
+  static async shareWithAttachment(to, subject, body, filename, htmlContent) {
+    if (htmlContent && filename && typeof navigator !== 'undefined' && navigator.canShare) {
+      const file = new File([htmlContent], filename, { type: 'text/html' });
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          // Include the recipient in the share text since Web Share API
+          // cannot pre-fill the To: field directly.
+          const shareText = to ? `To: ${to}\n\n${body}` : body;
+          await navigator.share({ files: [file], title: subject, text: shareText });
+          return; // native share sheet handled everything
+        } catch (err) {
+          if (err.name === 'AbortError') return; // user cancelled — do nothing
+          // Any other error: fall through to desktop fallback
+        }
+      }
+    }
+    // Desktop fallback: download file for manual attach + open mailto: draft
+    if (filename && htmlContent) {
+      EmailService.downloadFile(filename, htmlContent, 'text/html');
+    }
+    EmailService.composeEmail(to, subject, body);
+  }
+
+  // [MOD #004] Returns true when the browser supports Web Share with files (mobile)
+  static canUseNativeShare() {
+    if (typeof navigator === 'undefined' || !navigator.canShare) return false;
+    try {
+      return navigator.canShare({ files: [new File(['x'], 'test.html', { type: 'text/html' })] });
+    } catch {
+      return false;
+    }
+  }
+
   // [MOD #003] Download file to device so user can attach it manually
   static downloadFile(filename, content, mimeType = 'text/html') {
     const blob = new Blob([content], { type: `${mimeType};charset=utf-8` });
@@ -48,9 +87,36 @@ class EmailService {
     URL.revokeObjectURL(url);
   }
 
+  // [MOD #receipt] Print a generated document in a new window.
+  // WHY: window.print() prints the app screen, but user wants a clean receipt/invoice.
+  // This opens the generated HTML in a popup and calls print on that window.
+  static printDocument(type, data) {
+    const html = EmailService.generateAttachmentHTML(type, data);
+    if (!html) return;
+    const printWin = window.open('', '_blank', 'width=800,height=600');
+    if (!printWin) {
+      // Popup blocked — fallback to download
+      const filename = EmailService.getAttachmentFilename(type, data);
+      EmailService.downloadFile(filename, html);
+      return;
+    }
+    printWin.document.write(html);
+    printWin.document.close();
+    // Wait for content to load before printing
+    printWin.onload = () => {
+      printWin.focus();
+      printWin.print();
+    };
+    // Also try printing immediately for browsers that don't fire onload for document.write
+    setTimeout(() => {
+      printWin.focus();
+      printWin.print();
+    }, 250);
+  }
+
   // [MOD #003] Generate formatted HTML document for attachment
   static generateAttachmentHTML(type, data) {
-    const now = new Date().toLocaleDateString();
+    const now = formatDate(new Date());
     const companyName = 'WholesaleERP';
 
     if (type === 'invoice' && data.invoice) {
@@ -148,11 +214,71 @@ h1{color:#1a73e8}</style></head><body>
 </body></html>`;
     }
 
+    // [MOD #receipt] Payment receipt generation — shows payment details,
+    // what it was applied to, and customer info.
+    // WHY: After collecting payment, salesperson can email or print a receipt
+    // for the customer's records — same workflow as orders/invoices.
+    if (type === 'payment' && data.payment) {
+      const pmt = data.payment;
+      const cust = data.customer || {};
+      const methodLabels = {
+        cash: 'Cash',
+        check: 'Check',
+        credit_card: 'Credit Card',
+        ach: 'ACH/Wire Transfer',
+        account_credit: 'Account Credit',
+      };
+      const methodLabel = methodLabels[pmt.method] || pmt.method;
+
+      // Build "applied to" section
+      let appliedSection = '';
+      if (pmt.appliedTo && pmt.appliedTo.length > 0) {
+        const appliedRows = pmt.appliedTo.map(a => {
+          if (a.invoiceId) {
+            return `<tr><td>Invoice #${a.invoiceId}</td><td style="text-align:right">$${(a.amount || 0).toFixed(2)}</td></tr>`;
+          } else if (a.orderId) {
+            return `<tr><td>Order #${a.orderId}</td><td style="text-align:right">$${(a.amount || 0).toFixed(2)}</td></tr>`;
+          }
+          return '';
+        }).join('');
+        appliedSection = `<h3>Applied To</h3>
+<table><thead><tr><th>Reference</th><th>Amount</th></tr></thead>
+<tbody>${appliedRows}</tbody></table>`;
+      } else {
+        appliedSection = '<p><em>Stored as account credit — not yet applied to specific invoices/orders.</em></p>';
+      }
+
+      return `<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>Payment Receipt — ${cust.name || 'Customer'}</title>
+<style>body{font-family:Arial,sans-serif;margin:40px;color:#333}
+table{width:100%;border-collapse:collapse;margin:20px 0}
+th,td{border:1px solid #ddd;padding:8px;text-align:left}
+th{background:#f5f5f5;font-weight:bold}
+.total{font-weight:bold;font-size:1.1em}
+.receipt-box{border:2px solid #1a73e8;padding:24px;border-radius:8px;max-width:500px}
+h1{color:#1a73e8;margin-bottom:4px}
+.subtitle{color:#666;margin-top:0}</style></head><body>
+<div class="receipt-box">
+<h1>${companyName}</h1>
+<p class="subtitle">Payment Receipt</p>
+<hr>
+<p><strong>Customer:</strong> ${cust.name || ''}<br>
+<strong>Date:</strong> ${pmt.date ? formatDate(new Date(pmt.date)) : now}<br>
+<strong>Payment Method:</strong> ${methodLabel}${pmt.reference ? `<br><strong>Reference:</strong> ${pmt.reference}` : ''}</p>
+<p class="total" style="font-size:1.4em;color:#1a73e8">Amount Received: $${(pmt.amount || 0).toFixed(2)}</p>
+${appliedSection}
+<hr>
+<p style="text-align:center;color:#666;font-size:0.9em">Thank you for your payment!</p>
+</div>
+</body></html>`;
+    }
+
     // Fallback: generic content
     return null;
   }
 
   // [MOD #003] Get a suitable filename for the attachment
+  // [MOD #receipt] Added payment receipt filename support.
   static getAttachmentFilename(type, data) {
     if (type === 'invoice' && data.invoice) {
       return `Invoice_${data.invoice.invoiceNumber || 'draft'}.html`;
@@ -162,6 +288,10 @@ h1{color:#1a73e8}</style></head><body>
     }
     if (type === 'statement' && data.customer) {
       return `Statement_${(data.customer.name || 'customer').replace(/\s+/g, '_')}.html`;
+    }
+    if (type === 'payment' && data.payment) {
+      const dateStr = data.payment.date ? data.payment.date.split('T')[0] : new Date().toISOString().split('T')[0];
+      return `PaymentReceipt_${dateStr}_${(data.customer?.name || 'customer').replace(/\s+/g, '_')}.html`;
     }
     return `Document_${new Date().toISOString().split('T')[0]}.html`;
   }

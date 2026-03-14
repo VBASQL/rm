@@ -40,10 +40,81 @@
   margin-bottom: var(--space-xs);
 }
 
+/* [MOD #demo] Date row — date text + edit pencil button side by side */
+.dateRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
 .dateText {
   font-size: 0.8125rem;
   color: var(--text-secondary);
+  flex: 1;
+}
+
+.editDateBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.editDateBtn:active {
+  background: var(--bg-primary);
+}
+
+/* [MOD #demo] Inline date editor form */
+.editDateForm {
   margin-bottom: var(--space-md);
+}
+
+.editDateRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.editDateInput {
+  flex: 1;
+  font-size: 0.875rem !important;
+  padding: var(--space-sm) var(--space-md) !important;
+}
+
+.editDateSave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--color-success);
+  color: white;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.editDateCancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 .linkRow {
@@ -190,4 +261,126 @@
 .historyAmount {
   font-weight: 600;
   color: var(--color-success);
+}
+
+/* ── Print styles ──────────────────────────────────────────────── */
+/* WHY: Invoice printout must look like a professional B2B document —
+   clean letterhead feel, no app chrome, clear totals for the customer. */
+@media print {
+  @page { margin: 14mm 12mm; size: A4; }
+
+  /* Hide all interactive / navigation chrome */
+  .headerActions,
+  .iconBtn {
+    display: none !important;
+  }
+
+  .content {
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  /* Status row: keep but compact */
+  .statusRow {
+    padding: 4px 0 !important;
+    font-size: 0.75rem !important;
+  }
+
+  .dateText {
+    font-size: 0.72rem !important;
+  }
+
+  /* Order link row: hide clickable link on paper */
+  .linkRow {
+    display: none !important;
+  }
+
+  /* Table: full width, clean borders */
+  .invoiceTable {
+    border: 1px solid #ccc !important;
+    border-radius: 3px !important;
+    box-shadow: none !important;
+    margin-bottom: 8px !important;
+  }
+
+  .invoiceHeader {
+    background: #f0f0f0 !important;
+    padding: 4px 10px !important;
+    font-size: 0.7rem !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+
+  .invoiceLine {
+    padding: 3px 10px !important;
+    font-size: 0.75rem !important;
+    border-bottom: 1px solid #eee !important;
+  }
+
+  .invoiceProductName {
+    font-size: 0.75rem !important;
+  }
+
+  .depositLine {
+    padding: 3px 10px !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* Totals */
+  .totalSection {
+    padding: 4px 10px !important;
+    border-top: 1.5px solid #999 !important;
+  }
+
+  .totalRow {
+    padding: 2px 0 !important;
+    font-size: 0.75rem !important;
+  }
+
+  .grandTotal {
+    font-size: 0.95rem !important;
+    padding: 4px 0 !important;
+    border-top: 1.5px solid #333 !important;
+  }
+
+  /* Payment section */
+  .paymentSection {
+    padding: 6px 10px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 3px !important;
+    box-shadow: none !important;
+    font-size: 0.75rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  .paymentSection h4 {
+    font-size: 0.72rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .balanceDue {
+    font-size: 1rem !important;
+    padding: 4px 0 !important;
+  }
+
+  /* Payment history */
+  .historySection {
+    padding: 6px 10px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 3px !important;
+    box-shadow: none !important;
+    font-size: 0.75rem !important;
+  }
+
+  .historySection h4 {
+    font-size: 0.72rem !important;
+  }
+
+  .historyRow {
+    padding: 3px 0 !important;
+    font-size: 0.75rem !important;
+  }
+
+  .historyDate   { font-size: 0.7rem !important; }
+  .historyMethod { font-size: 0.7rem !important; }
+  .historyAmount { font-size: 0.75rem !important; }
 }

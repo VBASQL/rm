@@ -25,6 +25,22 @@
   accent-color: var(--color-primary);
 }
 
+/* [MOD #customtype] Link-style button to toggle custom type input */
+.customTypeLink {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  padding: var(--space-xs) 0;
+  display: inline-block;
+  margin-top: var(--space-xs);
+}
+
+.customTypeLink:hover {
+  text-decoration: underline;
+}
+
 .prepaidNotice {
   background: #e8f0fe;
   border-radius: var(--border-radius);
@@ -33,4 +49,42 @@
   color: var(--color-primary);
   margin-bottom: var(--space-lg);
   line-height: 1.5;
+}
+
+/* [MOD #demo] Payment type toggle — Prepaid / Credit Account */
+.paymentToggle {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: var(--bg-card);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggleBtn + .toggleBtn {
+  border-left: 1px solid var(--border-color);
+}
+
+.toggleActive {
+  background: var(--color-primary);
+  color: var(--text-inverse);
+  font-weight: 600;
+}
+
+/* [MOD #demo] Credit fields — shown only when Credit Account is selected */
+.creditFields {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
 }

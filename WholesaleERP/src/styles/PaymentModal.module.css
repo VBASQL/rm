@@ -164,3 +164,217 @@
   padding: var(--space-md);
   border-top: 1px solid var(--border-color);
 }
+
+/* [MOD #002] Processing states */
+.processingState,
+.processedState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.processedState {
+  color: #1e7e34;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.checkIcon {
+  color: #1e7e34;
+}
+
+/* [MOD #003] Saved payment method picker */
+.savedMethodList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.savedMethod {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.savedMethod input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.savedMethodSelected {
+  border-color: var(--color-primary);
+  background: #e8f0fe;
+}
+
+.savedMethodInfo {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.savedMethodExp {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.defaultBadge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: #e8f0fe;
+  padding: 2px 6px;
+  border-radius: var(--border-radius-pill);
+}
+
+/* [MOD #003] No saved method message */
+.noMethodMessage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: #fff8e1;
+  border: 1px solid #ffc107;
+  border-radius: var(--border-radius);
+  color: #856404;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-md);
+}
+
+.noMethodActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.sendLinkBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 14px var(--space-md);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  color: var(--color-primary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sendLinkBtn:hover:not(:disabled) {
+  background: #e8f0fe;
+}
+
+.sendLinkBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.linkSentMessage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: #d4edda;
+  border-radius: var(--border-radius);
+  color: #155724;
+  font-weight: 500;
+  width: 100%;
+  justify-content: center;
+}
+
+.checkIconSmall {
+  color: #1e7e34;
+  flex-shrink: 0;
+}
+
+.noMethodHelp {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin: 0;
+}
+
+/* [MOD #004] Add payment method button */
+.addMethodBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 14px var(--space-md);
+  border: none;
+  border-radius: var(--border-radius);
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addMethodBtn:hover {
+  background: #1565c0;
+}
+
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.orDivider::before,
+.orDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.sendLinkBtnAlt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-sm);
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.sendLinkBtnAlt:hover:not(:disabled) {
+  color: var(--color-primary);
+}
+
+.sendLinkBtnAlt:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

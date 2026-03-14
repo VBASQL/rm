@@ -11,19 +11,27 @@
 //   Phase 2 adds server-side sending with real SMTP attachments.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-13] #003 Use Web Share API (shareWithAttachment) for real mobile
+//                     draft+attachment; isSending guard; updated hint text.
 //   [2026-03-14] #002 Added real attachment generation + download.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
 import { X, Mail, Paperclip, Send, Download, Check } from 'lucide-react';
 import EmailService from '../services/EmailService';
+import MockFeatureBanner from './MockFeatureBanner';
 import styles from '../styles/SendMessageModal.module.css';
 
+// [MOD #receipt] Added payment receipt type for post-payment email workflow.
 const ATTACHMENT_TYPES = [
   { key: 'invoice', label: 'Invoice' },
   { key: 'order', label: 'Order Confirmation' },
   { key: 'statement', label: 'Account Statement' },
+  { key: 'payment', label: 'Payment Receipt' },
 ];
+
+// Detect once at module level
+const NATIVE_SHARE = EmailService.canUseNativeShare();
 
 class SendMessageModal extends React.Component {
   constructor(props) {
@@ -35,6 +43,7 @@ class SendMessageModal extends React.Component {
       attachmentType: props.attachmentType || null,
       attachmentReady: false,
       attachmentFilename: null,
+      isSending: false,
     };
   }
 
@@ -61,24 +70,27 @@ class SendMessageModal extends React.Component {
     }
   };
 
-  _handleSend = () => {
-    const { to, subject, body, attachmentType } = this.state;
-    if (!to) return;
+  _handleSend = async () => {
+    const { to, subject, body, attachmentType, isSending } = this.state;
+    if (!to || isSending) return;
+    this.setState({ isSending: true });
 
     const data = this.props.attachmentData || {};
     const html = attachmentType ? EmailService.generateAttachmentHTML(attachmentType, data) : null;
     const filename = html ? EmailService.getAttachmentFilename(attachmentType, data) : null;
 
-    // Opens mailto: AND downloads attachment file for manual attaching
-    EmailService.composeEmailWithAttachment(to, subject, body, filename, html);
+    // [MOD #003] Web Share API on mobile — opens native share sheet with file attached.
+    // Falls back to download + mailto: on desktop.
+    await EmailService.shareWithAttachment(to, subject, body, filename, html);
 
+    this.setState({ isSending: false });
     if (this.props.onSent) this.props.onSent();
     this.props.onClose();
   };
 
   render() {
     const { onClose, attachmentData } = this.props;
-    const { to, subject, body, attachmentType, attachmentReady, attachmentFilename } = this.state;
+    const { to, subject, body, attachmentType, attachmentReady, attachmentFilename, isSending } = this.state;
     const hasAttachmentData = attachmentData && Object.keys(attachmentData).length > 0;
 
     return (
@@ -92,6 +104,10 @@ class SendMessageModal extends React.Component {
           </div>
 
           <div className={styles.body}>
+            <MockFeatureBanner
+              title="Phase 1: Draft Email"
+              description="On mobile, your share sheet opens with the attachment already included. On desktop, the file downloads and your email app opens a draft — attach it manually. In production, the server sends the email automatically with no extra steps."
+            />
             <div className={styles.field}>
               <label className={styles.fieldLabel}>To</label>
               <input
@@ -129,19 +145,28 @@ class SendMessageModal extends React.Component {
                 ))}
               </div>
 
-              {/* [MOD #002] Attachment preview + download button */}
+              {/* [MOD #003] Attachment preview + action hint */}
               {attachmentType && attachmentReady && (
                 <div className={styles.attachPreview}>
                   <Check size={14} className={styles.attachCheckIcon} />
                   <span className={styles.attachFilename}>{attachmentFilename}</span>
-                  <button
-                    className={styles.attachDownloadBtn}
-                    onClick={this._handleDownloadAttachment}
-                    title="Download attachment file"
-                  >
-                    <Download size={14} /> Download
-                  </button>
+                  {!NATIVE_SHARE && (
+                    <button
+                      className={styles.attachDownloadBtn}
+                      onClick={this._handleDownloadAttachment}
+                      title="Download attachment file"
+                    >
+                      <Download size={14} /> Download
+                    </button>
+                  )}
                 </div>
+              )}
+              {attachmentType && attachmentReady && (
+                <p className={styles.attachNote}>
+                  {NATIVE_SHARE
+                    ? 'Tap Send — your share sheet will open with the file already attached.'
+                    : 'File will download to your device — attach it manually in your email app.'}
+                </p>
               )}
               {attachmentType && !attachmentReady && hasAttachmentData && (
                 <p className={styles.attachNote}>No data available for this attachment type.</p>
@@ -170,9 +195,12 @@ class SendMessageModal extends React.Component {
               className="btn btn-primary"
               style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
               onClick={this._handleSend}
-              disabled={!to}
+              disabled={!to || isSending}
             >
-              <Send size={18} /> Send{attachmentReady ? ' with Attachment' : ''}
+              <Send size={18} />
+              {isSending ? 'Opening…' : attachmentReady
+                ? (NATIVE_SHARE ? 'Share with Attachment' : 'Send with Attachment')
+                : 'Send'}
             </button>
           </div>
         </div>

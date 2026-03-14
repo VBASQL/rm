@@ -16,6 +16,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
+import MockFeatureBanner from '../components/MockFeatureBanner';
 import styles from '../styles/Login.module.css';
 
 class LoginPage extends React.Component {
@@ -46,6 +47,11 @@ class LoginPage extends React.Component {
             <div className={styles.logoIcon}>📦</div>
             <h1 className={styles.logoText}>WholesaleERP</h1>
           </div>
+
+          <MockFeatureBanner
+            title="Demo Login"
+            description="Sign-in is simulated. In production, this authenticates via Google OAuth or Microsoft Entra ID — no hardcoded accounts exist."
+          />
 
           {error && (
             <div className={styles.errorMessage}>{error}</div>

@@ -1,25 +1,31 @@
 // ============================================================
 // FILE: InvoiceDetail.jsx
 // PURPOSE: Invoice detail view — line items, totals, payment history,
-//          customer/order links, email action.
-// DEPENDS ON: PageHeader, StatusBadge, SendMessageModal, AppContext
+//          customer/order links, email action, demo date-change feature.
+// DEPENDS ON: PageHeader, StatusBadge, SendMessageModal, MockFeatureBanner, AppContext
 // DEPENDED ON BY: App.jsx (route: /invoices/:id)
 //
 // WHY THIS EXISTS:
 //   Invoices need to be viewable from CustomerProfile and Reports.
 //   Shows full breakdown: line items, deposits, discounts, totals,
 //   payment status, and an email action to send to the customer.
+//   [MOD #demo] Date-override feature lets testers backdate invoices
+//   to move them into overdue/aging buckets without waiting for real time to pass.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-14] #demo Added invoice date override with due date recalculation
+//     and linked order delivery date update. Marked with MockFeatureBanner.
 //   [2026-03-13] Initial creation.
 // ============================================================
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Mail, ShoppingBag, User, Printer } from 'lucide-react';
+import { Mail, ShoppingBag, User, Printer, Edit2, Check, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import PageHeader from '../components/PageHeader';
 import StatusBadge from '../components/StatusBadge';
 import SendMessageModal from '../components/SendMessageModal';
+import MockFeatureBanner from '../components/MockFeatureBanner';
+import { formatCurrency, formatDate } from '../utils/format';
 import styles from '../styles/InvoiceDetail.module.css';
 
 class InvoiceDetail extends React.Component {
@@ -31,6 +37,9 @@ class InvoiceDetail extends React.Component {
       order: null,
       payments: [],
       showEmailModal: false,
+      // [MOD #demo] Date-override feature — lets testers backdate to test aging report.
+      editingDate: false,
+      editDateValue: '',
     };
   }
 
@@ -55,15 +64,6 @@ class InvoiceDetail extends React.Component {
     this.setState({ invoice, customer, order, payments });
   }
 
-  _formatCurrency(amt) {
-    return '$' + Number(amt || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
-  }
-
-  _formatDate(d) {
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
   handlePrint = () => {
     window.print();
   };
@@ -72,28 +72,69 @@ class InvoiceDetail extends React.Component {
     this.setState({ showEmailModal: true });
   };
 
+  // [MOD #demo] Open the date editor — pre-fill with current invoice createdDate.
+  handleEditDate = () => {
+    const { invoice } = this.state;
+    this.setState({ editingDate: true, editDateValue: invoice.createdDate || '' });
+  };
+
+  // [MOD #demo] Save new invoice date:
+  //   1. Recalculate dueDate from new date + customer terms.
+  //   2. Update invoice in storage.
+  //   3. Update the linked order's deliveryDate to match (invoice is born at delivery).
+  //   4. Reload so UI reflects changes.
+  handleSaveDate = () => {
+    const { storage, showToast } = this.props;
+    const { invoice, customer, order, editDateValue } = this.state;
+    if (!editDateValue) return;
+
+    // WHY: Recalculate dueDate from new createdDate using the same terms logic
+    // as MockStorageService.createInvoice so aging buckets are consistent.
+    const terms = customer?.terms || '';
+    const termMatch = terms.match(/NET-?(\d+)/i);
+    const daysUntilDue = (customer?.paymentType === 'prepaid' || !termMatch) ? 0 : parseInt(termMatch[1], 10);
+    const newDue = new Date(editDateValue);
+    newDue.setDate(newDue.getDate() + daysUntilDue);
+    const newDueStr = newDue.toISOString().split('T')[0];
+
+    storage.updateInvoice(invoice.id, {
+      createdDate: editDateValue,
+      dueDate: newDueStr,
+    });
+
+    // WHY: Invoice is auto-generated at delivery, so sync order.deliveryDate
+    // so the order timeline stays consistent with the invoice date.
+    if (order) {
+      storage.updateOrder(order.id, { deliveryDate: editDateValue });
+    }
+
+    this._loadData();
+    this.setState({ editingDate: false, editDateValue: '' });
+    showToast('Invoice date updated');
+  };
+
   _buildEmailBody() {
     const { invoice, customer } = this.state;
     if (!invoice) return '';
     const lines = (invoice.lineItems || []).map(li =>
-      `${li.productName}  Qty: ${li.quantity}  @${this._formatCurrency(li.unitPrice)}  = ${this._formatCurrency(li.lineTotal)}`
+      `${li.productName}  Qty: ${li.quantity}  @${formatCurrency(li.unitPrice)}  = ${formatCurrency(li.lineTotal)}`
     );
     return [
       `Invoice: ${invoice.invoiceNumber}`,
-      `Date: ${this._formatDate(invoice.createdDate)}`,
-      `Due: ${this._formatDate(invoice.dueDate)}`,
+      `Date: ${formatDate(invoice.createdDate)}`,
+      `Due: ${formatDate(invoice.dueDate)}`,
       `Customer: ${customer?.name || ''}`,
       '',
       'Line Items:',
       ...lines,
       '',
-      `Subtotal: ${this._formatCurrency(invoice.subtotal)}`,
-      invoice.depositTotal ? `Deposits: -${this._formatCurrency(invoice.depositTotal)}` : null,
-      invoice.discountTotal ? `Discounts: -${this._formatCurrency(invoice.discountTotal)}` : null,
-      `Grand Total: ${this._formatCurrency(invoice.grandTotal)}`,
+      `Subtotal: ${formatCurrency(invoice.subtotal)}`,
+      invoice.depositTotal ? `Deposits: -${formatCurrency(invoice.depositTotal)}` : null,
+      invoice.discountTotal ? `Discounts: -${formatCurrency(invoice.discountTotal)}` : null,
+      `Grand Total: ${formatCurrency(invoice.grandTotal)}`,
       '',
-      `Amount Paid: ${this._formatCurrency(invoice.amountPaid)}`,
-      `Balance Due: ${this._formatCurrency(invoice.amountDue)}`,
+      `Amount Paid: ${formatCurrency(invoice.amountPaid)}`,
+      `Balance Due: ${formatCurrency(invoice.amountDue)}`,
     ].filter(Boolean).join('\n');
   }
 
@@ -135,12 +176,46 @@ class InvoiceDetail extends React.Component {
           <div className={styles.statusRow}>
             <StatusBadge status={invoice.status} />
           </div>
-          <div className={styles.dateText}>
-            Created: {this._formatDate(invoice.createdDate)}
-            {' · '}
-            Due: {this._formatDate(invoice.dueDate)}
-            {invoice.paidDate && ` · Paid: ${this._formatDate(invoice.paidDate)}`}
-          </div>
+
+          {/* [MOD #demo] Date editor — backdate invoice to test aging report */}
+          {!this.state.editingDate ? (
+            <div className={styles.dateRow}>
+              <span className={styles.dateText}>
+                Created: {formatDate(invoice.createdDate)}
+                {' · '}
+                Due: {formatDate(invoice.dueDate)}
+                {invoice.paidDate && ` · Paid: ${formatDate(invoice.paidDate)}`}
+              </span>
+              <button
+                className={styles.editDateBtn}
+                onClick={this.handleEditDate}
+                title="Change invoice date (demo)"
+              >
+                <Edit2 size={14} />
+              </button>
+            </div>
+          ) : (
+            <div className={styles.editDateForm}>
+              <MockFeatureBanner
+                title="Demo: Backdate Invoice"
+                description="In production invoice dates are set automatically at delivery and cannot be changed. This lets you test overdue and aging report buckets without waiting for real time to pass."
+              />
+              <div className={styles.editDateRow}>
+                <input
+                  type="date"
+                  className={`form-input ${styles.editDateInput}`}
+                  value={this.state.editDateValue}
+                  onChange={e => this.setState({ editDateValue: e.target.value })}
+                />
+                <button className={styles.editDateSave} onClick={this.handleSaveDate} title="Save">
+                  <Check size={16} />
+                </button>
+                <button className={styles.editDateCancel} onClick={() => this.setState({ editingDate: false })} title="Cancel">
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Customer + Order links */}
           {customer && (
@@ -181,16 +256,16 @@ class InvoiceDetail extends React.Component {
                   <span>{item.sku}</span>
                   <span className={styles.invoiceProductName}>{item.productName}</span>
                   <span>{item.quantity}</span>
-                  <span>{this._formatCurrency(item.unitPrice)}</span>
-                  <span>{this._formatCurrency(item.lineTotal)}</span>
+                  <span>{formatCurrency(item.unitPrice)}</span>
+                  <span>{formatCurrency(item.lineTotal)}</span>
                 </div>
                 {item.deposit > 0 && (
                   <div className={styles.depositLine}>
                     <span></span>
-                    <span>Deposit: {this._formatCurrency(item.deposit)} × {item.quantity}</span>
+                    <span>Deposit: {formatCurrency(item.deposit)} × {item.quantity}</span>
                     <span></span>
                     <span></span>
-                    <span>-{this._formatCurrency(item.deposit * item.quantity)}</span>
+                    <span>-{formatCurrency(item.deposit * item.quantity)}</span>
                   </div>
                 )}
               </React.Fragment>
@@ -201,23 +276,23 @@ class InvoiceDetail extends React.Component {
           <div className={styles.totalSection}>
             <div className={styles.totalRow}>
               <span>Subtotal</span>
-              <span>{this._formatCurrency(invoice.subtotal)}</span>
+              <span>{formatCurrency(invoice.subtotal)}</span>
             </div>
             {invoice.depositTotal > 0 && (
               <div className={styles.totalRow}>
                 <span>Deposits</span>
-                <span>-{this._formatCurrency(invoice.depositTotal)}</span>
+                <span>-{formatCurrency(invoice.depositTotal)}</span>
               </div>
             )}
             {invoice.discountTotal > 0 && (
               <div className={styles.totalRow}>
                 <span>Discounts</span>
-                <span>-{this._formatCurrency(invoice.discountTotal)}</span>
+                <span>-{formatCurrency(invoice.discountTotal)}</span>
               </div>
             )}
             <div className={`${styles.totalRow} ${styles.grandTotal}`}>
               <span>Grand Total</span>
-              <span>{this._formatCurrency(invoice.grandTotal)}</span>
+              <span>{formatCurrency(invoice.grandTotal)}</span>
             </div>
           </div>
 
@@ -226,11 +301,11 @@ class InvoiceDetail extends React.Component {
             <h4>Payment</h4>
             <div className={styles.totalRow}>
               <span>Amount Paid</span>
-              <span>{this._formatCurrency(invoice.amountPaid)}</span>
+              <span>{formatCurrency(invoice.amountPaid)}</span>
             </div>
             <div className={`${styles.totalRow} ${styles.balanceDue}`}>
               <span>Balance Due</span>
-              <span>{this._formatCurrency(invoice.amountDue)}</span>
+              <span>{formatCurrency(invoice.amountDue)}</span>
             </div>
           </div>
 
@@ -243,11 +318,11 @@ class InvoiceDetail extends React.Component {
                 return (
                   <div key={p.id} className={styles.historyRow}>
                     <div>
-                      <span className={styles.historyDate}>{this._formatDate(p.date)}</span>
+                      <span className={styles.historyDate}>{formatDate(p.date)}</span>
                       <span className={styles.historyMethod}>{p.method}</span>
                     </div>
                     <span className={styles.historyAmount}>
-                      {this._formatCurrency(applied?.amount || p.amount)}
+                      {formatCurrency(applied?.amount || p.amount)}
                     </span>
                   </div>
                 );

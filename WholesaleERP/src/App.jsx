@@ -40,7 +40,9 @@ import OrderHistory from './pages/OrderHistory';
 import Payment from './pages/Payment';
 import Reports from './pages/Reports';
 import InvoiceDetail from './pages/InvoiceDetail';
+import PaymentReceipt from './pages/PaymentReceipt';
 import Settings from './pages/Settings';
+import ReturnOrder from './pages/ReturnOrder';
 
 // WHY: Toast state lives at App level so any page can trigger a notification.
 // This is simpler than adding toast logic to every context.
@@ -150,10 +152,34 @@ function AppShell() {
           }
         />
         <Route
+          path="/returns/new"
+          element={
+            <ProtectedRoute>
+              <ReturnOrder showToast={showToast} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/returns/:id"
+          element={
+            <ProtectedRoute>
+              <ReturnOrder showToast={showToast} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/payments"
           element={
             <ProtectedRoute>
               <Payment showToast={showToast} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payments/:id"
+          element={
+            <ProtectedRoute>
+              <PaymentReceipt showToast={showToast} />
             </ProtectedRoute>
           }
         />

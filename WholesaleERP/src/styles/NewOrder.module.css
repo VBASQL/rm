@@ -37,6 +37,50 @@
   box-shadow: var(--shadow-md);
 }
 
+/* [MOD #branch] Branch location rows get a subtle left accent */
+.branchOption {
+  border-left: 3px solid #9c27b0;
+}
+
+.custOptionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.custOptionTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* [MOD #branch] Purple "Branch" tag inside Step 1 rows */
+.branchTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: #f3e5f5;
+  color: #6a1b9a;
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+
+/* [MOD #branch] Delivery address line in Step 1 branch rows */
+.branchAddressLine {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Preserved name/meta styles used in Step 1 rows */
 .custName {
   display: block;
   font-weight: 600;
@@ -55,9 +99,61 @@
   color: var(--text-inverse);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--border-radius);
-  font-weight: 600;
-  font-size: 0.875rem;
   margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.customerBarInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.customerBarLabel {
+  font-size: 0.68rem;
+  font-weight: 500;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* [MOD #branch] Branch delivery address in Step 2 customer bar */
+.customerBarBranch {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.customerBarName {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customerBarChange {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: var(--text-inverse);
+  padding: 5px 14px;
+  border-radius: var(--border-radius);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.customerBarChange:hover {
+  background: rgba(255, 255, 255, 0.32);
 }
 
 .modeToggle {
@@ -191,88 +287,132 @@
   font-size: 0.875rem;
 }
 
-/* Step 3: Review */
-.reviewTitle {
-  font-size: 1.125rem;
-  font-weight: 700;
-  margin: 0 0 4px;
-  color: var(--text-primary);
-}
+/* [MOD #002] REMOVED: .reviewTitle, .reviewCustomer, .invoiceTable, .invoiceHeader,
+   .invoiceLine, .invoiceProductName, .depositLine, .totalSection, .totalRow, .grandTotal
+   — moved to OrderReceipt.module.css */
 
-.reviewCustomer {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin: 0 0 var(--space-md);
-}
-
-.invoiceTable {
-  margin-bottom: var(--space-lg);
-  font-size: 0.75rem;
-  overflow-x: auto;
-}
-
-.invoiceHeader {
-  display: grid;
-  grid-template-columns: 50px 1fr 30px 60px 60px;
-  gap: 4px;
-  padding: var(--space-xs) 0;
-  border-bottom: 2px solid var(--text-primary);
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.invoiceLine {
-  display: grid;
-  grid-template-columns: 50px 1fr 30px 60px 60px;
-  gap: 4px;
-  padding: var(--space-xs) 0;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-}
-
-.invoiceProductName {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.depositLine {
-  display: grid;
-  grid-template-columns: 50px 1fr 30px 60px 60px;
-  gap: 4px;
-  padding: 2px 0 var(--space-xs);
-  font-size: 0.6875rem;
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.totalSection {
-  margin-bottom: var(--space-lg);
-  padding: var(--space-md);
-  background: var(--bg-card);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-}
-
-.totalRow {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.grandTotal {
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--text-primary);
-  border-top: 2px solid var(--text-primary);
-  margin-top: 4px;
-  padding-top: 8px;
+/* WHY: receiptDivider used in afterTotals slot passed to OrderReceipt */
+.receiptDivider {
+  height: 1px;
+  background: var(--border-color);
+  margin: var(--space-md) 0;
 }
 
 .deliverySection {
   margin-bottom: var(--space-md);
+}
+
+/* [MOD #demo-delivery] Full inline calendar picker */
+.calendarPicker {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  margin-top: var(--space-xs);
+  background: var(--bg-card);
+}
+
+.calendarNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.calendarNavBtn {
+  border: none;
+  background: none;
+  font-size: 1.375rem;
+  line-height: 1;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 2px 10px;
+  border-radius: var(--border-radius);
+  font-weight: 300;
+}
+
+.calendarNavBtn:active {
+  background: var(--bg-primary);
+}
+
+.calendarMonthLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: var(--space-xs);
+}
+
+.calendarDow {
+  text-align: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: var(--space-xs) 0 2px;
+}
+
+.calendarDay {
+  border: none;
+  background: none;
+  border-radius: 6px;
+  aspect-ratio: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.calendarDayAvailable {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.calendarDayAvailable:hover {
+  background: var(--bg-primary);
+}
+
+.calendarDayDisabled {
+  color: var(--text-muted);
+  opacity: 0.35;
+  cursor: default;
+  font-weight: 400;
+}
+
+.calendarDaySelected {
+  background: var(--color-primary) !important;
+  color: var(--text-inverse) !important;
+  font-weight: 700;
+}
+
+.calendarDayToday:not(.calendarDaySelected) {
+  box-shadow: inset 0 0 0 1.5px var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.noDeliveryDays {
+  font-size: 0.8125rem;
+  color: var(--color-danger);
+  padding: var(--space-sm) var(--space-md);
+  text-align: center;
+}
+
+.selectedDateLabel {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-top: var(--space-xs);
+  font-weight: 500;
 }
 
 .deliverNowRow {
@@ -298,10 +438,12 @@
   display: flex;
   gap: var(--space-sm);
   margin-top: var(--space-lg);
+  flex-wrap: wrap;
 }
 
 .reviewActions .btn {
   flex: 1;
+  min-width: 90px;
 }
 
 /* Step 4: Confirmation */
@@ -348,23 +490,8 @@
   gap: var(--space-sm);
 }
 
-/* [MOD #001] Clickable invoice line items */
-.invoiceLineClickable {
-  cursor: pointer;
-}
-.invoiceLineClickable:active {
-  background: var(--bg-secondary);
-}
-
-/* [MOD #001] Prepaid warning banner */
-.prepaidWarning {
-  background: #fff3cd;
-  color: #856404;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  font-size: 0.85rem;
-  margin-bottom: var(--space-md);
-}
+/* [MOD #002] REMOVED: .invoiceLineClickable, .prepaidWarning
+   — moved to OrderReceipt.module.css */
 
 /* [MOD #001] Order-wide discount section */
 .orderDiscountSection {
@@ -393,182 +520,9 @@
   white-space: nowrap;
 }
 
-/* ===== Editable Review Items (Step 3) ===== */
-.reviewItems {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
-}
-
-.reviewItem {
-  background: var(--bg-card);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-sm) var(--space-md);
-}
-
-.reviewItemHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-xs);
-}
-
-.reviewItemInfo {
-  display: flex;
-  gap: var(--space-sm);
-  align-items: baseline;
-  min-width: 0;
-}
-
-.reviewItemCode {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  white-space: nowrap;
-}
-
-.reviewItemName {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.reviewRemoveBtn {
-  background: none;
-  border: none;
-  color: var(--color-danger);
-  padding: 4px;
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  flex-shrink: 0;
-}
-.reviewRemoveBtn:active {
-  background: #fce8e6;
-}
-
-.reviewItemFields {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: var(--space-sm);
-  align-items: end;
-}
-
-.reviewField {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.reviewFieldLabel {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.priceOverride {
-  font-size: 0.5625rem;
-  color: var(--color-warning, #e67e22);
-  font-weight: 400;
-  font-style: italic;
-}
-
-.reviewQtyRow {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.reviewQtyBtn {
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  background: var(--bg-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-primary);
-  flex-shrink: 0;
-}
-.reviewQtyBtn:active {
-  background: var(--color-primary);
-  color: var(--text-inverse);
-}
-
-.reviewQtyInput {
-  width: 40px;
-  text-align: center;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 4px 2px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.reviewPriceWrap {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-}
-
-.dollarSign {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-}
-
-.reviewPriceInput {
-  width: 65px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 4px 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.reviewDiscInput {
-  width: 55px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 4px 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-.reviewDiscWarn {
-  border-color: var(--color-warning, #e67e22);
-  background: #fef3e2;
-  color: var(--color-warning, #e67e22);
-}
-
-.discWarnIcon {
-  color: var(--color-warning, #e67e22);
-}
-
-.reviewLineTotal {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  padding: 4px 0;
-}
-
-.reviewDepositLine {
-  font-size: 0.6875rem;
-  color: var(--text-muted);
-  font-style: italic;
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px dashed var(--border-color);
-}
+/* [MOD #002] REMOVED: .reviewItems, .reviewItem, .reviewItemHeader, .reviewItemInfo,
+   .reviewItemCode, .reviewItemName, .reviewRemoveBtn, .reviewItemFields, .reviewField,
+   .reviewFieldLabel, .priceOverride, .reviewQtyRow, .reviewQtyBtn, .reviewQtyInput,
+   .reviewPriceWrap, .dollarSign, .reviewPriceInput, .reviewDiscInput, .reviewDiscWarn,
+   .discWarnIcon, .reviewLineTotal, .reviewDepositLine
+   — moved to OrderReceipt.module.css */

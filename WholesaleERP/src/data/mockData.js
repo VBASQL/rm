@@ -16,11 +16,22 @@
 //   Deposit rates are estimated (§12, item #6).
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-14] #demo-delivery Added DEFAULT_DELIVERY_DAYS for warehouse schedule demo.
+//   [2026-03-14] #branch Added branch customer records for multi-location accounts.
+//     Branches share the parent account's credit/balance/terms but have
+//     their own delivery address, contact, phone, and email.
+//     Bumped SEED_VERSION to 'v3' to force re-seed with branch data (was v2 before branches were in CUSTOMERS array).
 //   [2026-03-13] #001 Removed 'Shipped' status from order seed data (now Picking).
 //     Added DEFAULT_DISCOUNT_SETTINGS for 4-level discount caps.
 //     Added [MOD] tags to RECENT_ACTIVITY linkTo.
 //   [2026-03-12] Initial creation — placeholder catalog.
 // ============================================================
+
+// WHY: Seed version controls force-reseed when new seed data is added.
+// Increment this string whenever CUSTOMERS/PRODUCTS/ORDERS change shape.
+// MockStorageService checks this and reseeds if version doesn't match.
+// [MOD #returns] Bumped to v4 to add returns seed data.
+export const SEED_VERSION = 'v4';
 
 // ── CATEGORIES ───────────────────────────────────────────────
 export const CATEGORIES = [
@@ -93,6 +104,10 @@ export const CUSTOMERS = [
     lastOrderDate: '2026-02-24', avgOrderCases: 18, accountCredit: 0,
     assignedSalesperson: 'Sarah Mitchell', notes: ['Prefers delivery before 10am', 'Always order extra cola during summer'],
     createdDate: '2024-06-15',
+    // [MOD #002] Saved payment methods — customer already set up CC on file
+    savedPaymentMethods: [
+      { id: 'cc_1', type: 'credit_card', last4: '4242', brand: 'Visa', expiry: '12/27', isDefault: true },
+    ],
   },
   {
     id: 2, name: 'Harbor Grill', code: 'HARB-001',
@@ -126,6 +141,12 @@ export const CUSTOMERS = [
     lastOrderDate: '2026-03-01', avgOrderCases: 35, accountCredit: 200.00,
     assignedSalesperson: 'Sarah Mitchell', notes: ['Dock delivery only — call 30 min ahead', 'Large event orders in summer'],
     createdDate: '2023-11-01',
+    // [MOD #002] Has both CC and ACH on file
+    savedPaymentMethods: [
+      { id: 'cc_2', type: 'credit_card', last4: '1234', brand: 'Amex', expiry: '08/28', isDefault: true },
+      { id: 'cc_3', type: 'credit_card', last4: '5678', brand: 'Mastercard', expiry: '03/27', isDefault: false },
+      { id: 'ach_1', type: 'ach', last4: '6789', bankName: 'Chase', isDefault: true },
+    ],
   },
   {
     id: 5, name: 'Fresh Bites Cafe', code: 'FRES-001',
@@ -170,6 +191,35 @@ export const CUSTOMERS = [
     lastOrderDate: '2026-03-10', avgOrderCases: 4, accountCredit: 0,
     assignedSalesperson: 'Sarah Mitchell', notes: [],
     createdDate: '2026-01-15',
+    isBranch: false,
+  },
+
+  // [MOD #branch] Branch locations — multi-location accounts.
+  // WHY: Branches share parent account's credit limit, balance, payment terms,
+  // and price level. Each branch has its own delivery address and contact.
+  // Orders placed for a branch update the PARENT account's balance.
+  // Billing/financial management always goes through the parent account.
+  {
+    id: 9, name: 'The Grand Hotel — Midtown', code: 'GRAN-001-B',
+    contact: 'Rachel Kim', phone: '(555) 567-8920', email: 'midtown@grandhotel.com',
+    type: 'Hotel', paymentType: 'credit', creditTier: 'A', balance: 0,
+    creditLimit: 0, terms: 'NET-30', parentId: 4, isBranch: true,
+    address: '45 Midtown Plaza, Manhattan, NY 10019', billingAddress: 'PO Box 100, Manhattan, NY 10001',
+    priceLevel: 'A', route: 'Route 3 - Manhattan', status: 'Active',
+    lastOrderDate: null, avgOrderCases: 0, accountCredit: 0,
+    assignedSalesperson: 'Sarah Mitchell', notes: ['Side entrance for deliveries'],
+    createdDate: '2024-06-01',
+  },
+  {
+    id: 10, name: 'Bella Cucina Restaurant — Park Slope', code: 'BELL-001-B',
+    contact: 'Sofia Rossi', phone: '(555) 234-5699', email: 'parkslope@bellacucina.com',
+    type: 'Restaurant', paymentType: 'credit', creditTier: 'A', balance: 0,
+    creditLimit: 0, terms: 'NET-30', parentId: 1, isBranch: true,
+    address: '88 5th Ave, Brooklyn, NY 11217', billingAddress: '123 Main St, Brooklyn, NY 11201',
+    priceLevel: 'A', route: 'Route 1 - Brooklyn', status: 'Active',
+    lastOrderDate: null, avgOrderCases: 0, accountCredit: 0,
+    assignedSalesperson: 'Sarah Mitchell', notes: ['Prefers delivery after 11am'],
+    createdDate: '2025-03-01',
   },
 ];
 
@@ -349,6 +399,67 @@ export const RECENT_ACTIVITY = [
   { id: 7, type: 'payment', text: 'Payment $60.00 collected — Harbor Grill', date: '2026-02-28T13:20:00Z', linkTo: '/customers/2' },
 ];
 
+// ── RETURN REASONS ────────────────────────────────────────────
+// WHY: Standard return reason codes for consistency in reporting.
+// [MOD #returns] New constant.
+export const RETURN_REASONS = [
+  { id: 'damaged', label: 'Damaged Product', icon: '💔' },
+  { id: 'wrong_item', label: 'Wrong Item Delivered', icon: '❌' },
+  { id: 'quality', label: 'Quality Issue', icon: '⚠️' },
+  { id: 'overstocked', label: 'Customer Overstocked', icon: '📦' },
+  { id: 'expired', label: 'Expired/Near Expiry', icon: '📅' },
+  { id: 'customer_changed_mind', label: 'Customer Changed Mind', icon: '🔄' },
+  { id: 'other', label: 'Other', icon: '📝' },
+];
+
+// ── DAMAGE TYPES ──────────────────────────────────────────────
+// WHY: Tracks how product was damaged for reporting and vendor claims.
+// [MOD #returns] New constant.
+export const DAMAGE_TYPES = [
+  { id: 'crushed', label: 'Crushed/Dented' },
+  { id: 'leaking', label: 'Leaking' },
+  { id: 'broken', label: 'Broken/Shattered' },
+  { id: 'contaminated', label: 'Contaminated' },
+  { id: 'temperature', label: 'Temperature Damage' },
+  { id: 'other', label: 'Other Damage' },
+];
+
+// ── RETURNS ──────────────────────────────────────────────────
+// WHY: Return orders that credit the customer account. Returns can be:
+//   - From existing delivered order (has originalOrderId)
+//   - Created from scratch (originalOrderId = null)
+// Line items can be marked as damaged with damageType.
+// [MOD #returns] New seed data.
+export const RETURNS = [
+  {
+    id: 1, returnNumber: 'RET-20260312-001', customerId: 1, salespersonId: 1,
+    status: 'Processed',
+    originalOrderId: 1, // Linked to delivered order ORD-20260310-001
+    returnReason: 'damaged',
+    lineItems: [
+      { productId: 1, productCode: '10001', productName: 'Cola Classic 12oz 24pk', quantity: 2, unitsPerCase: 24, casePrice: 12.99, depositPerCase: 1.20, discount: 0, lineTotal: 25.98, depositTotal: 2.40, isDamaged: true, damageType: 'crushed' },
+    ],
+    subtotal: 25.98, depositTotal: 2.40, discountTotal: 0, grandTotal: 28.38, totalCases: 2,
+    notes: 'Delivery truck incident — 2 cases crushed on arrival.',
+    creditApplied: true,
+    createdDate: '2026-03-12', modifiedDate: '2026-03-12', processedDate: '2026-03-12',
+  },
+  {
+    id: 2, returnNumber: 'RET-20260313-001', customerId: 4, salespersonId: 1,
+    status: 'Pending',
+    originalOrderId: null, // Created from scratch — not linked to specific order
+    returnReason: 'overstocked',
+    lineItems: [
+      { productId: 12, productCode: '10030', productName: 'Seltzer Plain 12oz 24pk', quantity: 5, unitsPerCase: 24, casePrice: 9.99, depositPerCase: 1.20, discount: 0, lineTotal: 49.95, depositTotal: 6.00, isDamaged: false, damageType: null },
+      { productId: 20, productCode: '10060', productName: 'Spring Water 16.9oz 24pk', quantity: 8, unitsPerCase: 24, casePrice: 6.99, depositPerCase: 1.20, discount: 0, lineTotal: 55.92, depositTotal: 9.60, isDamaged: false, damageType: null },
+    ],
+    subtotal: 105.87, depositTotal: 15.60, discountTotal: 0, grandTotal: 121.47, totalCases: 13,
+    notes: 'Hotel event cancelled — returning overstock.',
+    creditApplied: false,
+    createdDate: '2026-03-13', modifiedDate: '2026-03-13', processedDate: null,
+  },
+];
+
 // ── DEFAULT DISCOUNT SETTINGS ────────────────────────────────
 // WHY: 4-level discount caps editable from Settings for demo purposes.
 // In production, accounting will control these via admin panel.
@@ -362,3 +473,11 @@ export const DEFAULT_DISCOUNT_SETTINGS = {
   perOrderFixed: 50.00,
   perOrderPercent: 10,
 };
+
+// WHY: Default delivery schedule is Mon–Fri (weekday numbers 1–5).
+// 0 = Sunday, 1 = Monday, ..., 6 = Saturday.
+// In production the warehouse configures available delivery days
+// from the admin panel. Demo exposes this in Settings so stakeholders
+// can test how the order wizard restricts date selection.
+// [MOD #demo-delivery] New constant.
+export const DEFAULT_DELIVERY_DAYS = [1, 2, 3, 4, 5];

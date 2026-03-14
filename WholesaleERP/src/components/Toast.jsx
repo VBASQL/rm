@@ -12,12 +12,13 @@
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
-import { CheckCircle, AlertCircle, X } from 'lucide-react';
+import { CheckCircle, AlertCircle, AlertTriangle, X } from 'lucide-react';
 import styles from '../styles/Toast.module.css';
 
 const ICONS = {
   success: CheckCircle,
   error: AlertCircle,
+  warning: AlertTriangle,
 };
 
 class Toast extends React.Component {

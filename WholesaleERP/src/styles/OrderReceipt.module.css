@@ -1,0 +1,567 @@
+/* ============================================================
+   FILE: OrderReceipt.module.css
+   PURPOSE: Shared receipt/invoice styles used by the OrderReceipt
+     component. Supports both editable and read-only grid layouts.
+   DEPENDED ON BY: OrderReceipt.jsx (shared component)
+   [2026-03-13] Consolidated from NewOrder.module.css and
+     OrderDetail.module.css to eliminate duplication.
+   ============================================================ */
+
+/* ═══════════════════════════════════════════════
+   Receipt Container
+   ═══════════════════════════════════════════════ */
+
+.receipt {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg, 12px);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+/* ── Receipt Header ── */
+.receiptHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.receiptTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.receiptDate {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.receiptDivider {
+  border: none;
+  border-top: 1px dashed var(--border-color);
+  margin: var(--space-sm) 0;
+}
+
+/* ── Customer Info Block ── */
+.receiptCustomer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.receiptCustRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.receiptCustBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.receiptCustLabel {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 1px;
+}
+
+.receiptCustName {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.receiptCustDetail {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════
+   Line Items — Common
+   ═══════════════════════════════════════════════ */
+
+.receiptItemsSection {
+  margin-bottom: var(--space-sm);
+}
+
+.receiptItemsHeader,
+.receiptItemRow {
+  display: grid;
+  gap: 4px;
+  padding: var(--space-xs) 0;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+}
+
+.receiptItemsHeader {
+  border-bottom: 2px solid var(--text-primary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--text-secondary);
+}
+
+.receiptItemRow {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* WHY: Two grid modes — editable has 7 columns (includes Price, Disc%, Remove);
+   read-only has 6 columns (includes Disc% but no Remove). */
+.editableGrid {
+  grid-template-columns: 54px 1fr 72px 64px 50px 64px 28px;
+}
+
+.readOnlyGrid {
+  grid-template-columns: 54px 1fr 36px 60px 50px 64px;
+}
+
+/* ── Column cells ── */
+.riColCode {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.riColName {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.priceOverride {
+  font-size: 0.5625rem;
+  color: var(--color-warning, #e67e22);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.riColTotal {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Read-only static columns */
+.riColQtyStatic {
+  text-align: center;
+  font-weight: 600;
+}
+
+.riColPriceStatic {
+  font-size: 0.8125rem;
+}
+
+.riColDiscStatic {
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════
+   Editable Controls
+   ═══════════════════════════════════════════════ */
+
+/* Qty ± controls */
+.riQtyControls {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.riQtyBtn {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  padding: 0;
+}
+.riQtyBtn:active {
+  background: var(--color-primary);
+  color: var(--text-inverse);
+}
+
+.riQtyInput {
+  width: 28px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 2px 1px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Price input */
+.riPriceWrap {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.riDollar {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.riPriceInput {
+  width: 52px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Discount input */
+.riDiscInput {
+  width: 42px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.discWarn {
+  border-color: var(--color-warning, #e67e22);
+  background: #fef3e2;
+  color: var(--color-warning, #e67e22);
+}
+
+/* Remove button */
+.riRemoveBtn {
+  background: none;
+  border: none;
+  color: var(--color-danger);
+  padding: 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.riRemoveBtn:active {
+  background: #fce8e6;
+}
+
+/* Deposit sub-line */
+.riDepositLine {
+  grid-column: 1 / -1;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 1px 0 2px;
+}
+
+/* Empty state */
+.emptyItems {
+  text-align: center;
+  padding: var(--space-lg) 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Hide number input spinners */
+.riQtyInput::-webkit-inner-spin-button,
+.riQtyInput::-webkit-outer-spin-button,
+.riPriceInput::-webkit-inner-spin-button,
+.riPriceInput::-webkit-outer-spin-button,
+.riDiscInput::-webkit-inner-spin-button,
+.riDiscInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.riQtyInput,
+.riPriceInput,
+.riDiscInput {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* ═══════════════════════════════════════════════
+   Prepaid Warning
+   ═══════════════════════════════════════════════ */
+
+.prepaidWarning {
+  background: #fff3cd;
+  color: #856404;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md, 8px);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-md);
+}
+
+/* ═══════════════════════════════════════════════
+   Totals
+   ═══════════════════════════════════════════════ */
+
+.receiptTotals {
+  padding: var(--space-sm) 0;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.grandTotal {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+  border-top: 2px solid var(--text-primary);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+/* ───── Payment Status Section ───── */
+.paymentSection {
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px dashed var(--border-color);
+}
+
+.paidAmount {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.balanceRow {
+  font-weight: 600;
+}
+
+.balanceDue {
+  color: var(--color-danger, #d32f2f);
+}
+
+.balancePaid {
+  color: #4caf50;
+}
+
+.paymentStatusRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-xs);
+}
+
+.paymentBadge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.paymentBadgePaid {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.paymentBadgePartial {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.paymentBadgeUnpaid {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* ═══════════════════════════════════════════════
+   Notes (read-only)
+   ═══════════════════════════════════════════════ */
+
+.notesSection {
+  padding: var(--space-sm) 0;
+}
+
+.notesSection h4 {
+  margin: 0 0 var(--space-xs);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.notesSection p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* ── Print styles ──────────────────────────────────────────────── */
+/* WHY: OrderReceipt is the shared receipt/order component used in both
+   OrderDetail and NewOrder. Print must suppress all editing widgets
+   (qty steppers, price inputs, remove buttons) and produce a clean
+   document-style layout — used as customer copy or internal pick sheet. */
+@media print {
+  /* ── Receipt wrapper ── */
+  .receipt {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    border-radius: 3px !important;
+    margin-bottom: 8px !important;
+    background: #fff !important;
+  }
+
+  /* ── Header block ── */
+  .receiptHeader {
+    padding: 6px 12px !important;
+    border-bottom: 1.5px solid #333 !important;
+  }
+
+  .receiptTitle {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+  }
+
+  .receiptDate {
+    font-size: 0.72rem !important;
+  }
+
+  .receiptDivider {
+    margin: 4px 0 !important;
+  }
+
+  /* ── Customer block ── */
+  .receiptCustomer {
+    padding: 5px 12px !important;
+    border-bottom: 1px solid #ddd !important;
+    background: #fafafa !important;
+  }
+
+  .receiptCustLabel {
+    font-size: 0.65rem !important;
+  }
+
+  .receiptCustName {
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+  }
+
+  .receiptCustDetail {
+    font-size: 0.7rem !important;
+  }
+
+  /* ── Items section ── */
+  .receiptItemsSection {
+    padding: 0 !important;
+  }
+
+  .receiptItemsHeader,
+  .receiptItemRow {
+    padding: 3px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .receiptItemsHeader {
+    font-size: 0.68rem !important;
+    background: #f0f0f0 !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+
+  /* Hide editable controls — show only static values */
+  .riQtyControls,
+  .riPriceWrap,
+  .riDiscInput,
+  .riRemoveBtn,
+  .priceOverride,
+  .discWarn {
+    display: none !important;
+  }
+
+  .riColQtyStatic,
+  .riColPriceStatic,
+  .riColDiscStatic {
+    display: block !important;
+    font-size: 0.75rem !important;
+  }
+
+  .riColCode   { font-size: 0.7rem !important; }
+  .riColName   { font-size: 0.75rem !important; }
+  .riColTotal  { font-size: 0.78rem !important; font-weight: 600 !important; }
+
+  .riDepositLine {
+    padding: 2px 12px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* ── Totals ── */
+  .receiptTotals {
+    padding: 4px 12px !important;
+    border-top: 1.5px solid #999 !important;
+  }
+
+  .totalRow {
+    padding: 2px 0 !important;
+    font-size: 0.75rem !important;
+  }
+
+  .grandTotal {
+    font-size: 0.95rem !important;
+    padding: 4px 0 !important;
+    border-top: 1.5px solid #333 !important;
+  }
+
+  /* ── Payment section ── */
+  .paymentSection {
+    padding: 4px 12px !important;
+    border-top: 1px solid #ddd !important;
+  }
+
+  .paidAmount, .balanceDue, .balancePaid {
+    font-size: 0.8rem !important;
+  }
+
+  .paymentBadge {
+    font-size: 0.65rem !important;
+    padding: 1px 5px !important;
+  }
+
+  .prepaidWarning {
+    display: none !important;
+  }
+
+  /* ── Notes ── */
+  .notesSection {
+    padding: 4px 12px !important;
+    border-top: 1px solid #ddd !important;
+  }
+
+  .notesSection h4 {
+    font-size: 0.68rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .notesSection p {
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+  }
+}

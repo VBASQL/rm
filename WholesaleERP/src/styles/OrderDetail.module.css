@@ -1,7 +1,12 @@
 /* ============================================================
    FILE: OrderDetail.module.css
-   PURPOSE: Order detail page styles — timeline, invoice table, actions.
+   PURPOSE: Order detail page styles — timeline, actions, edit controls.
    MODIFICATION HISTORY:
+     [2026-03-13] #002 Removed dead CSS (.statusRow, .dateText, .customerLink,
+       .infoRow, .invoiceTable, .invoiceHeader, .invoiceLine, .invoiceProductName,
+       .depositLine, .totalSection, .totalRow, .grandTotal, .notesSection,
+       .editRow, .editQty, .removeBtn) — moved to OrderReceipt.module.css.
+       Added .lockedBanner.
      [2026-03-12] Initial creation.
    ============================================================ */
 
@@ -10,31 +15,18 @@
   padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
 }
 
-.statusRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
-}
+/* [MOD #002] REMOVED: .statusRow, .dateText, .customerLink, .infoRow
+   — customer/date/status now rendered by OrderReceipt._renderCustomerBlock */
 
-.dateText {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-}
-
-.customerLink {
-  font-size: 0.9375rem;
-  color: var(--color-primary);
-  font-weight: 500;
-  cursor: pointer;
-  margin-bottom: var(--space-sm);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.infoRow {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-lg);
+/* [MOD #002] Locked banner — visible when order is at Picking+ */
+.lockedBanner {
+  background: #fff3cd;
+  color: #856404;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-md);
+  text-align: center;
 }
 
 /* Menu */
@@ -121,93 +113,9 @@
   font-weight: 600;
 }
 
-/* Invoice table (shared pattern with NewOrder) */
-.invoiceTable {
-  margin-bottom: var(--space-lg);
-  font-size: 0.75rem;
-  overflow-x: auto;
-}
-
-.invoiceHeader {
-  display: grid;
-  grid-template-columns: 50px 1fr 30px 60px 60px;
-  gap: 4px;
-  padding: var(--space-xs) 0;
-  border-bottom: 2px solid var(--text-primary);
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.invoiceLine {
-  display: grid;
-  grid-template-columns: 50px 1fr 30px 60px 60px;
-  gap: 4px;
-  padding: var(--space-xs) 0;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-}
-
-.invoiceProductName {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.depositLine {
-  display: grid;
-  grid-template-columns: 50px 1fr 30px 60px 60px;
-  gap: 4px;
-  padding: 2px 0 var(--space-xs);
-  font-size: 0.6875rem;
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.totalSection {
-  margin-bottom: var(--space-lg);
-  padding: var(--space-md);
-  background: var(--bg-card);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-}
-
-.totalRow {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-.grandTotal {
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--text-primary);
-  border-top: 2px solid var(--text-primary);
-  margin-top: 4px;
-  padding-top: 8px;
-}
-
-.notesSection {
-  background: var(--bg-card);
-  border-radius: var(--border-radius);
-  padding: var(--space-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.notesSection h4 {
-  margin: 0 0 var(--space-xs);
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-}
-
-.notesSection p {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
+/* [MOD #002] REMOVED: .invoiceTable, .invoiceHeader, .invoiceLine, .invoiceProductName,
+   .depositLine, .totalSection, .totalRow, .grandTotal, .notesSection
+   — now in OrderReceipt.module.css */
 
 /* [MOD #001] Status advance button */
 .advanceBtn {
@@ -231,52 +139,8 @@
   opacity: 0.9;
 }
 
-/* [MOD #001] Edit mode */
-.editRow {
-  display: grid;
-  grid-template-columns: 50px 1fr 90px 60px 30px;
-  gap: 4px;
-  padding: var(--space-xs) 0;
-  border-bottom: 1px solid var(--border-color);
-  align-items: center;
-  font-size: 0.75rem;
-  color: var(--text-primary);
-}
-
-.editQty {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.editQty button {
-  width: 26px;
-  height: 26px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  background: var(--bg-card);
-  color: var(--color-primary);
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.editQty span {
-  min-width: 24px;
-  text-align: center;
-  font-weight: 600;
-}
-
-.removeBtn {
-  border: none;
-  background: none;
-  color: var(--color-danger);
-  cursor: pointer;
-  font-size: 0.875rem;
-  padding: 2px;
-}
+/* [MOD #002] REMOVED: .editRow, .editQty, .removeBtn
+   — edit mode now uses OrderReceipt editable grid */
 
 .editActions {
   display: flex;
@@ -286,4 +150,26 @@
 
 .editActions .btn {
   flex: 1;
+}
+
+/* ── Print styles ──────────────────────────────────────────────── */
+/* WHY: Order printout is used as a pick sheet or customer copy —
+   hide all editing controls, show clean order data only. */
+@media print {
+  @page { margin: 14mm 12mm; size: A4; }
+
+  /* Hide interactive chrome: menu, advance button, edit actions, locked banner, timeline */
+  .menuBtn,
+  .menu,
+  .advanceBtn,
+  .editActions,
+  .lockedBanner,
+  .timeline {
+    display: none !important;
+  }
+
+  .content {
+    padding: 0 !important;
+    background: #fff !important;
+  }
 }

@@ -1,0 +1,44 @@
+/* ============================================================
+   FILE: MockFeatureBanner.module.css
+   PURPOSE: Styles for the amber demo-feature callout banner.
+   MODIFICATION HISTORY:
+     [2026-03-14] Initial creation.
+   ============================================================ */
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-left: 4px solid #f59e0b;
+  border-radius: var(--border-radius);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #92400e;
+}
+
+.desc {
+  font-size: 0.8125rem;
+  color: #78350f;
+  line-height: 1.4;
+}

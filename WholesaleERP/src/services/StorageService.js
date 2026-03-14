@@ -12,6 +12,9 @@
 //   Zero page code changes when switching. See BUILD_PLAN.md §4.
 //
 // MODIFICATION HISTORY (newest first):
+//   [2026-03-14] #branch Added branch operations — getBranches, createBranch,
+//     getAccountOrders. Branches are delivery locations under a parent account,
+//     sharing the account's credit/balance/terms but with their own address.
 //   [2026-03-13] #001 Added invoice CRUD, alerts, discount settings, order status
 //     transitions, most-ordered products, duplicate order, credit limit reduction,
 //     payment history. Removed Shipped status — flow is now Picking → Delivered.
@@ -28,6 +31,22 @@ class StorageService {
   // WHY: Salesperson can only reduce credit — never raise. Setting to 0 = prepaid.
   // Accounting will control increases when backend is live.
   reduceCustomerCredit(_id, _newLimit) { throw new Error('StorageService.reduceCustomerCredit not implemented'); }
+
+  // [MOD #branch] Branch operations.
+  // WHY: Branches are delivery locations under a parent account.
+  // They share the account's credit limit, balance, and payment terms
+  // but have their own address, contact, phone, and email.
+  // All financial tracking (invoices, payments, balance) flows through the parent.
+  getBranches(_parentId) { throw new Error('StorageService.getBranches not implemented'); }
+  createBranch(_parentId, _data) { throw new Error('StorageService.createBranch not implemented'); }
+
+  // WHY: Returns all orders placed for a parent account including any of its branches.
+  // Use this when displaying the account-level order history on the parent profile.
+  getAccountOrders(_customerId) { throw new Error('StorageService.getAccountOrders not implemented'); }
+
+  // WHY: Returns the account (parent) customer ID for any customer.
+  // For a branch: returns parentId. For a parent/standalone: returns its own id.
+  getAccountId(_customerId) { throw new Error('StorageService.getAccountId not implemented'); }
 
   // ── Product Operations ───────────────────────────────────
   getProducts() { throw new Error('StorageService.getProducts not implemented'); }
@@ -46,9 +65,11 @@ class StorageService {
   // When status changes to Delivered, an invoice is auto-generated.
   updateOrderStatus(_id, _newStatus) { throw new Error('StorageService.updateOrderStatus not implemented'); }
 
-  // WHY: Returns products sorted by how often this salesperson ordered them,
-  // so the "Most Ordered" tab shows the full catalog in frequency order.
-  getMostOrderedProducts(_salespersonId) { throw new Error('StorageService.getMostOrderedProducts not implemented'); }
+  // WHY: Returns products sorted by how often they appear in this customer's
+  // committed orders (Delivered/Picking/Submitted). customerId is required so
+  // the "Top" tab shows THAT customer's buying pattern, not global frequency.
+  // [MOD #salesReport] Added customerId param — was _salespersonId (unused).
+  getMostOrderedProducts(_customerId) { throw new Error('StorageService.getMostOrderedProducts not implemented'); }
 
   // WHY: Deep-copies line items from an existing order into a new draft.
   // targetCustomerId is optional — if null, uses the original order's customer.
@@ -64,6 +85,12 @@ class StorageService {
   getPayments(_customerId) { throw new Error('StorageService.getPayments not implemented'); }
   createPayment(_data) { throw new Error('StorageService.createPayment not implemented'); }
 
+  // [MOD #004] Get orders with unpaid balance (for payment collection page)
+  getUnpaidOrders(_customerId) { throw new Error('StorageService.getUnpaidOrders not implemented'); }
+
+  // [MOD #004] Apply customer's account credit to order or invoice
+  applyAccountCredit(_customerId, _targetType, _targetId, _amount) { throw new Error('StorageService.applyAccountCredit not implemented'); }
+
   // ── Alerts ───────────────────────────────────────────────
   // WHY: Dynamically computed from data — overdue invoices, over-credit-limit,
   // accounts on hold. Each alert has a linkTo for navigation.
@@ -74,7 +101,12 @@ class StorageService {
   // editable from Settings page. Defaults provided; accounting controls later.
   getDiscountSettings() { throw new Error('StorageService.getDiscountSettings not implemented'); }
   updateDiscountSettings(_data) { throw new Error('StorageService.updateDiscountSettings not implemented'); }
-
+  // ── Delivery Days ──────────────────────────────────────────
+  // WHY: Array of weekday numbers (0–6) on which deliveries are available.
+  // In production set by the warehouse. In demo: configurable from Settings.
+  // [MOD #demo-delivery] Added.
+  getDeliveryDays() { throw new Error('StorageService.getDeliveryDays not implemented'); }
+  updateDeliveryDays(_days) { throw new Error('StorageService.updateDeliveryDays not implemented'); }
   // ── Favorites ────────────────────────────────────────────
   getFavorites(_customerId) { throw new Error('StorageService.getFavorites not implemented'); }
   setFavorites(_customerId, _productIds) { throw new Error('StorageService.setFavorites not implemented'); }

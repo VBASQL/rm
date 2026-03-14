@@ -10,6 +10,7 @@
 //   alphabetical sort, each row shows name/balance/status with "New Order" shortcut.
 //
 // MODIFICATION HISTORY (newest first):
+//   [MOD #branch] Build customersById map to pass parentName to branch rows.
 //   [2026-03-12] Initial creation.
 // ============================================================
 import React from 'react';
@@ -54,7 +55,10 @@ class CustomerList extends React.Component {
 
   _getFilteredCustomers() {
     const { customers, search, filter } = this.state;
-    let result = customers;
+    // [MOD #branch] Branches are part of the parent account — they only appear
+    // separately in NewOrder (so reps pick the right delivery location).
+    // WHY: Everywhere else it's one account; showing branches here adds noise.
+    let result = customers.filter(c => !c.isBranch);
 
     // Apply status / type filter
     if (filter !== 'all') {
@@ -97,8 +101,10 @@ class CustomerList extends React.Component {
 
   render() {
     const { navigate } = this.props;
-    const { search, filter } = this.state;
+    const { search, filter, customers } = this.state;
     const filtered = this._getFilteredCustomers();
+    // [MOD #branch] Index all customers by ID so branch rows can look up parent name.
+    const customersById = Object.fromEntries(customers.map(c => [c.id, c]));
 
     return (
       <div className="page">
@@ -129,9 +135,16 @@ class CustomerList extends React.Component {
             />
           ) : (
             <div className={styles.list}>
-              {filtered.map(customer => (
-                <CustomerRow key={customer.id} customer={customer} />
-              ))}
+              {filtered.map(customer => {
+                // [MOD #branch] Pass parent name so branch rows can show
+                // "Account: [Parent]" without needing a storage lookup inside CustomerRow.
+                const parentName = customer.isBranch
+                  ? (customersById[customer.parentId]?.name || '')
+                  : null;
+                return (
+                  <CustomerRow key={customer.id} customer={customer} parentName={parentName} />
+                );
+              })}
             </div>
           )}
         </div>

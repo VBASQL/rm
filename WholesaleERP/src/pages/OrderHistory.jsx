@@ -16,12 +16,13 @@
 // ============================================================
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText } from 'lucide-react';
+import { FileText, RotateCcw } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import PageHeader from '../components/PageHeader';
 import SearchBar from '../components/SearchBar';
 import StatusBadge from '../components/StatusBadge';
 import EmptyState from '../components/EmptyState';
+import { formatDate } from '../utils/format';
 import styles from '../styles/OrderHistory.module.css';
 
 // [MOD #001] Removed 'Shipped' — flow is now Picking → Delivered.
@@ -58,11 +59,6 @@ class OrderHistory extends React.Component {
     this.setState({ orders, customers });
   }
 
-  _formatDate(d) {
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  }
-
   _getFiltered() {
     const { orders, customers, search, filter } = this.state;
     let filtered = [...orders];
@@ -95,7 +91,18 @@ class OrderHistory extends React.Component {
 
     return (
       <div className="page">
-        <PageHeader title="Orders" />
+        <PageHeader
+          title="Orders"
+          rightContent={
+            <button
+              className={styles.returnBtn}
+              onClick={() => navigate('/returns/new')}
+              aria-label="New Return"
+            >
+              <RotateCcw size={18} />
+            </button>
+          }
+        />
 
         <div className={styles.content}>
           <SearchBar
@@ -131,7 +138,7 @@ class OrderHistory extends React.Component {
                     </div>
                     <div className={styles.rowSub}>
                       <span>{cust ? cust.name : 'Unknown'}</span>
-                      <span>{this._formatDate(order.createdDate)}</span>
+                      <span>{formatDate(order.createdDate)}</span>
                     </div>
                     <div className={styles.rowMeta}>
                       <span>{order.totalCases} cases</span>
